@@ -63,19 +63,30 @@
     let mcqs = [];
     let overviewHTML = "";
 
+    // Helper to extract mcqs from an object
+    function extractFromObj(obj) {
+      if (obj.mcqs && Array.isArray(obj.mcqs)) mcqs.push(...obj.mcqs);
+      if (obj.quiz && Array.isArray(obj.quiz)) mcqs.push(...obj.quiz);
+      if (obj.questions && Array.isArray(obj.questions)) mcqs.push(...obj.questions);
+    }
+
     // If data is an array, we separate the overview object from mcq objects.
     if (Array.isArray(data)) {
       data.forEach(item => {
         if (item.question && item.options) {
           mcqs.push(item);
-        } else if (item.chapter || item.review || item.overview) {
-          // This is an overview object
-          overviewHTML = buildOverviewHTML(item);
+        } else {
+          extractFromObj(item);
+          if (item.chapter || item.review || item.overview || item.chapter_review) {
+            // This is an overview object
+            const html = buildOverviewHTML(item);
+            if (html) overviewHTML += html;
+          }
         }
       });
     } else if (typeof data === 'object') {
       // If it's an object, look for 'mcqs' or 'quiz'
-      mcqs = data.mcqs || data.quiz || data.questions || [];
+      extractFromObj(data);
       overviewHTML = buildOverviewHTML(data);
     }
 

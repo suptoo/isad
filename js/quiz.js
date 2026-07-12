@@ -108,16 +108,24 @@
   function buildOverviewHTML(item) {
     let html = "";
     
-    const title = item.title || item.chapter || (item.chapter_review && item.chapter_review.chapter_name);
+    // Normalize if the data is wrapped in a 'chapter' or 'chapter_review' object
+    let chapterObj = item;
+    if (item.chapter && typeof item.chapter === 'object') {
+      chapterObj = item.chapter;
+    } else if (item.chapter_review && typeof item.chapter_review === 'object') {
+      chapterObj = item.chapter_review;
+    }
+
+    const title = chapterObj.title || chapterObj.chapter_name || (typeof item.chapter === 'string' ? item.chapter : null);
     if (title && typeof title === 'string') {
       html += `<h2>${title}</h2>`;
     }
 
-    const review = item.review || item.overview || (item.chapter_review && item.chapter_review.overview);
+    let review = chapterObj.review || chapterObj.overview;
     
     if (typeof review === 'string') {
       html += `<p>${review}</p>`;
-    } else if (typeof review === 'object') {
+    } else if (typeof review === 'object' && review !== null) {
       if (review.summary && typeof review.summary === 'string') html += `<p>${review.summary}</p>`;
       if (Array.isArray(review.summary)) {
         html += `<ul>${review.summary.map(s => `<li>${s}</li>`).join('')}</ul>`;
@@ -126,6 +134,27 @@
       const topics = review.important_topics || review.keyTopics;
       if (Array.isArray(topics)) {
         html += `<h3>Important Topics</h3><ul>${topics.map(t => `<li>${t}</li>`).join('')}</ul>`;
+      }
+      
+      // Handle the case where review is an array of sections (like chapter1.html)
+      if (Array.isArray(review)) {
+        review.forEach(sec => {
+          if (sec.title) html += `<h3>${sec.title}</h3>`;
+          if (sec.content) {
+            if (typeof sec.content === 'string') {
+              html += `<p>${sec.content}</p>`;
+            } else if (Array.isArray(sec.content)) {
+              html += `<ul>${sec.content.map(c => `<li>${c}</li>`).join('')}</ul>`;
+            } else if (typeof sec.content === 'object') {
+              Object.entries(sec.content).forEach(([k, v]) => {
+                html += `<h4>${k.replace(/_/g, ' ')}</h4>`;
+                if (Array.isArray(v)) {
+                  html += `<ul>${v.map(i => `<li>${i}</li>`).join('')}</ul>`;
+                }
+              });
+            }
+          }
+        });
       }
     }
     

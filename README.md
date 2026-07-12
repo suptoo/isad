@@ -19,7 +19,11 @@ No server or install required.
 | 3 | `chapter-3.html` | Convolution & Filtering | 100 |
 | 4 | `chapter-4.html` | Edge Detection | 60 |
 | 5 | `chapter-5.html` | Morphological Processing | 40 |
-| 6 | `chapter-6.html` | Convolution & Filtering (Review) | 100 |
+| 6 | `chapter-6.html` | Convolution & Filtering — Overview | 100 |
+
+## Content policy
+
+**Chapter HTML files contain book-derived MCQs and explanations — do not edit question text, options, or explanations.** Only shared `css/` and `js/` files may be updated for layout and navigation.
 
 ## Design
 

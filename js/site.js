@@ -1,5 +1,7 @@
 /**
  * DIP MCQ Lab — shared navigation & site chrome
+ * NOTE: This file controls navigation/layout only.
+ * MCQ text, explanations, and chapter content in HTML files must never be edited.
  */
 (function () {
   "use strict";
@@ -53,8 +55,8 @@
     {
       id: 6,
       file: "chapter-6.html",
-      title: "Convolution & Filtering (Review)",
-      topic: "Extra practice — same 100 questions as Ch.3",
+      title: "Convolution & Filtering — Overview",
+      topic: "Full chapter overview — kernel size effects & general review",
       questions: 100,
       concepts: 12,
       color: "#4c8bf5",

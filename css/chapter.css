@@ -1,6 +1,6 @@
 /**
  * DIP MCQ Lab — unified chapter quiz styles
- * Shared across all 6 chapters for consistent mobile + desktop reading.
+ * Style/layout only — does not alter MCQ content in chapter HTML files.
  */
 :root {
   --bg: #0b0d10;

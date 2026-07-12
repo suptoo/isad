@@ -1,0 +1,1084 @@
+/**
+ * DIP MCQ Lab — unified chapter quiz styles
+ * Shared across all 6 chapters for consistent mobile + desktop reading.
+ */
+:root {
+  --bg: #0b0d10;
+  --bg-soft: #10141a;
+  --panel: #14171c;
+  --panel-2: #1a1f27;
+  --border: #262b33;
+  --border-soft: #1d222b;
+  --text: #e7eaee;
+  --muted: #8a93a3;
+  --faint: #5c6575;
+  --accent: #f2a65a;
+  --accent-dim: #8a6a41;
+  --accent-soft: rgba(242, 166, 90, 0.12);
+  --correct: #4c8bf5;
+  --correct-bg: rgba(76, 139, 245, 0.14);
+  --correct-border: #4c8bf5;
+  --wrong: #e2635f;
+  --wrong-bg: rgba(226, 99, 95, 0.14);
+  --wrong-border: #e2635f;
+  --teal: #35c9b0;
+  --teal-soft: rgba(53, 201, 176, 0.12);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  --display: "Space Grotesk", sans-serif;
+  --body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --wrap-max: 760px;
+  --tap-min: 44px;
+}
+
+/* ---------- Chapter page base ---------- */
+body.chapter-page {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(900px 500px at 0% -10%, rgba(242, 166, 90, 0.06), transparent 55%),
+    radial-gradient(700px 400px at 100% 0%, rgba(76, 139, 245, 0.05), transparent 50%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.chapter-page .wrap,
+body.chapter-page .main-inner {
+  max-width: var(--wrap-max);
+  margin: 0 auto;
+}
+
+body.chapter-page .wrap {
+  padding: 20px 16px calc(64px + env(safe-area-inset-bottom, 0px));
+}
+
+@keyframes dip-rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Chapter header ---------- */
+body.chapter-page header {
+  margin-bottom: 20px;
+}
+
+body.chapter-page .brand,
+body.chapter-page header.top .brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+body.chapter-page .brand-mark,
+body.chapter-page .kernel-mark {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+
+body.chapter-page .brand-mark {
+  background: repeating-linear-gradient(
+    90deg,
+    #0b0d10 0 2px,
+    #1a1e24 2px 4px,
+    #232833 4px 7px,
+    #3a4256 7px 12px,
+    #5c6880 12px 18px
+  );
+}
+
+body.chapter-page .kernel-mark {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 2px;
+  padding: 4px;
+}
+
+body.chapter-page .kernel-mark span,
+body.chapter-page .kernel-mark div {
+  border-radius: 2px;
+  background: var(--faint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 8px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+body.chapter-page .kernel-mark span.c,
+body.chapter-page .kernel-mark div {
+  background: var(--accent);
+  color: #1a1206;
+}
+
+body.chapter-page .brand h1,
+body.chapter-page .brand-text h1,
+body.chapter-page header h1 {
+  font-family: var(--display);
+  font-size: clamp(16px, 4vw, 19px);
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+body.chapter-page .brand span,
+body.chapter-page .subtitle,
+body.chapter-page .brand-sub {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 3px;
+  line-height: 1.45;
+}
+
+body.chapter-page .eyebrow,
+body.chapter-page .kicker,
+body.chapter-page .brand-text .kicker {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+
+/* ---------- Progress ---------- */
+body.chapter-page .progress-strip {
+  position: relative;
+  height: 8px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+}
+
+body.chapter-page .progress-mask {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg);
+  opacity: 0.85;
+  transition: width 0.35s ease;
+}
+
+body.chapter-page .progress-marker {
+  position: absolute;
+  top: -3px;
+  width: 2px;
+  height: 14px;
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(242, 166, 90, 0.7);
+  transition: left 0.35s ease;
+}
+
+body.chapter-page .progress-label,
+body.chapter-page .progress-row,
+body.chapter-page .progress-meta,
+body.chapter-page .overall-progress .row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+body.chapter-page .progress-label b,
+body.chapter-page .progress-meta .hl,
+body.chapter-page .section-tag {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+body.chapter-page .progress-outer,
+body.chapter-page .progress-bar,
+body.chapter-page .track,
+body.chapter-page .bar-track,
+body.chapter-page .top-progress .track {
+  height: 6px;
+  background: var(--panel-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+body.chapter-page .progress-inner,
+body.chapter-page .progress-fill,
+body.chapter-page .track .fill,
+body.chapter-page .bar-fill,
+body.chapter-page .top-progress .fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--teal), var(--correct));
+  border-radius: 99px;
+  transition: width 0.35s ease;
+}
+
+body.chapter-page .section-tag {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+body.chapter-page .top-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+body.chapter-page .top-progress .track {
+  flex: 1;
+}
+
+/* ---------- Cards ---------- */
+body.chapter-page .card,
+body.chapter-page .intro-card,
+body.chapter-page .q-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(18px, 4vw, 26px);
+  margin-top: 16px;
+  animation: dip-rise 0.3s ease;
+}
+
+body.chapter-page .intro-card,
+body.chapter-page .q-card {
+  margin-bottom: 16px;
+}
+
+/* ---------- Tags / eyebrows ---------- */
+body.chapter-page .eyebrow,
+body.chapter-page .concept-tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+body.chapter-page .eyebrow::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 1px;
+}
+
+body.chapter-page .intro-card .tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+/* ---------- Titles & text ---------- */
+body.chapter-page .concept-title,
+body.chapter-page .concept-intro h2,
+body.chapter-page .concept-card h2,
+body.chapter-page .welcome h2,
+body.chapter-page .intro-card h2,
+body.chapter-page .final-title,
+body.chapter-page .final h2 {
+  font-family: var(--display);
+  font-size: clamp(20px, 5vw, 26px);
+  line-height: 1.3;
+  margin: 0 0 12px;
+  font-weight: 700;
+}
+
+body.chapter-page .concept-desc,
+body.chapter-page .concept-intro p,
+body.chapter-page .concept-card p,
+body.chapter-page .welcome p,
+body.chapter-page .intro-card p,
+body.chapter-page .final-sub {
+  color: var(--muted);
+  font-size: 14.5px;
+  line-height: 1.65;
+  margin: 0 0 16px;
+}
+
+body.chapter-page .formula,
+body.chapter-page .code-hint,
+body.chapter-page .takeaway {
+  font-family: var(--mono);
+  font-size: 13px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  margin: 14px 0;
+  color: #f0d2ad;
+  line-height: 1.55;
+  overflow-x: auto;
+}
+
+body.chapter-page .takeaway {
+  color: #cfd4dc;
+}
+
+/* ---------- Questions ---------- */
+body.chapter-page .q-count,
+body.chapter-page .q-meta,
+body.chapter-page .count-line {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+body.chapter-page .q-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+body.chapter-page .q-meta .num {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+body.chapter-page .q-text {
+  font-family: var(--display);
+  font-size: clamp(16px, 4.2vw, 19px);
+  font-weight: 600;
+  line-height: 1.45;
+  margin: 6px 0 18px;
+}
+
+/* ---------- Options (all variants) ---------- */
+body.chapter-page .options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+body.chapter-page .opt,
+body.chapter-page .option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  min-height: var(--tap-min);
+  text-align: left;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 13px 15px;
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 14.5px;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.chapter-page .opt:hover:not([disabled]):not(.locked),
+body.chapter-page .option:hover:not(.locked) {
+  border-color: #3a4150;
+  background: #1f2630;
+}
+
+body.chapter-page .opt:active:not([disabled]):not(.locked),
+body.chapter-page .option:active:not(.locked) {
+  transform: scale(0.995);
+}
+
+body.chapter-page .opt[disabled],
+body.chapter-page .opt.locked,
+body.chapter-page .option.locked {
+  cursor: default;
+}
+
+body.chapter-page .opt .tag,
+body.chapter-page .opt .letter,
+body.chapter-page .option .letter {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+/* Correct states */
+body.chapter-page .opt.correct,
+body.chapter-page .opt.correct-pick,
+body.chapter-page .opt.reveal-correct,
+body.chapter-page .option.is-correct {
+  background: var(--correct-bg);
+  border-color: var(--correct-border);
+}
+
+body.chapter-page .opt.correct .tag,
+body.chapter-page .opt.correct-pick .letter,
+body.chapter-page .opt.reveal-correct .letter,
+body.chapter-page .option.is-correct .letter {
+  background: var(--correct);
+  border-color: var(--correct);
+  color: #fff;
+}
+
+/* Wrong states */
+body.chapter-page .opt.wrong,
+body.chapter-page .opt.wrong-pick,
+body.chapter-page .opt.incorrect,
+body.chapter-page .option.is-wrong {
+  background: var(--wrong-bg);
+  border-color: var(--wrong-border);
+}
+
+body.chapter-page .opt.wrong .tag,
+body.chapter-page .opt.wrong-pick .letter,
+body.chapter-page .opt.incorrect .letter,
+body.chapter-page .option.is-wrong .letter {
+  background: var(--wrong);
+  border-color: var(--wrong);
+  color: #fff;
+}
+
+body.chapter-page .opt.dim,
+body.chapter-page .opt.faded,
+body.chapter-page .option.dim {
+  opacity: 0.45;
+}
+
+body.chapter-page .result-tag {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 5px;
+  background: var(--correct);
+  color: #fff;
+}
+
+body.chapter-page .opt.wrong-pick .result-tag {
+  background: var(--wrong);
+}
+
+/* ---------- Explanations ---------- */
+body.chapter-page .explain {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #cfd4dc;
+  border-left: 3px solid var(--accent);
+  animation: dip-rise 0.25s ease;
+}
+
+body.chapter-page .explain.correct,
+body.chapter-page .explain.ok,
+body.chapter-page .explain.is-correct {
+  border-left-color: var(--correct);
+  background: var(--correct-bg);
+}
+
+body.chapter-page .explain.wrong,
+body.chapter-page .explain.no,
+body.chapter-page .explain.is-wrong,
+body.chapter-page .explain.wrong-tint {
+  border-left-color: var(--wrong);
+  background: var(--wrong-bg);
+}
+
+body.chapter-page .explain b,
+body.chapter-page .explain p {
+  color: var(--text);
+}
+
+body.chapter-page .explain .verdict,
+body.chapter-page .explain .tag,
+body.chapter-page .explain .exp-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 8px;
+}
+
+body.chapter-page .explain.correct .verdict,
+body.chapter-page .explain.ok .tag,
+body.chapter-page .explain .tag.right,
+body.chapter-page .explain.is-correct .exp-label,
+body.chapter-page .verdict.ok {
+  color: var(--correct);
+}
+
+body.chapter-page .explain.wrong .verdict,
+body.chapter-page .explain.no .tag,
+body.chapter-page .explain .tag.wrong,
+body.chapter-page .explain.is-wrong .exp-label,
+body.chapter-page .verdict.no {
+  color: var(--wrong);
+}
+
+body.chapter-page .explain.show {
+  display: block;
+}
+
+/* ---------- Buttons ---------- */
+body.chapter-page .btn-row,
+body.chapter-page .next-row,
+body.chapter-page .actions,
+body.chapter-page .nav-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+body.chapter-page .nav-row {
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+body.chapter-page .btn,
+body.chapter-page .btn-primary,
+body.chapter-page button.btn {
+  font-family: var(--body);
+  font-weight: 600;
+  font-size: 14px;
+  min-height: var(--tap-min);
+  background: var(--accent);
+  color: #1a1206;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 11px 20px;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.1s ease;
+}
+
+body.chapter-page .btn:hover,
+body.chapter-page .btn-primary:hover {
+  filter: brightness(1.08);
+}
+
+body.chapter-page .btn.primary,
+body.chapter-page .btn-primary {
+  background: var(--correct);
+  color: #08111f;
+}
+
+body.chapter-page .btn.ghost,
+body.chapter-page .btn-ghost {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent-dim);
+}
+
+body.chapter-page .btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+body.chapter-page .hint {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+body.chapter-page .menu-btn {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  min-height: var(--tap-min);
+}
+
+/* ---------- Done / complete screens ---------- */
+body.chapter-page .done-icon,
+body.chapter-page .complete-badge,
+body.chapter-page .done-card .mark,
+body.chapter-page .summary-card .check {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--correct-bg);
+  border: 1px solid var(--correct-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--correct);
+  font-size: 22px;
+  margin-bottom: 14px;
+}
+
+body.chapter-page .done-card,
+body.chapter-page .summary-card,
+body.chapter-page .intro-card.welcome,
+body.chapter-page .done-screen {
+  text-align: center;
+}
+
+body.chapter-page .recap {
+  padding-left: 18px;
+  margin: 14px 0;
+}
+
+body.chapter-page .recap li {
+  color: #cfd4dc;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+body.chapter-page footer,
+body.chapter-page .page-footer {
+  text-align: center;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11px;
+  margin-top: 32px;
+  line-height: 1.5;
+}
+
+/* ---------- Stats ---------- */
+body.chapter-page .stats,
+body.chapter-page .stat-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 18px 0;
+}
+
+body.chapter-page .stat {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  flex: 1 1 120px;
+  text-align: center;
+}
+
+body.chapter-page .stat .n,
+body.chapter-page .stat .num {
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--correct);
+}
+
+body.chapter-page .stat .l,
+body.chapter-page .stat .lab {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* ---------- Concept nav (ch4) ---------- */
+body.chapter-page .concept-nav {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+}
+
+body.chapter-page .concept-nav button {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 8px 12px;
+  min-height: 36px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+body.chapter-page .concept-nav button.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+body.chapter-page .concept-nav button.done {
+  color: var(--correct);
+}
+
+/* ---------- Kernel viz (ch4 header) ---------- */
+body.chapter-page .kernel {
+  display: grid;
+  grid-template-columns: repeat(3, 26px);
+  grid-template-rows: repeat(3, 26px);
+  gap: 3px;
+  padding: 6px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  flex: none;
+}
+
+body.chapter-page .kernel div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 3px;
+}
+
+body.chapter-page header.top {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+body.chapter-page .head-text {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---------- Menu overlay (ch3/6) ---------- */
+body.chapter-page .overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 60px 16px;
+  z-index: 900;
+  overflow-y: auto;
+}
+
+body.chapter-page .overlay.show {
+  display: flex;
+}
+
+body.chapter-page .menu-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 520px;
+  padding: 22px;
+}
+
+body.chapter-page .menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+body.chapter-page .menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  cursor: pointer;
+  min-height: var(--tap-min);
+}
+
+body.chapter-page .menu-item:hover {
+  border-color: var(--correct);
+}
+
+/* ---------- Chapter 1 layout (sidebar) ---------- */
+body.chapter-page .stripe {
+  height: 4px;
+  display: flex;
+  width: 100%;
+}
+
+body.chapter-page .stripe span {
+  flex: 1;
+}
+
+body.chapter-page .stripe .r { background: #e2635f; }
+body.chapter-page .stripe .g { background: var(--teal); }
+body.chapter-page .stripe .b { background: var(--correct); }
+
+body.chapter-page .app {
+  display: flex;
+  min-height: calc(100vh - 4px);
+}
+
+body.chapter-page .sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  color: var(--text);
+  padding: 20px 14px;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: calc(100vh - 4px);
+  overflow-y: auto;
+}
+
+body.chapter-page .sidebar .brand {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  display: block;
+}
+
+body.chapter-page .brand-title {
+  font-family: var(--display);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 4px;
+}
+
+body.chapter-page .sidebar .brand-sub {
+  margin-bottom: 18px;
+}
+
+body.chapter-page .concept-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+body.chapter-page .concept-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.15s ease;
+  min-height: var(--tap-min);
+}
+
+body.chapter-page .concept-item:hover {
+  background: var(--panel-2);
+}
+
+body.chapter-page .concept-item.active {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+}
+
+body.chapter-page .c-code {
+  font-family: var(--mono);
+  font-size: 10px;
+  background: var(--faint);
+  color: var(--text);
+  border-radius: 5px;
+  padding: 3px 6px;
+  min-width: 30px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+body.chapter-page .concept-item.done .c-code {
+  background: var(--teal);
+  color: #04211a;
+}
+
+body.chapter-page .concept-item.active .c-code {
+  background: var(--correct);
+  color: #fff;
+}
+
+body.chapter-page .c-name {
+  flex: 1;
+  line-height: 1.3;
+}
+
+body.chapter-page .c-count {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+
+body.chapter-page .main {
+  flex: 1;
+  min-width: 0;
+  padding: 24px 16px 64px;
+  display: flex;
+  justify-content: center;
+}
+
+body.chapter-page .q-channels {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  display: flex;
+  flex-direction: column;
+}
+
+body.chapter-page .q-channels span { flex: 1; }
+body.chapter-page .q-body { padding: 22px 22px 18px 26px; }
+
+body.chapter-page .banner-done {
+  background: var(--teal-soft);
+  border: 1px solid rgba(53, 201, 176, 0.35);
+  color: var(--teal);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+body.chapter-page .done-screen .stripe-mini {
+  display: flex;
+  width: 64px;
+  height: 8px;
+  margin: 0 auto 16px;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+body.chapter-page .done-screen .stripe-mini span { flex: 1; }
+
+/* ---------- Morphology kernel icon (ch5) ---------- */
+body.chapter-page .kernel-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+}
+
+body.chapter-page .kernel-icon span {
+  background: var(--panel-2);
+  border-radius: 2px;
+}
+
+body.chapter-page header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+body.chapter-page[data-chapter="5"] header {
+  margin-bottom: 24px;
+}
+
+body.chapter-page .sub {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 860px) {
+  body.chapter-page .app {
+    flex-direction: column;
+  }
+
+  body.chapter-page .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  body.chapter-page .concept-list {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  body.chapter-page .kernel {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  body.chapter-page .wrap {
+    padding: 16px 14px 56px;
+  }
+
+  body.chapter-page .opt,
+  body.chapter-page .option {
+    padding: 14px 14px;
+    font-size: 14px;
+  }
+
+  body.chapter-page .nav-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  body.chapter-page .nav-row .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.chapter-page .card,
+  body.chapter-page .explain {
+    animation: none;
+  }
+}

@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b0d10">
+<title>DIP · OpenCV MCQ Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="css/chapter.css">
+</head>
+<body class="chapter-page" data-chapter="1">
+
+<div class="stripe"><span class="r"></span><span class="g"></span><span class="b"></span></div>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">CSE 4106 · Lab practice</div>
+    <p class="brand-title">Digital Image Processing</p>
+    <p class="brand-sub">100 MCQs · 10 concepts · OpenCV basics</p>
+
+    <div class="overall-progress">
+      <div class="label"><span>OVERALL</span><span id="overallLabel">0 / 100</span></div>
+      <div class="bar-track"><div class="bar-fill" id="overallBar"></div></div>
+    </div>
+
+    <ul class="concept-list" id="conceptList"></ul>
+  </aside>
+
+  <main class="main">
+    <div class="main-inner">
+      <div class="top-progress">
+        <span id="qPosLabel">Q1</span>
+        <div class="track"><div class="fill" id="topBar"></div></div>
+        <span id="qPctLabel">1%</span>
+      </div>
+
+      <div id="doneBanner"></div>
+      <div id="introSlot"></div>
+      <div id="questionSlot"></div>
+      <div id="finishSlot"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+const DATA = [
+{
+  code:"C01",
+  title:"Image reading and display basics",
+  intro:`This concept covers how OpenCV loads image files into memory, why Colab needs a special display function, how imread's flags work, and what actually happens (and fails silently) when reading and writing image files. Getting these fundamentals solid prevents a huge share of beginner bugs, since almost every later operation starts from a successfully loaded image array.`,
+  questions:[
+    {q:`What library does "cv2" refer to when imported in Python?`,
+     options:[`A general-purpose numeric library unrelated to vision`,`OpenCV's Python bindings, the core computer vision library used throughout this lab`,`A plotting library used only for charts`,`A deep learning framework such as PyTorch`],
+     correct:1,
+     explain:`cv2 is the module name for OpenCV's Python bindings. The "2" in the name is a historical artifact from OpenCV's C++ API version, not the Python version, so it persists even in modern releases. Every function used in this lab, imread, cvtColor, split, resize, rotate, and the bitwise operations, is exposed through this single cv2 module.`},
+    {q:`What does cv2.imread() return when the given file path does not exist or cannot be found?`,
+     options:[`It raises a FileNotFoundError immediately`,`It returns None, without raising an exception`,`It returns an empty string`,`It returns a black image matching a default size`],
+     correct:1,
+     explain:`Unlike Python's built-in open(), cv2.imread() does not throw an exception when a file is missing or unreadable; it silently returns None. This is a very common source of confusing downstream errors, because subsequent operations like cv2.cvtColor(None, ...) will crash with a cryptic message that does not clearly point back to the real cause. Best practice is to explicitly check "if image is None" right after loading.`},
+    {q:`What is the default value of the "flag" parameter in cv2.imread(path, flag) if it is not specified?`,
+     options:[`cv2.IMREAD_GRAYSCALE`,`cv2.IMREAD_UNCHANGED`,`cv2.IMREAD_COLOR`,`cv2.IMREAD_ANYDEPTH`],
+     correct:2,
+     explain:`When no flag is passed, OpenCV defaults to cv2.IMREAD_COLOR, which loads the image as a standard 3-channel BGR color image and drops any alpha (transparency) channel that might exist in the source file. This is why a PNG with transparency loses that transparency information unless IMREAD_UNCHANGED is explicitly requested.`},
+    {q:`Which imread flag should be used to preserve an image's alpha (transparency) channel if it has one?`,
+     options:[`cv2.IMREAD_COLOR`,`cv2.IMREAD_GRAYSCALE`,`cv2.IMREAD_UNCHANGED`,`cv2.IMREAD_REDUCED_COLOR_2`],
+     correct:2,
+     explain:`cv2.IMREAD_UNCHANGED tells OpenCV to load the image exactly as stored, including a fourth alpha channel if the source PNG or similar format contains one, resulting in a 4-channel BGRA array instead of the usual 3-channel BGR array. The default IMREAD_COLOR flag, by contrast, always forces a 3-channel output and discards transparency.`},
+    {q:`Why does calling the standard cv2.imshow() function typically fail or misbehave inside a Google Colab notebook?`,
+     options:[`Because Colab does not support NumPy arrays`,`Because Colab runs in a remote browser environment without a local display, and cv2.imshow() expects to open a native GUI window on the machine running the code`,`Because cv2.imshow() has been permanently removed from OpenCV`,`Because Colab only accepts PNG images`],
+     correct:1,
+     explain:`cv2.imshow() is built to open a native operating-system window on the machine executing the code, which works fine on a local desktop but breaks in Colab because the Python kernel runs on a remote server with no attached display. Attempting to call it there either throws an error or simply does nothing visible, which is why Colab-specific alternatives exist.`},
+    {q:`What is the purpose of "from google.colab.patches import cv2_imshow"?`,
+     options:[`It permanently disables OpenCV`,`It provides a Colab-compatible function that renders an image inline in the notebook output, working around the missing native display`,`It compresses images before they are saved`,`It converts video files into individual frames`],
+     correct:1,
+     explain:`Since native cv2.imshow() windows are not available in Colab's remote environment, Google provides cv2_imshow() as a patched replacement that instead converts the image array into an inline HTML/image output that renders directly in the notebook cell, giving the same visual result through a browser-friendly path.`},
+    {q:`If the output directory passed to cv2.imwrite() does not exist, what typically happens?`,
+     options:[`OpenCV automatically creates the missing directory for you`,`The write silently fails and the function returns False, without creating the file`,`Python always raises a fatal, uncatchable exception`,`It overwrites unrelated system files`],
+     correct:1,
+     explain:`cv2.imwrite() does not create missing parent directories on its own; if the target folder does not exist, the call typically fails quietly and returns False rather than throwing a loud error. This is another common source of "my code ran with no errors but the file is missing" bugs, so it is good practice to check the boolean return value or pre-create the directory with os.makedirs().`},
+    {q:`Which of the following is generally NOT something cv2.imread() can open directly without extra codecs or conversion?`,
+     options:[`JPG files`,`PNG files`,`BMP files`,`Proprietary camera RAW formats such as .CR2`],
+     correct:3,
+     explain:`OpenCV's imread supports common formats like JPG, PNG, BMP, and TIFF out of the box through its bundled image codecs. Proprietary camera RAW formats, however, use manufacturer-specific encodings that generally require a dedicated RAW-processing library (such as rawpy) before the data can be turned into a standard array OpenCV can work with.`},
+    {q:`For a typical 8-bit color image, what NumPy dtype does the array returned by cv2.imread() usually have?`,
+     options:[`A plain nested Python list, with no dtype`,`uint8, an 8-bit unsigned integer type with values from 0 to 255`,`A PIL.Image.Image object`,`A pandas DataFrame`],
+     correct:1,
+     explain:`Standard 8-bit images are represented as NumPy arrays with dtype uint8, meaning each channel value at each pixel is an unsigned integer between 0 and 255. This matters for arithmetic: operations that push values above 255 or below 0 will wrap around unexpectedly unless the array is first cast to a wider type like int32 or float32.`},
+    {q:`If you display a freshly loaded BGR image directly with plt.imshow(image) without converting its color order first, why do the colors typically look wrong?`,
+     options:[`Because plt.imshow() only accepts grayscale input`,`Because OpenCV stores channels in BGR order while Matplotlib interprets the array as RGB, so red and blue appear swapped`,`Because plt.imshow() automatically flips the image vertically`,`Because JPEG compression permanently changes the hue of the file`],
+     correct:1,
+     explain:`OpenCV's arrays store color as Blue-Green-Red, but Matplotlib's imshow() assumes the incoming array is Red-Green-Blue. Feeding a raw BGR array into imshow() therefore swaps the red and blue channels visually, giving skies an orange tint and skin tones a bluish cast, unless you first call cv2.cvtColor(image, cv2.COLOR_BGR2RGB).`},
+    {q:`What determines the output file format when calling cv2.imwrite("output.png", image)?`,
+     options:[`The dtype of the NumPy array being saved`,`The file extension given in the destination path string`,`A separate global "format" setting that must be configured beforehand`,`The color space the image happens to be in at the time`],
+     correct:1,
+     explain:`cv2.imwrite() infers which encoder to use purely from the extension in the destination filename, so passing "output.png" invokes the PNG encoder while "output.jpg" would invoke the JPEG encoder, even if the underlying pixel data is identical. Choosing an unsupported extension usually causes the write to fail.`},
+    {q:`If a file exists on disk but is corrupted or only partially downloaded, what is the most likely behavior of cv2.imread()?`,
+     options:[`It always raises a very specific "corrupted file" exception`,`It may return None, or in some cases a malformed array, rather than reliably crashing with a clear error`,`It automatically repairs the file before loading it`,`It is guaranteed to always load successfully regardless of file integrity`],
+     correct:1,
+     explain:`OpenCV's decoders are not designed to gracefully diagnose corruption; a truncated or damaged file commonly results in imread() returning None just like a missing file would, though in some edge cases a partially decoded array can be returned. This is why defensive "if image is None" checks are recommended after every load, especially in batch-processing loops over many files.`}
+  ]
+},
+{
+  code:"C02",
+  title:"Color spaces and conversion",
+  intro:`OpenCV represents color differently from most other tools, and converting correctly between color spaces (BGR, RGB, grayscale, HSV) is one of the most important habits in image processing. This concept builds intuition for why these conversions exist, what cv2.cvtColor() actually does under the hood, and why HSV in particular is useful for tasks like color-based detection.`,
+  questions:[
+    {q:`By default, in what channel order does OpenCV store a loaded color image?`,
+     options:[`RGB (Red, Green, Blue)`,`BGR (Blue, Green, Red)`,`HSV (Hue, Saturation, Value)`,`CMYK (Cyan, Magenta, Yellow, Key)`],
+     correct:1,
+     explain:`OpenCV was originally designed around the BGR channel order for historical reasons tied to early camera and codec conventions, and it has kept this order for backward compatibility ever since. This is the single most important quirk to remember, since almost every other Python imaging library (Matplotlib, PIL, scikit-image) defaults to RGB instead.`},
+    {q:`What is the correct syntax to convert a BGR image to grayscale using OpenCV?`,
+     options:[`cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)`,`cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)`,`cv2.grayscale(image)`,`cv2.convert(image, "gray")`],
+     correct:1,
+     explain:`The general pattern for OpenCV color conversions is cv2.cvtColor(source_image, conversion_flag), where the flag name encodes the direction of the conversion as SOURCE2TARGET. cv2.COLOR_BGR2GRAY specifically converts a 3-channel BGR image into a single-channel grayscale image; the reversed flag, COLOR_GRAY2BGR, would instead expand a grayscale image back into three identical channels.`},
+    {q:`What does the flag cv2.COLOR_BGR2RGB accomplish?`,
+     options:[`It converts a grayscale image into a color image`,`It reorders the channels so the array matches typical RGB ordering, effectively swapping the Blue and Red channels`,`It brightens the entire image uniformly`,`It permanently deletes the blue channel from the array`],
+     correct:1,
+     explain:`Because BGR and RGB contain the exact same three channels, just in a different order, COLOR_BGR2RGB does not change any pixel intensities; it only rearranges which channel is stored first, second, and third. This single swap is why images look "correct" in Matplotlib after the conversion but appear color-shifted before it.`},
+    {q:`In OpenCV's 8-bit HSV representation, what is the typical numeric range of the Hue (H) channel?`,
+     options:[`0 to 360`,`0 to 255`,`0 to 179`,`0 to 100`],
+     correct:2,
+     explain:`A true hue value naturally spans 0 to 360 degrees around the color wheel, but an 8-bit channel can only hold values from 0 to 255. To make hue fit within a single byte, OpenCV halves the standard range, compressing it down to 0-179. This is a frequent source of bugs when developers copy hue thresholds from tools that use the full 0-360 scale.`},
+    {q:`Why is the HSV color space often preferred over BGR/RGB for tasks like detecting a specific colored object under varying lighting?`,
+     options:[`Because HSV files always take up less disk space`,`Because HSV separates the actual color (Hue) from brightness (Value), so thresholding mainly on Hue makes detection more robust to shadows and lighting changes`,`Because HSV images cannot represent grayscale content at all`,`Because HSV has no Saturation channel to worry about`],
+     correct:1,
+     explain:`In BGR/RGB, a change in lighting affects all three channels simultaneously and unpredictably, which makes color thresholds unreliable across different lighting conditions. HSV isolates the pure color identity into the Hue channel, largely independent of how bright or dark the scene is, so a detector built around a Hue range tends to keep working even as shadows or exposure shift, as long as it also constrains Saturation and Value sensibly.`},
+    {q:`What does the "S" channel represent in the HSV color model?`,
+     options:[`Saturation, meaning the intensity or purity of the color, from washed-out/gray to vivid`,`The sharpness of edges in the image`,`The physical size of the image in pixels`,`The number of distinct shades of gray present`],
+     correct:0,
+     explain:`Saturation measures how "pure" or vivid a color is versus how close it is to gray. A low-saturation pixel looks pale, dull, or washed out even if its hue is technically "red," while a high-saturation pixel of the same hue looks vivid and intense. This channel is especially useful for filtering out grayish background noise when isolating strongly colored objects.`},
+    {q:`What does the "V" channel represent in HSV?`,
+     options:[`The velocity of change between video frames`,`Value, representing brightness or intensity, largely independent of the actual hue`,`The vertical resolution of the image`,`The amount of random noise/variance in the image`],
+     correct:1,
+     explain:`Value corresponds roughly to how bright or dark a pixel appears, ranging from black at the low end to full brightness at the high end, regardless of which hue is involved. Because Value is separated out from Hue, HSV lets you adjust or threshold brightness independently of color identity, which is exactly what makes it useful under uneven lighting.`},
+    {q:`When OpenCV converts a color image to grayscale, roughly how are the R, G, and B channels combined?`,
+     options:[`As a simple unweighted average of the three channels`,`As a weighted sum that reflects human perceptual sensitivity, with green weighted the highest and blue the lowest`,`Only the Red channel value is kept and the rest are discarded`,`A random channel is picked independently for every pixel`],
+     correct:1,
+     explain:`Human vision is more sensitive to green light than to red or blue, so grayscale conversion formulas weight the green channel most heavily, then red, then blue least, rather than averaging the three equally. This weighting produces a grayscale image whose perceived brightness pattern matches how a human would judge the original color image's luminance, rather than an arbitrary blend.`},
+    {q:`How many channels does the array have after calling cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)?`,
+     options:[`3`,`1`,`4`,`It depends on the input image's file format`],
+     correct:1,
+     explain:`Converting to grayscale collapses the three color channels into a single intensity channel, so the resulting NumPy array's shape changes from (height, width, 3) to just (height, width), with no third dimension at all. Code that assumes a channel axis exists will need updating after this conversion, since indexing like image[:,:,0] no longer applies.`},
+    {q:`What is the first argument expected by cv2.cvtColor()?`,
+     options:[`The desired output filename`,`The input image array to be converted`,`A tuple of custom channel weights`,`The target image dimensions`],
+     correct:1,
+     explain:`cv2.cvtColor() follows the pattern cv2.cvtColor(source_array, conversion_code), so the very first positional argument must be the NumPy image array you are converting, and the second is the flag constant (like COLOR_BGR2GRAY) that specifies which conversion to apply.`},
+    {q:`If you forget to convert BGR to RGB before displaying an image with Matplotlib, what visual symptom typically results?`,
+     options:[`The image renders completely black`,`Reds and blues appear swapped, giving skin tones, skies, and other colors an unnatural tint`,`The image automatically becomes grayscale`,`Nothing changes visually at all`],
+     correct:1,
+     explain:`Because Matplotlib reads the array's first channel as "red" while OpenCV actually stored "blue" there, every red-ish region in the true photo renders as blue-ish on screen and vice versa. This produces a distinctive, easily recognizable color-cast error that experienced OpenCV users learn to spot immediately.`},
+    {q:`Which flag reverses a COLOR_BGR2RGB conversion, converting an RGB image back to BGR?`,
+     options:[`The same swap logic works both ways, and cv2.COLOR_RGB2BGR performs the identical channel swap`,`cv2.COLOR_RGB2GRAY`,`There is no way to reverse this conversion once applied`,`cv2.COLOR_HSV2BGR`],
+     correct:0,
+     explain:`Since BGR-to-RGB conversion is just a swap of the first and third channels, applying that same swap a second time restores the original order. OpenCV exposes this reverse operation explicitly as cv2.COLOR_RGB2BGR, and functionally it performs the exact same channel-swap logic as COLOR_BGR2RGB, just named for the opposite starting point.`},
+    {q:`Why can mismatched color space assumptions silently break a downstream algorithm, rather than causing an obvious crash?`,
+     options:[`Color space never actually affects any algorithm's output`,`Because many algorithms (like color-based thresholding) compute results directly from channel values, so feeding them channels in the wrong order or space produces plausible-looking but incorrect results without any error message`,`Because grayscale images are immune to this problem entirely`,`Because color space conversions always increase the file size, which is easy to detect`],
+     correct:1,
+     explain:`A thresholding routine tuned to detect "red" objects by checking a specific channel's high value will happily run on a BGR array as if it were RGB, quietly detecting blue objects instead of red ones, with no runtime error to flag the mistake. This kind of silent logical bug is often harder to catch than a crash, because the code appears to work while producing subtly wrong results.`},
+    {q:`What happens to an image array's shape when it is converted from 3-channel BGR to single-channel grayscale?`,
+     options:[`It changes from (H, W, 3) to (H, W)`,`It changes from (H, W) to (H, W, 3)`,`The shape stays exactly the same in every respect`,`It collapses to a single scalar number`],
+     correct:0,
+     explain:`Grayscale conversion removes the channel axis entirely because there is only one intensity value per pixel instead of three, so a (height, width, 3) array becomes a plain 2D (height, width) array. Some functions expect a channel axis to exist and will raise shape-mismatch errors if given this reduced grayscale array without adjustment.`},
+    {q:`Why might a developer specifically work in HSV, rather than RGB, when trying to reliably detect a colored object (for example, a red car) across a range of lighting conditions?`,
+     options:[`Because lighting changes primarily shift the Value channel, so thresholding mainly on Hue (with looser Saturation/Value bounds) stays robust even as shadows and brightness vary`,`Because HSV images use noticeably less memory than RGB images of the same size`,`Because HSV automatically removes sensor noise from every photo`,`Because OpenCV is technically unable to process RGB arrays directly for detection`],
+     correct:0,
+     explain:`In RGB, a shadow falling across a red object darkens all three channels together in a way that is hard to predict, shifting the object's RGB signature substantially. In HSV, that same shadow mostly reduces the Value channel while the Hue stays close to its original "red" position, so a detector built primarily around Hue ranges keeps recognizing the object correctly across a much wider range of real-world lighting.`}
+  ]
+},
+{
+  code:"C03",
+  title:"Image properties as NumPy arrays",
+  intro:`Once an image is loaded, it becomes a NumPy array, and understanding array attributes like shape, size, and ndim is essential for debugging and writing correct processing code. This concept focuses on how OpenCV's image representation maps onto NumPy's indexing conventions, and why getting height/width order right matters.`,
+  questions:[
+    {q:`What does image.shape return for a typical color image loaded with OpenCV?`,
+     options:[`A single integer giving total pixel count`,`A tuple of (height, width, channels)`,`A tuple of only (width, height)`,`A text string describing color depth`],
+     correct:1,
+     explain:`image.shape is a NumPy array attribute that reports the array's dimensions in order, and for a standard color image this comes back as (height, width, number_of_channels), for example (246, 246, 3). Note the height comes first, which surprises people used to thinking of images in (x, y) or (width, height) terms.`},
+    {q:`At which index of image.shape is the number of color channels stored?`,
+     options:[`Index 0`,`Index 1`,`Index 2`,`It is not part of the shape tuple at all`],
+     correct:2,
+     explain:`For a color image, shape is (height, width, channels), so height sits at index 0, width at index 1, and the channel count at index 2. Accessing image.shape[2] is the standard way to programmatically check whether an image is single-channel grayscale or multi-channel color.`},
+    {q:`What does image.size return for a NumPy image array?`,
+     options:[`The file size of the image in bytes on disk`,`The total number of individual values in the array, equal to height times width times channels`,`The number of visually unique colors present`,`The bit depth used per channel`],
+     correct:1,
+     explain:`NumPy's .size attribute reports the total element count across all dimensions of the array, which for an image equals height × width × channels, not the number of pixels alone and definitely not the file's byte size on disk. A 246×246 color image, for instance, has a size of 246×246×3 = 181,548 values.`},
+    {q:`What does image.ndim represent?`,
+     options:[`The number of dimensions (axes) in the array, such as 3 for a typical color image`,`The bit depth of each individual pixel`,`How many separate image files were loaded`,`A measure of noise or graininess in the picture`],
+     correct:0,
+     explain:`ndim reports how many axes the array has: a color image with shape (H, W, 3) has ndim equal to 3, while a grayscale image with shape (H, W) has ndim equal to 2. This attribute is a quick way to programmatically detect whether an array is grayscale or color without needing to inspect the full shape tuple.`},
+    {q:`For a grayscale image with shape (H, W) and no explicit channel axis, what is image.ndim?`,
+     options:[`3`,`1`,`2`,`0`],
+     correct:2,
+     explain:`A grayscale array only has a row axis and a column axis, with no separate channel dimension, so its shape is exactly (height, width) and its ndim is 2. This differs from a color image, which adds a third axis for channels and therefore has ndim equal to 3.`},
+    {q:`What Python type does type(image) typically report for an array produced by cv2.imread()?`,
+     options:[`<class 'PIL.Image.Image'>`,`<class 'numpy.ndarray'>`,`<class 'list'>`,`A dedicated <class 'cv2.Mat'> type that is never treated as an ndarray`],
+     correct:1,
+     explain:`Even though OpenCV is a C++ library under the hood, its Python bindings represent images as standard NumPy arrays, so type(image) reports numpy.ndarray. This is precisely why all of NumPy's slicing, broadcasting, and mathematical operations work directly on OpenCV images without any special conversion step.`},
+    {q:`How would you access the pixel value located at row 0, column 0 of an image array?`,
+     options:[`image(0,0), using function-call syntax`,`image[0][0] or the equivalent image[0,0]`,`image.get(0,0)`,`image.pixel(0,0)`],
+     correct:1,
+     explain:`NumPy arrays use square-bracket indexing, so image[0][0] (chained indexing) or the more efficient image[0,0] (tuple indexing) both retrieve the value at row 0, column 0. For color images this returns an array of channel values at that location rather than a single number.`},
+    {q:`For a color image, what does image[0][0] actually return?`,
+     options:[`A single grayscale intensity number`,`A small array holding the channel values (for example [B, G, R]) at that specific pixel location`,`The image's file path on disk`,`The total pixel count of the whole image`],
+     correct:1,
+     explain:`Because a color image has a channel axis, indexing a single (row, column) location returns a 1D array containing one value per channel, such as array([120, 80, 200]) representing Blue, Green, and Red intensities at that pixel in OpenCV's default ordering.`},
+    {q:`Given that image.shape[0] is height and image.shape[1] is width, what does this reveal about NumPy's indexing convention for images?`,
+     options:[`NumPy indexes images as (width, height, channels)`,`NumPy indexes images as (row, column, channel), meaning height (the vertical/y axis) comes first, which is the opposite of how people often think of image coordinates as (x, y)`,`Height and width must always be numerically equal`,`Channels always come before height in the shape tuple`],
+     correct:1,
+     explain:`NumPy treats a 2D or 3D array as a grid of rows and columns, and for images the "row" axis corresponds to vertical position (height/y) while the "column" axis corresponds to horizontal position (width/x). This means shape and slicing operations are naturally expressed as (y, x), which trips up people who default to thinking in (x, y) screen-coordinate terms.`},
+    {q:`Why is it good practice to check image.shape immediately after loading an image in a processing pipeline?`,
+     options:[`It has no real practical benefit, it is purely informational`,`It confirms the image loaded correctly with the expected dimensions and channel count, helping catch loading failures, unexpected grayscale input, or a stray alpha channel early`,`It automatically resizes the image to a standard size`,`It silently changes the image's color space`],
+     correct:1,
+     explain:`Printing or asserting on image.shape right after a load acts as a cheap sanity check: if the image failed to load, this line would raise an AttributeError on None before any further processing wastes time on bad data, and it also reveals if an image unexpectedly came in as grayscale (2D) or with an alpha channel (4 channels) rather than the standard 3-channel color you assumed.`}
+  ]
+},
+{
+  code:"C04",
+  title:"Channel splitting and merging",
+  intro:`Color images can be decomposed into their individual Blue, Green, and Red planes and recombined afterward, which is central to channel-specific analysis, custom color filters, and understanding how color images are structured internally. This concept covers cv2.split(), cv2.merge(), pixel counting per channel, and the more efficient NumPy-slicing alternative.`,
+  questions:[
+    {q:`What does cv2.split(image) return for a standard 3-channel BGR image?`,
+     options:[`A single re-merged array identical to the input`,`Three separate single-channel arrays corresponding to the Blue, Green, and Red planes`,`Just a tuple of (height, width) with no pixel data`,`A grayscale version of the original image`],
+     correct:1,
+     explain:`cv2.split() decomposes a multi-channel image into one array per channel, so for a BGR image it returns three separate 2D arrays, one holding only the Blue intensities, one only Green, and one only Red, each still shaped (height, width). These can then be analyzed, modified, or displayed independently.`},
+    {q:`In the line "b, g, r = cv2.split(image)", what does the order of the returned values correspond to?`,
+     options:[`OpenCV's default BGR channel storage order`,`Alphabetical variable naming, unrelated to actual channel order`,`RGB order, matching Matplotlib conventions`,`A different random order on each call`],
+     correct:0,
+     explain:`Because OpenCV stores color images as Blue-Green-Red internally, cv2.split() returns the channels in that same order, first Blue, then Green, then Red, which is exactly why the unpacking is conventionally written as "b, g, r = cv2.split(image)" to match variable names to their actual content.`},
+    {q:`What is the purpose of cv2.merge((r, g, b))?`,
+     options:[`It permanently deletes two of the three channels`,`It combines separate single-channel arrays back into one multi-channel image, in whatever order they are passed`,`It converts a color image into grayscale`,`It crops the image to a smaller region`],
+     correct:1,
+     explain:`cv2.merge() is the inverse of cv2.split(): given a tuple or list of same-sized single-channel arrays, it stacks them together along a new channel axis to form one multi-channel image. Crucially, the resulting image's channel order is determined entirely by the order in which you pass the arrays into merge(), not by any inherent property of the channels themselves.`},
+    {q:`If channels were originally split in BGR order but then merged as cv2.merge((r, g, b)), what color space is the resulting image effectively in?`,
+     options:[`It remains BGR, unchanged`,`RGB, because the channels were deliberately reordered to Red, Green, then Blue during the merge`,`HSV`,`Grayscale`],
+     correct:1,
+     explain:`Even though the underlying pixel intensities are identical to the original BGR image, simply changing the order in which the three single-channel arrays are stacked back together produces an array that is now structured as Red-Green-Blue, i.e., effectively an RGB image, which is a common trick used specifically to prepare a BGR-loaded image for correct display in Matplotlib.`},
+    {q:`What does cv2.countNonZero(channel) actually count?`,
+     options:[`The number of pixels with a value of exactly zero`,`The number of pixels with a value strictly greater than zero (i.e., non-zero) within that single channel`,`The total number of pixels in the array regardless of value`,`The number of distinct unique values present in the channel`],
+     correct:1,
+     explain:`cv2.countNonZero() scans a single-channel array and tallies how many entries are non-zero, meaning any pixel with even a small positive intensity in that channel counts toward the total. It is commonly used on binary masks (where "on" pixels are 255 and "off" pixels are 0) to measure the area of a detected region, but it can be applied to any single-channel array.`},
+    {q:`Why might cv2.countNonZero() on the red channel of an ordinary photograph return a number close to the total pixel count, even in a scene without much visually "red" content?`,
+     options:[`Because red channel intensities are rarely exactly zero anywhere in a natural photo, so almost every pixel counts as "non-zero" regardless of whether the scene looks red to a human`,`Because OpenCV always forces the red channel to its maximum value`,`Because the image file must be corrupted if this happens`,`Because red is mathematically guaranteed to dominate every photo`],
+     correct:0,
+     explain:`countNonZero() only checks whether a value is above zero, not whether it is visually significant or dominant; since natural photographs almost always have at least some small non-zero red-channel contribution across nearly every pixel (few real pixels are pure 0,0,0 black), the red channel's non-zero count tends to be very high even in scenes that look mostly green or blue to a viewer.`},
+    {q:`Besides cv2.split(), what is an equivalent way to extract a single channel using direct NumPy slicing?`,
+     options:[`image.getChannel(0)`,`image[:, :, channel_index]`,`image.split()[0]`,`image.channel(0)`],
+     correct:1,
+     explain:`Since an OpenCV image is just a 3D NumPy array, standard slicing syntax image[:, :, index] selects "all rows, all columns, one specific channel," returning the same single-channel data that cv2.split() would produce for that channel, without needing to call a dedicated OpenCV function at all.`},
+    {q:`Why is NumPy slicing (image[:,:,0]) often preferred over cv2.split() when only one channel is actually needed?`,
+     options:[`Because cv2.split() unnecessarily creates separate copies of all three channels even when only one is required, making slicing generally faster and more memory-efficient`,`Because cv2.split() has been fully removed from recent OpenCV versions`,`Because NumPy slicing secretly changes the color space of the result`,`Because there is genuinely no practical difference between the two approaches`],
+     correct:0,
+     explain:`cv2.split() always processes and copies every channel present in the image, which wastes time and memory if you only actually need, say, just the green channel. A direct slice like image[:,:,1] extracts only that one channel's view (or a cheap copy) without the overhead of separating channels you are going to discard anyway, which matters more as image size or the number of calls grows.`},
+    {q:`When displaying a single extracted channel with plt.imshow(r, cmap='gray'), why does the cmap='gray' argument matter?`,
+     options:[`Without it, Matplotlib may apply a false-color colormap (like its default viridis) to what is actually single-channel intensity data, visually misrepresenting the channel as if it were multiple hues`,`It physically converts the channel back into a 3-channel color array`,`It changes the underlying pixel values stored in the array`,`It has no visible effect under any circumstances`],
+     correct:0,
+     explain:`When Matplotlib receives a 2D array, it does not know that array represents plain grayscale intensity; by default it maps low-to-high values through its default colormap (often a blue-to-yellow gradient), which can make a single red-channel extraction look like it has multiple colors even though it is really just varying brightness. Explicitly setting cmap='gray' tells Matplotlib to render the values as a true grayscale gradient instead.`},
+    {q:`What shape does a single channel extracted via image[:,:,0] have, compared to the original 3-channel image's shape?`,
+     options:[`The exact same shape, (H, W, 3)`,`The shape becomes (H, W), a 2D array instead of the original 3D array`,`The shape becomes (3, H, W), with channels moved to the front`,`The shape collapses to a single scalar number`],
+     correct:1,
+     explain:`Slicing out one specific index along the channel axis removes that axis entirely from the resulting array, so a (height, width, 3) image becomes a plain (height, width) array once a single channel is selected, exactly matching the shape you would get from a true grayscale image.`},
+    {q:`If channels are merged in the wrong order, for example cv2.merge((b, r, g)) instead of the intended order, what happens to the resulting image?`,
+     options:[`OpenCV automatically detects and silently corrects the mistake`,`The colors will be visibly distorted or incorrect, since each channel is now being interpreted in the wrong positional slot`,`The image automatically becomes pure grayscale`,`An error is always raised immediately and loudly`],
+     correct:1,
+     explain:`cv2.merge() has no way to know what each array "means"; it simply stacks whatever is passed into position 0, 1, and 2. If a channel that was originally "red" ends up in the position that downstream code or display tools interpret as "blue," the resulting colors will look wrong (often with an unnatural cast), even though no error is thrown, because the operation itself succeeded, just with unintended semantics.`},
+    {q:`What is a practical real-world use case that benefits from splitting and independently manipulating color channels?`,
+     options:[`Tasks like channel-specific contrast enhancement, building custom color-based masks, or designing filters where each channel needs different processing`,`It is essentially never useful outside of a classroom exercise`,`It only has meaning for video files, never for still images`,`It is a mandatory step before any image can be displayed at all`],
+     correct:0,
+     explain:`Splitting channels is genuinely useful whenever different color planes need different treatment, for example boosting contrast only in the green channel of a microscopy image, thresholding just the red channel to detect ripe red fruit, or building a custom sepia-tone filter by scaling each channel differently before merging them back together into a final composite image.`}
+  ]
+},
+{
+  code:"C05",
+  title:"Image format conversion",
+  intro:`Converting images between file formats such as JPEG and PNG, often in batch across an entire folder, is a common preprocessing task. This concept covers how OpenCV determines output format, the practical scripting patterns used for batch conversion, and the underlying tradeoffs between lossy and lossless formats.`,
+  questions:[
+    {q:`What determines the output file format when using cv2.imwrite() to save an image?`,
+     options:[`A globally configured format flag set once at the start of the script`,`The file extension present in the destination path string, such as ".png" versus ".jpg"`,`Only the dtype of the NumPy array being saved`,`Whatever format the original input file happened to be in`],
+     correct:1,
+     explain:`cv2.imwrite() looks at the extension in the filename you provide and selects the matching encoder automatically, so writing to "output.png" produces a PNG file and writing to "output.jpg" produces a JPEG, entirely independent of what format the image was originally loaded from.`},
+    {q:`In a batch conversion loop, why is os.path.splitext(filename)[0] useful?`,
+     options:[`It strips the file extension off the filename so a new extension (like ".png") can be appended cleanly`,`It permanently deletes the original file from disk`,`It compresses the image data in place`,`It reads and returns the raw pixel content of the file`],
+     correct:0,
+     explain:`os.path.splitext() splits a filename into a (base_name, extension) tuple, so taking index [0] gives just the base name without its original extension. This lets a script take "photo.jpg", strip it down to "photo", and then safely build a new filename like "photo.png" for the converted output.`},
+    {q:`Before writing converted files to an output folder, why is a check like "if not os.path.exists(output_dir): os.makedirs(output_dir)" important?`,
+     options:[`It ensures the destination folder actually exists first, since cv2.imwrite() will typically fail silently if the target directory is missing`,`It deletes any old files sitting in that folder`,`It reduces the resolution of every converted image`,`It changes the color space of the images being converted`],
+     correct:0,
+     explain:`Just as with a single imwrite() call, a batch script trying to write dozens of files into a nonexistent folder will simply fail on every single write without a loud error. Proactively checking for and creating the output directory before the loop starts avoids this entire class of silent failure.`},
+    {q:`Does converting a JPEG image to PNG format recover any detail that was lost during the original JPEG compression?`,
+     options:[`Yes, PNG's lossless format always restores any detail that JPEG discarded`,`No, PNG is lossless going forward from that point, but it cannot recreate information that JPEG's lossy compression already permanently discarded`,`Only if the image is resized larger first`,`Only for grayscale images specifically`],
+     correct:1,
+     explain:`JPEG compression permanently throws away certain high-frequency detail to shrink file size, and once that information is gone, no amount of re-saving in a different format can bring it back. Converting to PNG afterward simply preserves whatever data remains exactly as-is going forward, without further loss, but it cannot undo the original JPEG artifacts already baked into the pixels.`},
+    {q:`What is a key practical difference between JPEG and PNG relevant to an image processing pipeline?`,
+     options:[`JPEG uses lossy compression, producing smaller files with some quality loss, while PNG uses lossless compression, producing larger files with no quality loss and support for transparency`,`The two formats are functionally identical in every respect`,`PNG is fundamentally incapable of storing color images`,`JPEG files are always smaller than PNG files for every kind of image, including simple line art`],
+     correct:0,
+     explain:`JPEG achieves smaller file sizes by discarding some visual information the human eye is less sensitive to, which is fine for photographs but introduces compression artifacts. PNG instead compresses without discarding any pixel data, guaranteeing an exact reconstruction, and additionally supports an alpha transparency channel that JPEG cannot represent at all; the tradeoff is generally larger file sizes, especially for complex photographic content.`},
+    {q:`Why does a batch conversion loop typically check "if filename.endswith('.jpg') or filename.endswith('.jpeg')" before processing a file?`,
+     options:[`To skip non-image files or files already in a different format, avoiding errors from trying to read something that is not a valid input image`,`To sort the files into alphabetical order`,`To resize every matching image to a fixed size`,`To change the color space of matching images`],
+     correct:0,
+     explain:`A real folder often contains a mix of file types, including hidden system files, text files, or images already in the target format. Explicitly filtering for the expected source extensions prevents the loop from attempting cv2.imread() on something that is not actually a JPEG image, which would otherwise return None and could crash the subsequent processing step.`},
+    {q:`If cv2.imread() returns None for a corrupted file inside a batch loop, and the code does not check for None before calling cv2.imwrite(img, ...), what usually happens?`,
+     options:[`The script silently and gracefully skips that file with no problems`,`It will likely raise an error, since cv2.imwrite() expects a valid NumPy array as input, not None`,`A blank white placeholder image gets written automatically`,`OpenCV automatically repairs the corrupted file before continuing`],
+     correct:1,
+     explain:`Passing None into cv2.imwrite() is not a valid image argument, so the function will typically raise an exception rather than handling it gracefully. Robust batch scripts add an explicit "if image is None: continue" (often with a logged warning) right after imread() to skip problem files without crashing the entire batch job.`},
+    {q:`Why might a developer prefer saving intermediate processing results, like masks or split channel images, as PNG rather than JPEG during development?`,
+     options:[`Because PNG's lossless nature avoids introducing new compression artifacts that could confuse pixel-level debugging of the algorithm's output`,`Because PNG files always load noticeably faster on every system`,`Because JPEG is fundamentally unable to store grayscale images`,`Because OpenCV technically requires PNG for all internal operations`],
+     correct:0,
+     explain:`When debugging pixel-exact operations, such as verifying a binary mask has precisely the values 0 and 255 with nothing in between, saving that mask as a lossy JPEG could introduce subtle compression artifacts (like near-0 or near-255 values that are not exactly 0 or 255), making it look like the algorithm has a bug when the real culprit is the lossy save step. PNG avoids this entirely by guaranteeing the saved values match the in-memory array exactly.`}
+  ]
+},
+{
+  code:"C06",
+  title:"Image resizing and cropping",
+  intro:`Resizing and cropping are two fundamentally different operations that both change an image's dimensions but affect content in opposite ways: resizing scales the whole picture while cropping discards part of it. This concept works through cv2.resize()'s syntax and interpolation choices, plus how NumPy slicing is used to crop a region.`,
+  questions:[
+    {q:`What is the fundamental difference between resizing and cropping an image?`,
+     options:[`Resizing rescales the image while keeping its full content visible, whereas cropping removes/discards part of the image while keeping the remaining pixels at their original scale`,`The two operations are functionally identical in every case`,`Cropping always makes an image larger than the original`,`Resizing always discards part of the image's content`],
+     correct:0,
+     explain:`Resizing changes how many pixels represent the entire original scene, effectively stretching or shrinking everything proportionally (or disproportionately) while every original visual element is still present somewhere in the output. Cropping, by contrast, keeps the remaining pixels exactly as they were, at the same scale, but permanently discards whatever region falls outside the selected boundary.`},
+    {q:`Which operation, resizing or cropping, preserves the entire visual content of the original image, just possibly at a different scale?`,
+     options:[`Cropping`,`Resizing`,`Neither operation preserves the full content`,`Both operations discard exactly the same amount of content`],
+     correct:1,
+     explain:`Resizing never throws away any part of the scene; it only changes the pixel density used to represent it, so a resized image still shows everything the original did, just at a smaller or larger resolution. Cropping, on the other hand, is inherently destructive to whatever falls outside the chosen boundary, since that content is simply cut away.`},
+    {q:`What is the correct general syntax pattern for cv2.resize()?`,
+     options:[`cv2.resize(image, (new_width, new_height), interpolation=...)`,`cv2.resize(image, (new_height, new_width))`,`cv2.resize(new_width, new_height, image)`,`cv2.resize(image).size(width, height)`],
+     correct:0,
+     explain:`cv2.resize() takes the source image, followed by a target size tuple, followed by an optional interpolation method. Importantly, that size tuple is ordered as (width, height), which is the reverse of the (height, width) order used by image.shape, a subtle inconsistency that frequently causes stretched or squashed results when developers accidentally swap the two values.`},
+    {q:`In "cv2.resize(image, (512, 256), interpolation=cv2.INTER_LINEAR)", what do 512 and 256 represent respectively?`,
+     options:[`Height first, then width`,`Width first, then height`,`It does not matter, both orderings produce identical results`,`Number of channels first, then width`],
+     correct:1,
+     explain:`The target size tuple passed to cv2.resize() is always (width, height), so in this example the output image will be 512 pixels wide and 256 pixels tall. Confusing this order with the (height, width, channels) convention used elsewhere in OpenCV (like image.shape) is one of the most common resizing mistakes.`},
+    {q:`What is the purpose of the interpolation parameter in cv2.resize()?`,
+     options:[`It determines how new pixel values are estimated when the image is enlarged or shrunk, since target pixel locations rarely line up exactly with original ones`,`It changes the color space of the image being resized`,`It sets the file format used when the resized image is eventually saved`,`It has no meaningful effect on the visual output`],
+     correct:0,
+     explain:`When an image is scaled up or down, the new grid of pixel positions generally does not align exactly with the original grid, so OpenCV must compute new pixel values by combining nearby original pixels in some way. The interpolation method (linear, cubic, area, nearest, etc.) defines exactly how that estimation is performed, directly affecting sharpness, smoothness, and the presence of blocky or blurry artifacts.`},
+    {q:`When significantly shrinking (downscaling) an image, which interpolation method does OpenCV generally recommend for the best visual results?`,
+     options:[`cv2.INTER_LINEAR in every case, without exception`,`cv2.INTER_AREA, because it better avoids aliasing artifacts specifically when reducing an image's size`,`There is no meaningfully preferred method for downscaling`,`cv2.INTER_NEAREST in every case, without exception`],
+     correct:1,
+     explain:`INTER_AREA works by effectively averaging pixel values over the area being collapsed into each new output pixel, which suppresses the aliasing (moiré-like) artifacts that can appear when many original pixels are squeezed into far fewer output pixels. Methods like INTER_LINEAR or INTER_NEAREST are more commonly recommended when enlarging an image instead.`},
+    {q:`How would you crop a 200x200 pixel region from the exact center of a 512x512 image using NumPy slicing?`,
+     options:[`image[0:200, 0:200]`,`image[156:356, 156:356], using a center offset of (512-200)//2 = 156 on each side`,`cv2.crop(image, 200, 200)`,`image.resize(200, 200)`],
+     correct:1,
+     explain:`To crop centered content, you compute the margin to trim from each side as (original_size - crop_size) // 2, which here is (512-200)//2 = 156. Slicing image[156:356, 156:356] then selects rows 156 through 355 and columns 156 through 355, giving exactly a 200x200 region centered within the original 512x512 image.`},
+    {q:`Why does cropping in OpenCV/NumPy typically rely on array slicing rather than a dedicated cv2.crop() function?`,
+     options:[`Because OpenCV has no built-in crop function, and since images are just NumPy arrays, standard slicing syntax naturally and efficiently extracts any rectangular sub-region`,`Because array slicing is actually much slower than a hypothetical dedicated function would be`,`Because a cv2.crop() function does exist but is deliberately hidden from most users`,`Because cropping technically requires first converting the array into a plain Python list`],
+     correct:0,
+     explain:`Since an OpenCV image is nothing more than a NumPy array, and NumPy already provides fast, expressive slicing syntax for selecting sub-ranges along any axis, there was never a need for OpenCV to reinvent that functionality with its own separate crop function. image[y1:y2, x1:x2] is simply the idiomatic, efficient way to extract a rectangular region directly from the array.`},
+    {q:`If you resize an image without preserving its original aspect ratio, what visual artifact commonly appears?`,
+     options:[`The image appears noticeably sharper than before`,`The image looks stretched or squashed, with proportions of objects appearing distorted`,`The image automatically crops itself to compensate`,`Nothing changes visually in any perceptible way`],
+     correct:1,
+     explain:`If width and height are scaled by different factors, every shape in the image gets distorted along one axis more than the other, so circles can turn into ovals and faces can look unnaturally wide or narrow. Preserving the original aspect ratio (or explicitly padding/cropping to a target ratio first) avoids this distortion.`},
+    {q:`What generally happens to image quality when significantly enlarging (upscaling) a small image via resizing?`,
+     options:[`Quality actually improves, since more pixels are being added`,`Quality typically degrades, appearing blurry or blocky, because interpolation can only estimate new pixel values rather than recover detail that was never captured in the first place`,`Quality remains mathematically identical to the original in every way`,`The file format automatically changes as a side effect`],
+     correct:1,
+     explain:`Enlarging an image does not add any genuinely new visual information; it only asks the interpolation method to guess plausible intermediate pixel values based on the sparse original data. The result almost always looks softer, blurrier, or blockier than a true higher-resolution capture of the same scene would, because fine detail that was never recorded simply cannot be reconstructed from thin air.`},
+    {q:`In a face-cropping application, why might resizing be applied after cropping, rather than before?`,
+     options:[`Because cropping first isolates just the region of interest, and resizing that smaller region afterward standardizes it to a fixed input size while avoiding wasted computation on irrelevant background`,`Because the order genuinely never matters for the end result or the processing cost`,`Because OpenCV technically requires resizing to always be the very first operation performed`,`Because cropping becomes completely impossible once an image has already been resized`],
+     correct:0,
+     explain:`Cropping down to just the detected face region first means all subsequent processing, including the resize step, only has to work on a much smaller amount of pixel data, which is both faster and avoids letting irrelevant background influence the final standardized output size that many machine learning models expect as fixed-size input.`},
+    {q:`When defining a crop region as image[y1:y2, x1:x2], why does the y-range come before the x-range in this slicing syntax?`,
+     options:[`Because NumPy arrays representing images are indexed as (row, column), meaning the vertical/height axis first, matching the same (H, W, C) convention used by image.shape`,`Because the x-coordinate is always ignored during a crop operation`,`Because the order is arbitrary and could be freely swapped without consequence`,`Because OpenCV enforces this specific ordering purely by alphabetical convention`],
+     correct:0,
+     explain:`This ordering is not arbitrary, it directly mirrors how NumPy treats a 2D or 3D array as rows-then-columns, and rows correspond to the vertical (y/height) axis while columns correspond to the horizontal (x/width) axis. Slicing image[y1:y2, x1:x2] is therefore consistent with the same (height, width, channels) shape convention used throughout the rest of OpenCV's array-based API.`}
+  ]
+},
+{
+  code:"C07",
+  title:"Image rotation",
+  intro:`Rotating an image can mean a simple fixed 90-degree turn or an arbitrary angle rotation, and OpenCV handles these two cases with entirely different functions. This concept distinguishes cv2.rotate()'s fixed rotations from the more general rotation matrix and warpAffine approach, and covers what happens to image dimensions and corners during each.`,
+  questions:[
+    {q:`What does cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE) do?`,
+     options:[`Rotates the image 90 degrees clockwise`,`Rotates the image a full 180 degrees`,`Flips the image horizontally, like a mirror`,`Rotates by an arbitrary angle supplied through a separate parameter`],
+     correct:0,
+     explain:`cv2.rotate() applies one of a small set of fixed, predefined rotations, and the ROTATE_90_CLOCKWISE flag specifically turns the entire image 90 degrees in the clockwise direction. Because it is a fixed 90-degree turn, this operation is exact, fast, and introduces no interpolation blurring, unlike an arbitrary-angle rotation would.`},
+    {q:`Which of the following is NOT a valid built-in flag for cv2.rotate()?`,
+     options:[`cv2.ROTATE_90_CLOCKWISE`,`cv2.ROTATE_180`,`cv2.ROTATE_90_COUNTERCLOCKWISE`,`cv2.ROTATE_45_CLOCKWISE`],
+     correct:3,
+     explain:`cv2.rotate() only supports whole 90-degree-multiple rotations: 90 clockwise, 180, and 90 counterclockwise. There is no built-in ROTATE_45 flag or any other arbitrary-angle option within this specific function, since rotating by any angle that is not a multiple of 90 degrees requires a genuinely different approach involving interpolation.`},
+    {q:`For rotating an image by an arbitrary angle, such as 45 degrees, which pair of OpenCV functions is typically combined?`,
+     options:[`cv2.rotate() used entirely on its own`,`cv2.getRotationMatrix2D() to compute the transformation matrix, followed by cv2.warpAffine() to actually apply that transformation to the image`,`cv2.resize() used entirely on its own`,`cv2.flip() used entirely on its own`],
+     correct:1,
+     explain:`cv2.getRotationMatrix2D(center, angle, scale) computes a 2x3 affine transformation matrix describing the desired rotation (and optional scaling) around a given pivot point, and cv2.warpAffine() then applies that matrix to every pixel in the source image to produce the actual rotated output. This two-step combination is necessary because arbitrary angles require true geometric transformation with interpolation, not a simple fixed reshuffling of pixels.`},
+    {q:`When rotating an image by 90 or 270 degrees, what happens to its width and height dimensions?`,
+     options:[`They remain exactly the same as before`,`They swap: the original width becomes the new height, and the original height becomes the new width`,`Both dimensions collapse to zero`,`Both dimensions are doubled in size`],
+     correct:1,
+     explain:`A 90-degree or 270-degree turn effectively rotates the entire rectangular canvas onto its side, so whatever used to be the horizontal extent becomes the vertical extent and vice versa. A 400x600 image, for example, becomes 600x400 after a 90-degree rotation, whereas a 180-degree rotation leaves the dimensions unchanged since the shape simply flips in place.`},
+    {q:`If you rotate an image by 45 degrees using an affine transform without adjusting the output canvas size, what commonly happens to the image's corners?`,
+     options:[`Nothing changes, all corners remain perfectly visible`,`They can get cropped off, since the rotated content no longer fits neatly within the original rectangular frame unless the output canvas and bounding box are recalculated`,`The image automatically and correctly enlarges itself with zero extra code`,`The colors of the image invert`],
+     correct:1,
+     explain:`A rectangle rotated by an angle that is not a multiple of 90 degrees occupies a larger bounding box than the original rectangle did, since its corners now extend diagonally beyond the original frame. If the output canvas size is left unchanged, those extended corner regions simply get clipped off at the edges of the original frame, unless the developer explicitly computes a larger output size to accommodate the full rotated shape.`},
+    {q:`What is the role of the "center" parameter in cv2.getRotationMatrix2D(center, angle, scale)?`,
+     options:[`It has no meaningful effect on the actual rotation result`,`It defines the pivot point around which the rotation is performed, commonly set to the image's own center coordinates`,`It specifies where the output file should be saved`,`It controls which interpolation method gets used`],
+     correct:1,
+     explain:`Rotation is always defined relative to some fixed pivot point, and the center argument tells OpenCV exactly where that pivot is located within the image's coordinate space. Choosing the image's geometric center as the pivot, typically (width/2, height/2), produces a rotation that spins the picture around its own middle rather than around an arbitrary corner, which would otherwise send most of the content flying off the visible frame.`},
+    {q:`Why might rotating an image without cropping any content require calculating a new, larger canvas size?`,
+     options:[`Because a rotated rectangle's bounding box is generally larger than the original rectangle's footprint (except at exact 90/180/270-degree rotations), so extra space is needed to avoid clipping the corners`,`Because OpenCV technically requires all images to be perfectly square`,`Because any rotation operation always doubles the image's total size automatically`,`Because rotation somehow changes the image's color depth`],
+     correct:0,
+     explain:`Except for the special cases of exact multiples of 90 degrees (where the rectangle simply lands on a different but equally sized footprint), rotating a rectangle by any other angle produces a shape whose overall bounding box is wider and taller than the original. To keep every original corner visible without cropping, code must compute this new, larger bounding box dimensions and create an output canvas that size before applying the rotation.`},
+    {q:`What is a key practical difference between using cv2.rotate() versus using cv2.warpAffine() with a rotation matrix?`,
+     options:[`cv2.rotate() is limited to fixed 90-degree-multiple rotations with no interpolation artifacts or cropping concerns, while warpAffine with a rotation matrix supports arbitrary angles but requires careful handling of output canvas size and interpolation quality`,`The two approaches are functionally identical in absolutely every respect`,`cv2.warpAffine() is fundamentally incapable of performing any kind of rotation`,`cv2.rotate() actually supports arbitrary floating-point angle values just like warpAffine does`],
+     correct:0,
+     explain:`cv2.rotate() trades flexibility for simplicity and exactness: it only handles the three fixed 90-degree-multiple cases, but does so perfectly with no blurring and no risk of cropping corners, since dimensions simply swap or stay the same. cv2.warpAffine() with a computed rotation matrix is far more general, handling any angle at all, but the developer becomes responsible for choosing an interpolation method and correctly sizing the output canvas to avoid losing content at the edges.`}
+  ]
+},
+{
+  code:"C08",
+  title:"Image blending",
+  intro:`Blending combines two images into a single output using weighted transparency, the basis for effects like overlays, watermarks, and cross-fades. This concept focuses on the addWeighted formula, what each parameter controls, and the dimensional constraints required for blending to work correctly.`,
+  questions:[
+    {q:`What is the general purpose of image blending in image processing?`,
+     options:[`To combine two images into one by mixing their pixel values, often used for overlays, transitions, or watermarking effects`,`To permanently and completely delete one of the two source images`,`To convert a color image into a grayscale one`,`To physically crop two separate images together into a single frame`],
+     correct:0,
+     explain:`Blending takes two images of the same size and produces a third image whose pixel values are a weighted combination of the two inputs at every location, which is exactly how effects like a semi-transparent watermark overlay, a smooth cross-fade transition between two photos, or a double-exposure style composite are achieved.`},
+    {q:`Which OpenCV function is commonly used to blend two images with weighted transparency?`,
+     options:[`cv2.merge()`,`cv2.addWeighted()`,`cv2.split()`,`cv2.rotate()`],
+     correct:1,
+     explain:`cv2.addWeighted(img1, alpha, img2, beta, gamma) is the standard OpenCV function for computing a weighted sum of two images pixel-by-pixel, directly implementing the classic blending formula and returning the combined result as a new array of the same dimensions.`},
+    {q:`In the blending formula "dst = alpha*img1 + beta*img2 + gamma", what does the "alpha" value typically control?`,
+     options:[`The rotation angle applied to the first image`,`The weight, or effective opacity, of the first image's contribution to the final blended result`,`Which file format the output gets saved in`,`The number of channels present in the output`],
+     correct:1,
+     explain:`Alpha directly scales how strongly the first image's pixel values contribute to the sum at every location; a higher alpha means the first image shows through more prominently in the blend, similar to how increasing a layer's opacity in photo-editing software makes it more visible over whatever sits beneath it.`},
+    {q:`If alpha = 0.7 and beta = 0.3 are used in cv2.addWeighted(), what does this imply about the resulting blend?`,
+     options:[`The two images contribute exactly equally to the final result`,`The first image will dominate the blend more strongly, contributing roughly 70 percent, compared to the second image's roughly 30 percent`,`Only the second image will end up visible in the output`,`The result will end up being fully transparent everywhere`],
+     correct:1,
+     explain:`Since alpha and beta directly scale each image's pixel contribution before summing, an alpha of 0.7 versus a beta of 0.3 means the first image's intensities are weighted more than twice as heavily as the second's, so it will visually dominate the blended composite, though the second image will still be faintly visible layered underneath.`},
+    {q:`What is the role of the "gamma" parameter in cv2.addWeighted(img1, alpha, img2, beta, gamma)?`,
+     options:[`It is a scalar value added to every pixel sum, often used to adjust the overall brightness of the resulting blended image`,`It sets the rotation angle used during blending`,`It determines the width of the output image`,`It has no effect whatsoever and is always silently ignored`],
+     correct:0,
+     explain:`After the weighted sum of the two images is computed, gamma is added as a flat offset to every pixel, uniformly nudging the overall brightness of the result up or down. It is commonly left at 0 for a straightforward blend, but a small positive gamma can be used to brighten a result that would otherwise look slightly dim due to the weighting.`},
+    {q:`Why must two images typically share the same dimensions (and generally channel count) before blending them with cv2.addWeighted()?`,
+     options:[`Because the function performs an element-wise weighted sum at each pixel location, which requires the two arrays' shapes to align exactly for the arithmetic to make sense`,`Dimensions technically never need to match for this particular function`,`OpenCV silently resizes mismatched images internally with no user intervention needed`,`Blending only ever works when both images are grayscale`],
+     correct:0,
+     explain:`Because addWeighted() combines the two inputs pixel-by-pixel at matching coordinates, a mismatch in height, width, or channel count means there is no well-defined way to pair up corresponding pixels, and the operation will fail with a shape/size error. If the two source images differ in size, one must be resized to match the other before blending can proceed.`},
+    {q:`For alpha and beta values that together sum to noticeably more than 1.0 (for example, alpha=0.9 and beta=0.9), what visual effect is commonly expected in the result?`,
+     options:[`The blended result could appear overexposed or brighter than either original image, since the summed pixel values can exceed the normal display range before being clipped`,`The two images will perfectly cancel each other out to produce solid black`,`Nothing changes since OpenCV automatically renormalizes the weights for you`,`An error is always guaranteed to be raised in this situation`],
+     correct:0,
+     explain:`When alpha plus beta exceeds 1.0, the weighted sum at each pixel can legitimately exceed the maximum representable intensity (255 for 8-bit images), causing those values to clip at the top of the range, which manifests visually as a washed-out, overexposed look in bright regions of the blended output, rather than a proportional, balanced mix.`},
+    {q:`What common real-world application relies on essentially the same weighted-blending concept used in cv2.addWeighted()?`,
+     options:[`Adding a semi-transparent watermark or logo overlay onto a photo`,`Converting an image into grayscale`,`Detecting edges within an image`,`Rotating an image by a fixed 90 degrees`],
+     correct:0,
+     explain:`Watermarking a photo with a semi-transparent logo is a textbook application of weighted blending: the logo image (sized and positioned to match the region of interest) is combined with the underlying photo using a low alpha for the watermark layer, letting the original photo remain visible while the logo appears as a subtle overlay rather than an opaque block.`}
+  ]
+},
+{
+  code:"C09",
+  title:"Bitwise operations",
+  intro:`AND, OR, NOT, and XOR let you combine binary images and masks logically at the pixel level, forming the foundation for masking and region-extraction workflows. This concept builds a mental model for what each operation does to overlapping and non-overlapping regions, and how they are used in practice.`,
+  questions:[
+    {q:`What does the bitwise AND operation between two binary images (masks) typically produce?`,
+     options:[`A result where a pixel is "on" (white) only if it is "on" in both input images, useful for finding the overlap between two regions`,`A result that is always completely black regardless of the inputs`,`A result identical to the first input image alone`,`A result that inverts all pixel colors in both images`],
+     correct:0,
+     explain:`Bitwise AND requires agreement from both inputs at every pixel location: a pixel only turns "on" in the output if it was already "on" in both the first and second image at that same position. This makes AND the natural operation for computing the intersection, or overlap, between two shapes or masks.`},
+    {q:`What does the bitwise OR operation between two binary masks produce?`,
+     options:[`A result where a pixel is "on" if it is "on" in either (or both) of the input images, useful for combining or taking the union of two regions`,`A result that keeps only the pixels where both inputs overlap`,`A result that is always fully white regardless of the inputs`,`A result where both original shapes are completely removed`],
+     correct:0,
+     explain:`Bitwise OR is more permissive than AND: a pixel turns "on" in the result as long as at least one of the two input images has it "on" at that location. This makes OR ideal for merging two separate shapes or masks into a single combined region that includes everything from both.`},
+    {q:`What does the bitwise NOT operation do to a binary image?`,
+     options:[`It creates an exact duplicate of the image with no changes`,`It inverts every pixel value: black becomes white and white becomes black (0 becomes 255 and vice versa)`,`It rotates the entire image by 180 degrees`,`It merges together two separate color channels`],
+     correct:1,
+     explain:`Bitwise NOT is a single-image operation that flips each pixel's value to its complement; for an 8-bit binary mask this specifically swaps 0 and 255, turning "on" regions "off" and "off" regions "on". This is commonly used to invert a mask so that a previously excluded region becomes the region of interest, or vice versa.`},
+    {q:`What does the bitwise XOR (exclusive OR) operation highlight when applied to two binary shapes?`,
+     options:[`Only the regions where both shapes overlap with each other`,`The regions that differ between the two images, meaning pixels that are "on" in exactly one of the two inputs but not both, essentially the non-overlapping parts`,`Only pixels that are completely black in both inputs`,`The average brightness level across both input images`],
+     correct:1,
+     explain:`XOR is "on" precisely when the two inputs disagree, meaning one is "on" and the other is "off" at that location, while it turns "off" wherever both inputs agree, whether that agreement is both-on or both-off. Applied to two overlapping shapes, this cancels out their shared overlap region while highlighting only the parts unique to each individual shape.`},
+    {q:`In practical image masking, why is the AND operation commonly used to extract a specific region of interest (ROI) from an image?`,
+     options:[`Because AND-ing the full image with a binary mask keeps pixel values only where the mask is white (non-zero) and forces everything else to zero, effectively isolating just the region of interest`,`Because the AND operation always brightens the entire image`,`Because AND changes the image's underlying color space`,`Because AND automatically resizes the image to fit the mask`],
+     correct:0,
+     explain:`When you bitwise-AND an image against a mask, wherever the mask has value 0 (off), the AND result is forced to 0 regardless of the original image's pixel value there, effectively blacking out that area, while wherever the mask is non-zero, the original pixel values pass through mostly unchanged. This selectively "cuts out" the mask's shape from the full image.`},
+    {q:`When creating a circular mask for use with bitwise operations, what is a typical first step?`,
+     options:[`Directly editing the JPEG file's internal metadata`,`Creating a blank (all-zero, black) NumPy array the same size as the target image, then drawing a filled white circle onto it using a function such as cv2.circle()`,`Resizing the original photograph itself into a circular shape`,`Converting the target image into the HSV color space`],
+     correct:1,
+     explain:`A mask is just another single-channel image where pixel value indicates "include" (typically 255/white) or "exclude" (typically 0/black). To build a circular mask, you start with a canvas of all zeros matching the target image's dimensions, then use a drawing function like cv2.circle(mask, center, radius, 255, -1) to fill in a solid white circular region representing the area you want to keep.`},
+    {q:`When calling cv2.bitwise_and(image, image, mask=circular_mask), what role does the mask parameter play?`,
+     options:[`It has no effect on the operation's output whatsoever`,`It restricts the AND operation so output pixels are only computed and kept where the mask is non-zero, effectively cropping out a circular region from the full image`,`It changes the resolution of the output image`,`It converts the supplied mask into an entirely new standalone image file`],
+     correct:1,
+     explain:`The optional mask argument in OpenCV's bitwise functions applies an extra restriction on top of the normal AND computation: only pixels where the mask is non-zero get computed and kept in the output, while everywhere the mask is zero, the output is forced to zero regardless of what the AND of the two images would otherwise have been. Passing the same image as both inputs with a circular mask is a common trick to extract just a circular slice of that image.`},
+    {q:`If bitwise XOR is applied between a rectangle shape and a circle shape drawn on two separate black canvases, what will the result visually show?`,
+     options:[`Only the parts where the rectangle and circle overlap`,`The parts of the rectangle and circle that do NOT overlap, essentially outlining their unique regions, while the shared overlapping area cancels out to black`,`A solid, uniformly white image`,`A solid, uniformly black image with no shapes visible at all`],
+     correct:1,
+     explain:`Wherever both shapes are present (both "on"), XOR outputs "off" because the two inputs agree; wherever only one shape is present, XOR outputs "on" because the inputs disagree there. The net visual effect is that the shared overlapping region between the rectangle and circle disappears, while the non-overlapping portions of each shape remain clearly visible, effectively highlighting their differences.`},
+    {q:`Why are bitwise operations typically performed on binary (black/white) images or masks rather than directly on arbitrary full-color photographs?`,
+     options:[`Because bitwise logic (AND/OR/XOR/NOT) is most meaningfully interpreted at the level of clean "on/off" regions, which binary masks represent cleanly, while applying the same logic directly to complex, continuously varying color data tends to produce far less intuitive or useful results`,`Because color images cannot technically be represented as NumPy arrays at all`,`Because bitwise operations are hard-restricted to grayscale JPEG files only`,`Because OpenCV outright disallows calling bitwise functions on any color image`],
+     correct:0,
+     explain:`Bitwise operations technically can run on any array of integers, including full-color photos, but the results only make clear intuitive sense when each pixel represents a simple binary "include/exclude" decision. Applying AND/OR/XOR directly to arbitrary continuous color values tends to produce visually chaotic, hard-to-predict combinations, which is why binary masks (used to selectively include or exclude regions) are the standard, meaningful use case for these operations in practice.`},
+    {q:`In OpenCV, which specific function performs the bitwise XOR operation between two images or arrays?`,
+     options:[`cv2.bitwise_not()`,`cv2.bitwise_xor()`,`cv2.bitwise_and()`,`cv2.merge()`],
+     correct:1,
+     explain:`OpenCV provides a dedicated function for each of the four core bitwise operations covered in this lab: cv2.bitwise_and(), cv2.bitwise_or(), cv2.bitwise_not(), and cv2.bitwise_xor(), each taking one or two input arrays (and an optional mask) and returning the pixel-wise logical result.`}
+  ]
+},
+{
+  code:"C10",
+  title:"Masking and practical applications",
+  intro:`This final concept ties everything together: masks let you isolate arbitrarily shaped regions rather than just rectangles, and combining reading, color conversion, properties, channels, geometric transforms, blending, and bitwise logic is what a real basic image-processing pipeline looks like end to end.`,
+  questions:[
+    {q:`What is a "mask" in the context of image processing?`,
+     options:[`A physical filter attached to the front of a camera lens`,`A binary (or grayscale) image used to specify which pixels of another image should be kept, ignored, or otherwise processed, typically applied through bitwise operations`,`A compressed, lower-resolution version of an image`,`A specific type of color space, similar to HSV`],
+     correct:1,
+     explain:`In software, a mask is simply another array, usually the same height and width as the target image, whose values indicate which locations matter. A value of 255 (or any non-zero value) at a given pixel typically means "include this location," while 0 means "ignore it," and this mask is then combined with the real image, most often via a bitwise AND, to isolate exactly the intended region.`},
+    {q:`Why might a developer use a mask instead of simple rectangular cropping when they need a non-rectangular region of interest, like a circle or an irregular blob shape?`,
+     options:[`Because cropping can only ever produce rectangular sub-images since it relies on simple array slicing, whereas masking with bitwise operations can isolate arbitrarily shaped regions, including circles, polygons, or freeform outlines`,`Because masks always guarantee a smaller resulting file size than cropping does`,`Because masking is a mandatory step required before any image can be resized`,`Because there is genuinely no meaningful difference between the two approaches`],
+     correct:0,
+     explain:`Rectangular slicing like image[y1:y2, x1:x2] is fundamentally limited to axis-aligned rectangles, since that is how array indexing works. A mask, by contrast, can represent any shape you can draw or compute, circles, ellipses, polygons, or even the freeform output of a segmentation algorithm, and applying it via bitwise AND lets you isolate exactly that shape from the source image rather than being confined to a bounding box.`},
+    {q:`After using cv2.bitwise_and() with a mask to isolate a circular region, what typically happens to the pixels that fall outside the mask in the output?`,
+     options:[`They remain completely unchanged from the original source image`,`They become zero (black), because AND-ing any value against a mask region of zero forces the corresponding output pixel to zero`,`They automatically turn pure white`,`They are entirely removed from the array, physically shrinking its shape`],
+     correct:1,
+     explain:`Since AND requires both inputs to be non-zero for the output to be non-zero, any location where the mask is 0 forces the result to 0 at that location, regardless of what the original image's pixel value was there. The output array keeps its original full dimensions, it is not physically shrunk, but everything outside the masked shape simply becomes black.`},
+    {q:`Which combination of concepts would you use to build a simple "vignette" effect, meaning darkened edges with a clear, bright center on a photo?`,
+     options:[`Applying image rotation alone, with no other operations`,`Building a radial gradient mask (bright in the center, dark toward the edges) and combining it with the original image through a weighted blend or multiplication`,`Using only a bitwise XOR between two rectangles`,`Splitting the color channels alone, with no further combination step`],
+     correct:1,
+     explain:`A vignette effect requires brightness to fall off smoothly from the center outward, which is exactly what a radial gradient mask represents, a mask whose values are high near the center and gradually decrease toward the edges. Combining that gradient mask with the original photo, either by multiplying pixel values together or via a weighted blend, darkens the edges progressively while leaving the center largely untouched, producing the classic vignette look.`},
+    {q:`Considering everything covered in this lab, reading images, color spaces, properties, channels, resizing/cropping, rotation, blending, and bitwise masking, which best describes a typical basic image-processing pipeline?`,
+     options:[`These operations are entirely unrelated to each other and are essentially never used together in practice`,`Load the image (imread) then inspect or convert it as needed (color space checks, property checks) then transform it (resize, crop, or rotate) then combine or mask it (blend or bitwise operations) then save the final result (imwrite), with each step building on the same underlying NumPy array representation`,`Only cv2.imwrite() is ever strictly necessary; every other step is purely optional decoration`,`Bitwise operations must always be performed before cv2.imread() is even called`],
+     correct:1,
+     explain:`Nearly every real image-processing task follows some version of this same overall shape: bring the data in as an array, understand and normalize its representation (color space, shape, channels), geometrically transform it to the region or size you actually need, combine it with other data or masks to achieve the desired effect, and finally persist the result back to disk. Every concept in this lab, from imread() through bitwise_and(), is a building block that plugs into one of these stages, which is exactly why they were introduced together as a single coherent lab.`}
+  ]
+}
+];
+
+const flat = [];
+DATA.forEach((concept, ci)=>{
+  concept.questions.forEach((q, qi)=>{
+    flat.push({ci, qi, conceptCode:concept.code, conceptTitle:concept.title, ...q});
+  });
+});
+const TOTAL = flat.length;
+const answers = new Array(TOTAL).fill(null);
+let current = 0;
+
+const conceptListEl = document.getElementById("conceptList");
+const overallBar = document.getElementById("overallBar");
+const overallLabel = document.getElementById("overallLabel");
+const topBar = document.getElementById("topBar");
+const qPosLabel = document.getElementById("qPosLabel");
+const qPctLabel = document.getElementById("qPctLabel");
+const introSlot = document.getElementById("introSlot");
+const questionSlot = document.getElementById("questionSlot");
+const finishSlot = document.getElementById("finishSlot");
+const doneBanner = document.getElementById("doneBanner");
+
+function conceptRange(ci){
+  let start = 0;
+  for(let i=0;i<ci;i++) start += DATA[i].questions.length;
+  return [start, start + DATA[ci].questions.length];
+}
+
+function conceptAnsweredCount(ci){
+  const [s,e] = conceptRange(ci);
+  let n = 0;
+  for(let i=s;i<e;i++) if(answers[i]) n++;
+  return n;
+}
+
+function renderSidebar(){
+  conceptListEl.innerHTML = "";
+  DATA.forEach((concept, ci)=>{
+    const [s,e] = conceptRange(ci);
+    const answeredN = conceptAnsweredCount(ci);
+    const total = e - s;
+    const li = document.createElement("li");
+    li.className = "concept-item" + (ci===flat[current].ci ? " active":"") + (answeredN===total ? " done":"");
+    li.innerHTML = `<span class="c-code">${concept.code}</span><span class="c-name">${concept.title}</span><span class="c-count">${answeredN}/${total}</span>`;
+    li.addEventListener("click", ()=>{ current = s; render(); });
+    conceptListEl.appendChild(li);
+  });
+}
+
+function renderTopProgress(){
+  const answeredTotal = answers.filter(a=>a).length;
+  const pct = Math.round((answeredTotal/TOTAL)*100);
+  overallBar.style.width = pct + "%";
+  overallLabel.textContent = answeredTotal + " / " + TOTAL;
+  topBar.style.width = Math.round(((current+1)/TOTAL)*100) + "%";
+  qPosLabel.textContent = "Q" + (current+1) + " of " + TOTAL;
+  qPctLabel.textContent = pct + "% learned";
+}
+
+function renderIntro(item, isFirstOfConcept){
+  introSlot.innerHTML = "";
+  doneBanner.innerHTML = "";
+  if(item.qi === 0){
+    if(item.ci > 0){
+      const prev = DATA[item.ci-1];
+      const banner = document.createElement("div");
+      banner.className = "banner-done";
+      banner.textContent = "Concept " + prev.code + " complete — " + prev.title + ". Moving on to " + item.conceptCode + ".";
+      doneBanner.appendChild(banner);
+    }
+    const card = document.createElement("div");
+    card.className = "intro-card";
+    card.innerHTML = `<div class="tag">${item.conceptCode} · Concept</div><h2>${item.conceptTitle}</h2><p>${DATA[item.ci].intro}</p>`;
+    introSlot.appendChild(card);
+  }
+}
+
+function letterFor(i){ return ["A","B","C","D"][i]; }
+
+function renderQuestion(){
+  const item = flat[current];
+  questionSlot.innerHTML = "";
+  finishSlot.innerHTML = "";
+
+  const card = document.createElement("div");
+  card.className = "q-card";
+
+  const strip = document.createElement("div");
+  strip.className = "q-channels";
+  strip.innerHTML = `<span style="background:var(--chan-r)"></span><span style="background:var(--chan-g)"></span><span style="background:var(--chan-b)"></span>`;
+  card.appendChild(strip);
+
+  const body = document.createElement("div");
+  body.className = "q-body";
+
+  const meta = document.createElement("div");
+  meta.className = "q-meta";
+  meta.textContent = item.conceptCode + " · question " + (item.qi+1) + " of " + DATA[item.ci].questions.length + " in this concept";
+  body.appendChild(meta);
+
+  const qtext = document.createElement("p");
+  qtext.className = "q-text";
+  qtext.textContent = item.q;
+  body.appendChild(qtext);
+
+  const optsWrap = document.createElement("div");
+  optsWrap.className = "options";
+
+  const existing = answers[current];
+
+  item.options.forEach((optText, i)=>{
+    const btn = document.createElement("button");
+    btn.className = "opt";
+    btn.innerHTML = `<span class="letter">${letterFor(i)}</span><span>${optText}</span>`;
+
+    if(existing){
+      btn.classList.add("locked");
+      if(i === item.correct){
+        btn.classList.add("reveal-correct");
+        const tag = document.createElement("span");
+        tag.className = "result-tag";
+        tag.textContent = "CORRECT";
+        btn.appendChild(tag);
+      }
+      if(i === existing.selected && existing.selected !== item.correct){
+        btn.classList.remove("reveal-correct");
+        btn.classList.add("wrong-pick");
+        const tag = document.createElement("span");
+        tag.className = "result-tag";
+        tag.textContent = "YOUR PICK";
+        btn.appendChild(tag);
+      }
+      if(i === existing.selected && existing.selected === item.correct){
+        btn.classList.add("correct-pick");
+      }
+      if(i !== item.correct && i !== existing.selected){
+        btn.classList.add("dim");
+      }
+    } else {
+      btn.addEventListener("click", ()=>{
+        const isCorrect = i === item.correct;
+        answers[current] = {selected:i, correct:isCorrect};
+        render();
+      });
+    }
+    optsWrap.appendChild(btn);
+  });
+
+  body.appendChild(optsWrap);
+
+  if(existing){
+    const exp = document.createElement("div");
+    exp.className = "explain " + (existing.correct ? "is-correct":"is-wrong");
+    exp.innerHTML = `<div class="exp-label">${existing.correct ? "Correct — why":"Not quite — here is why"}</div><p>${item.explain}</p>`;
+    body.appendChild(exp);
+  }
+
+  card.appendChild(body);
+
+  const nav = document.createElement("div");
+  nav.className = "nav-row";
+
+  const prevBtn = document.createElement("button");
+  prevBtn.className = "btn";
+  prevBtn.textContent = "← Previous";
+  prevBtn.disabled = current === 0;
+  prevBtn.addEventListener("click", ()=>{ current = Math.max(0, current-1); render(); });
+
+  const rightWrap = document.createElement("div");
+  rightWrap.style.display = "flex";
+  rightWrap.style.alignItems = "center";
+  rightWrap.style.gap = "12px";
+
+  if(!existing){
+    const hint = document.createElement("span");
+    hint.className = "hint";
+    hint.textContent = "select an option to reveal the explanation";
+    rightWrap.appendChild(hint);
+  }
+
+  const nextBtn = document.createElement("button");
+  nextBtn.className = "btn primary";
+  nextBtn.textContent = current === TOTAL-1 ? "Finish" : "Next question →";
+  nextBtn.disabled = !existing;
+  nextBtn.addEventListener("click", ()=>{
+    if(current === TOTAL-1){
+      showCompletion();
+    } else {
+      current += 1;
+      render();
+    }
+  });
+  rightWrap.appendChild(nextBtn);
+
+  nav.appendChild(prevBtn);
+  nav.appendChild(rightWrap);
+  card.appendChild(nav);
+
+  questionSlot.appendChild(card);
+}
+
+function showCompletion(){
+  questionSlot.innerHTML = "";
+  introSlot.innerHTML = "";
+  doneBanner.innerHTML = "";
+  const answeredTotal = answers.filter(a=>a).length;
+  const correctTotal = answers.filter(a=>a && a.correct).length;
+
+  const wrap = document.createElement("div");
+  wrap.className = "done-screen";
+  wrap.innerHTML = `
+    <div class="stripe-mini"><span style="background:var(--chan-r)"></span><span style="background:var(--chan-g)"></span><span style="background:var(--chan-b)"></span></div>
+    <h2>All 10 concepts complete</h2>
+    <p>You have worked through every question on image reading, color spaces, properties, channels, format conversion, resizing/cropping, rotation, blending, and bitwise masking, with a full explanation attached to each one.</p>
+    <div class="stat-row">
+      <div class="stat"><div class="num">${answeredTotal}/${TOTAL}</div><div class="lab">answered</div></div>
+      <div class="stat"><div class="num">${correctTotal}</div><div class="lab">correct on first try</div></div>
+      <div class="stat"><div class="num">10/10</div><div class="lab">concepts done</div></div>
+    </div>
+    <button class="btn primary" id="restartBtn">Restart from question 1</button>
+  `;
+  finishSlot.appendChild(wrap);
+  document.getElementById("restartBtn").addEventListener("click", ()=>{
+    answers.fill(null);
+    current = 0;
+    render();
+  });
+  renderSidebarDone();
+  renderTopProgress();
+}
+
+function renderSidebarDone(){
+  renderSidebar();
+}
+
+function render(){
+  finishSlot.innerHTML = "";
+  renderSidebar();
+  renderTopProgress();
+  renderIntro(flat[current]);
+  renderQuestion();
+}
+
+render();
+</script>
+<script src="js/site.js"></script>
+</body>
+</html>

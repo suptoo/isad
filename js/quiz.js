@@ -19,13 +19,13 @@
   async function loadChapter() {
     const chId = getQueryParam("ch");
     if (!chId) {
-      mcqList.innerHTML = `<div class="error-state">No chapter specified. <a href="home.html">Go Home</a></div>`;
+      mcqList.innerHTML = `<div class="error-state">No chapter specified. <a href="index.html">Go Home</a></div>`;
       return;
     }
 
     const chapterConfig = window.SAD_SITE.CHAPTERS.find(c => c.id == chId);
     if (!chapterConfig) {
-      mcqList.innerHTML = `<div class="error-state">Chapter not found. <a href="home.html">Go Home</a></div>`;
+      mcqList.innerHTML = `<div class="error-state">Chapter not found. <a href="index.html">Go Home</a></div>`;
       return;
     }
 

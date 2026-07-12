@@ -125,7 +125,7 @@
     header.className = "site-header";
     header.setAttribute("role", "banner");
     header.innerHTML =
-      `<a href="home.html" class="site-brand" aria-label="SAD MCQ Lab home">` +
+      `<a href="index.html" class="site-brand" aria-label="SAD MCQ Lab home">` +
       `<span class="site-brand-text">` +
       `<span class="site-brand-title">SAD MCQ Lab</span>` +
       `<span class="site-brand-sub">System Analysis and Design</span>` +
@@ -160,7 +160,7 @@
       `<ul class="site-chapter-links">${buildChapterLinks(currentId)}</ul>` +
       `<p class="site-drawer-label" style="margin-top:18px">Site</p>` +
       `<ul class="site-chapter-links">` +
-      `<li><a href="home.html"${isHome ? ' class="active"' : ""}><span class="num">⌂</span><span class="info"><span class="title">Home</span><span class="meta">Chapter overview</span></span></a></li>` +
+      `<li><a href="index.html"${isHome ? ' class="active"' : ""}><span class="num">⌂</span><span class="info"><span class="title">Home</span><span class="meta">Chapter overview</span></span></a></li>` +
       `</ul>`;
 
     document.body.insertBefore(header, document.body.firstChild);

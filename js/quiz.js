@@ -177,49 +177,70 @@
     return array;
   }
 
-  function normalizeOptions(optionsData, answerData, correctOptionData) {
+  function normalizeOptions(optionsData, mcq) {
     let normalized = [];
     
-    // Some JSON uses object { "A": "Opt1", "B": "Opt2" }
-    // Others use array ["Opt1", "Opt2"]
+    const answer = mcq.answer;
+    const correctAnswer = mcq.correctAnswer;
+    const correct_answer = mcq.correct_answer;
+    const correctOption = mcq.correctOption;
+
+    function checkCorrect(text, index, key) {
+      const cleanText = text.trim().toLowerCase();
+      
+      const textMatches = [correctOption, correct_answer, answer]
+        .filter(val => typeof val === 'string' && val.length > 1)
+        .some(val => cleanText === val.trim().toLowerCase());
+        
+      if (textMatches) return true;
+
+      if (key !== undefined) {
+        const cleanKey = String(key).trim().toUpperCase();
+        const keyMatches = [answer, correct_answer]
+          .filter(val => typeof val === 'string' && val.length === 1)
+          .some(val => cleanKey === val.trim().toUpperCase());
+          
+        if (keyMatches) return true;
+      }
+
+      const indexMatches = [answer, correctAnswer, correct_answer]
+        .some(val => {
+          if (typeof val === 'number') {
+            return val === index;
+          }
+          if (typeof val === 'string' && /^\d+$/.test(val.trim())) {
+            return parseInt(val.trim(), 10) === index;
+          }
+          return false;
+        });
+
+      if (indexMatches) return true;
+
+      return false;
+    }
+
     if (Array.isArray(optionsData)) {
       optionsData.forEach((optText, index) => {
-        let isCorrect = false;
-        // Answer could be 0-based index or 1-based index or string match
-        if (typeof answerData === 'number') {
-           // Check if it's 0-based or 1-based. If answer is matching the exact index:
-           if (answerData === index || answerData === index + 1) {
-              // Wait, strictly we must know. Let's assume if answer matches index exactly, it's correct (0-based).
-              // If we see 1-based, we'd need a heuristic, but most are 0-based or use explicit correctOption string.
-           }
-           if (answerData === index) isCorrect = true;
-           // Wait, some chapters might use 1-based. Let's check correctOptionData fallback.
-        }
-        
-        if (correctOptionData && optText.trim() === correctOptionData.trim()) {
-          isCorrect = true;
-        }
-
-        // Sometimes answer is a string but options is array (e.g., answer: "2")
-        if (typeof answerData === 'string' && parseInt(answerData, 10) === index) {
-          isCorrect = true;
-        }
-        // Fallback for 1-based if it's explicitly 1-based and 0-based didn't match anything?
-        // Let's rely on correctOption if available, else 0-based index matching.
-        
+        const isCorrect = checkCorrect(optText, index, undefined);
         normalized.push({ text: optText, isCorrect, originalKey: index });
       });
-      
-      // Heuristic: if none is marked correct but answerData is an integer, assume it's 1-based.
-      if (!normalized.some(n => n.isCorrect) && typeof answerData === 'number' && answerData > 0 && answerData <= normalized.length) {
-        normalized[answerData - 1].isCorrect = true;
+
+      if (!normalized.some(n => n.isCorrect)) {
+        const potential1BasedIndex = [answer, correctAnswer, correct_answer]
+          .map(val => {
+            if (typeof val === 'number') return val;
+            if (typeof val === 'string' && /^\d+$/.test(val.trim())) return parseInt(val.trim(), 10);
+            return null;
+          })
+          .find(val => val !== null && val > 0 && val <= normalized.length);
+
+        if (potential1BasedIndex !== undefined) {
+          normalized[potential1BasedIndex - 1].isCorrect = true;
+        }
       }
     } else if (typeof optionsData === 'object') {
       for (const [key, text] of Object.entries(optionsData)) {
-        let isCorrect = false;
-        if (answerData === key) isCorrect = true;
-        if (correctOptionData && text.trim() === correctOptionData.trim()) isCorrect = true;
-        
+        const isCorrect = checkCorrect(text, undefined, key);
         normalized.push({ text, isCorrect, originalKey: key });
       }
     }
@@ -245,7 +266,7 @@
       const optsContainer = document.createElement("div");
       optsContainer.className = "mcq-options";
       
-      let normalizedOptions = normalizeOptions(mcq.options, mcq.answer, mcq.correctOption || mcq.correctAnswer);
+      let normalizedOptions = normalizeOptions(mcq.options, mcq);
       
       // Shuffle options to randomize answers!
       normalizedOptions = shuffleArray(normalizedOptions);

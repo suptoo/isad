@@ -1,1482 +1,258 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0b0d10">
-<title>Convolution &amp; Filtering — MCQ Mastery</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/site.css">
-<link rel="stylesheet" href="css/chapter.css">
-</head>
-<body class="chapter-page" data-chapter="3">
-
-<div class="wrap">
-  <header class="top">
-    <div class="brand">
-      <div class="kernel-mark" id="kernelMark">
-        <span></span><span></span><span></span>
-        <span></span><span class="c"></span><span></span>
-        <span></span><span></span><span></span>
-      </div>
-      <div class="brand-text">
-        <div class="kicker">CSE 4106 · Digital Image Processing</div>
-        <h1>Convolution &amp; Filtering</h1>
-      </div>
-    </div>
-    <button class="menu-btn" onclick="openMenu()">Concepts</button>
-  </header>
-
-  <div class="overall-progress">
-    <div class="row">
-      <span id="progLabel">0 / 100 answered</span>
-      <span id="progPercent">0%</span>
-    </div>
-    <div class="track"><div class="fill" id="progFill"></div></div>
-  </div>
-
-  <div id="card" class="card"></div>
-</div>
-
-<div class="overlay" id="overlay">
-  <div class="menu-panel">
-    <h3>Jump to a concept</h3>
-    <div class="sub">Pick any concept to start or resume it.</div>
-    <div class="menu-list" id="menuList"></div>
-    <button class="btn btn-ghost menu-close" onclick="closeMenu()">Close</button>
-  </div>
-</div>
-
-<script>
-/* =========================================================
-   DATA — 12 concepts, 100 questions total
-   ========================================================= */
-const DATA = [
-{
-  title: "Convolution & Kernel Basics",
-  blurb: "Before touching a single filter, let's pin down what convolution actually is and how a kernel drives every spatial filtering operation in this lab — averaging, Gaussian, Laplacian, all of it come back to this one sliding-window operation.",
-  takeaway: "Convolution = slide a kernel, multiply, sum. Every spatial filter you meet in this lab is a variation on this one operation.",
-  questions: [
+[{
+  "chapter": "System Analyst - Chapter 3",
+  "source": "EKH Lecture 3.pdf",
+  "review": {
+    "title": "Chapter Review",
+    "summary": [
+      "A System Analyst acts as a bridge between business stakeholders and the technical team.",
+      "Primary responsibilities include requirement gathering, system design, feasibility study, implementation support, testing, documentation, user training, and maintenance.",
+      "Soft skills include communication, active listening, leadership, negotiation, teamwork, adaptability, empathy, and problem-solving.",
+      "Technical skills include SDLC, UML, DFD, ERD, SQL, database design, programming fundamentals, requirements engineering, testing, cybersecurity, and technical writing.",
+      "Skill importance varies across SDLC phases: Recognition of Need (Interpersonal), Feasibility (Balanced), Requirements Analysis (Interpersonal), System Design (Technical), Development (Technical), Testing (Technical), Implementation (Interpersonal), Maintenance (Balanced).",
+      "A System Analyst may perform multiple roles including Investigator, Requirement Analyst, System Designer, Change Agent, Communicator, Project Coordinator, Technical Advisor, Tester, and Documentation Specialist.",
+      "Organizational structures include Project-Oriented, Pool-Oriented, and Functional-Oriented."
+    ]
+  },
+  "mcqs": [
     {
-      q: "In the context of image processing, what does the convolution operation fundamentally do to an image?",
-      options: [
-        "It slides a small matrix (kernel) over the image and computes a weighted sum of neighboring pixel values to produce each output pixel",
-        "It resizes the image to a fixed dimension without changing any pixel values",
-        "It converts a color image into grayscale by averaging the RGB channels",
-        "It compresses the image file size using a lossy compression algorithm"
-      ],
-      correct: 0,
-      explain: "Convolution positions a small matrix of numbers (the kernel) over each pixel neighborhood in turn, multiplies the kernel weights by the underlying pixel values, and sums the products to produce a single output value for that location. Repeating this for every pixel position builds the full output image. This single mechanism underlies every spatial filter in this lab — averaging, Gaussian smoothing, Laplacian sharpening, and Sobel edge detection all differ only in what numbers sit inside the kernel."
+      "id": 1,
+      "question": "A System Analyst mainly acts as a—",
+      "options": {
+        "A": "Programmer",
+        "B": "Database Administrator",
+        "C": "Bridge between business and technical team",
+        "D": "Network Engineer"
+      },
+      "answer": "C",
+      "explanation_bn": "System Analyst ব্যবসায়িক ব্যবহারকারী এবং ডেভেলপারদের মধ্যে সংযোগ স্থাপন করে।"
     },
     {
-      q: "What is a kernel (also called a filter or mask) in spatial image filtering?",
-      options: [
-        "A small matrix of weights that defines how neighboring pixels are combined to produce each output pixel",
-        "A resized copy of the entire image used only for preview thumbnails",
-        "A lookup table that maps colors to grayscale values",
-        "A file that stores metadata such as the image's resolution and camera settings"
-      ],
-      correct: 0,
-      explain: "The kernel is the small grid of numeric weights — commonly 3x3 or 5x5 — that gets convolved with the image. Its specific values determine the filter's behavior: uniform positive weights create blur, a center-heavy negative-surround pattern creates sharpening, and directional weight patterns create edge detection. Changing only the kernel's numbers is enough to turn the exact same convolution loop into an entirely different type of filter."
+      "id": 2,
+      "question": "Requirement gathering is mainly performed during which SDLC phase?",
+      "options": {
+        "A": "Testing",
+        "B": "Maintenance",
+        "C": "Requirement Analysis",
+        "D": "Coding"
+      },
+      "answer": "C",
+      "explanation_bn": "Requirement Analysis পর্যায়ে ব্যবহারকারীর চাহিদা সংগ্রহ করা হয়।"
     },
     {
-      q: "Why must most spatial filter kernels have odd dimensions (3x3, 5x5, 7x7, and so on)?",
-      options: [
-        "An odd-sized kernel has a single, unambiguous central pixel that can be aligned exactly over the pixel being processed",
-        "Odd-sized kernels are always computationally faster than even-sized ones in every implementation",
-        "OpenCV's filter2D function is hard-coded to reject any even number as an input error",
-        "Even-sized kernels always produce negative pixel values regardless of their content"
-      ],
-      correct: 0,
-      explain: "An odd-sized kernel, like 3x3 or 5x5, has exactly one center cell — for example, the middle cell of a 3x3 grid sits one step away from every edge in every direction. This lets the filter place that center cell directly over the pixel currently being computed, with a symmetric ring of neighbors on all sides. Even-sized kernels don't have this clean center, which complicates alignment and is why virtually all the kernels in this lab (identity, averaging, Laplacian, Sobel) are 3x3."
+      "id": 3,
+      "question": "Which of the following is NOT a soft skill?",
+      "options": {
+        "A": "Communication",
+        "B": "Empathy",
+        "C": "SQL",
+        "D": "Negotiation"
+      },
+      "answer": "C",
+      "explanation_bn": "SQL একটি Technical Skill, Soft Skill নয়।"
     },
     {
-      q: "What is the 'anchor point' of a kernel typically set to during convolution?",
-      options: [
-        "The exact center of the kernel",
-        "The top-left corner cell of the kernel",
-        "A randomly selected cell that changes on every iteration",
-        "Whichever cell happens to hold the highest numeric weight"
-      ],
-      correct: 0,
-      explain: "The anchor is the kernel cell that gets aligned with the output pixel currently being computed, and by convention this is the kernel's geometric center for odd-sized kernels. In the lab's identity kernel [[0,0,0],[0,1,0],[0,0,0]], the center '1' sits at the anchor, which is exactly why the output equals the input: the anchor cell captures the pixel's own value while every neighbor contributes zero."
+      "id": 4,
+      "question": "Which is a technical skill of a System Analyst?",
+      "options": {
+        "A": "Leadership",
+        "B": "Active Listening",
+        "C": "Database Knowledge",
+        "D": "Empathy"
+      },
+      "answer": "C",
+      "explanation_bn": "Database Knowledge একটি Hard/Technical Skill।"
     },
     {
-      q: "In the identity kernel [[0,0,0],[0,1,0],[0,0,0]], why does the filtered output equal the original image?",
-      options: [
-        "The kernel keeps only the center pixel (weight 1) and multiplies every surrounding neighbor by 0, so each output pixel equals its corresponding input pixel",
-        "OpenCV automatically detects an identity kernel and skips the convolution step entirely",
-        "The kernel's 3x3 size is too small to have any effect on the image",
-        "Every pixel in the source image already has a value of exactly 1"
-      ],
-      correct: 0,
-      explain: "During convolution, each neighboring pixel is multiplied by its corresponding kernel weight. Here, every neighbor is multiplied by 0 and contributes nothing, while the center pixel is multiplied by 1 and passes through unchanged. Summing these products leaves only the original center pixel value, so the 'filtered' output is pixel-for-pixel identical to the input — which is exactly why it is called the identity kernel."
+      "id": 5,
+      "question": "DFD stands for—",
+      "options": {
+        "A": "Data File Diagram",
+        "B": "Data Flow Diagram",
+        "C": "Data Function Design",
+        "D": "Digital Flow Diagram"
+      },
+      "answer": "B",
+      "explanation_bn": "DFD-এর পূর্ণরূপ Data Flow Diagram।"
     },
     {
-      q: "If the weights of a smoothing kernel do not sum to 1 and no normalization is applied, what happens to the output image?",
-      options: [
-        "The overall brightness of the filtered image increases or decreases relative to the original, because energy is not conserved by the kernel",
-        "The image permanently loses all of its color information",
-        "The kernel automatically resizes itself to compensate",
-        "The convolution operation fails to execute and throws an error"
-      ],
-      correct: 0,
-      explain: "Each output pixel is a weighted sum of neighboring pixel values. If those weights sum to more than 1, the output pixels will systematically be brighter than the input; if they sum to less than 1, the output darkens. This is exactly why the lab divides the 3x3 all-ones averaging kernel by 9 and the weighted kernel by 16 — dividing by the sum of the weights (normalizing) keeps the output image's brightness consistent with the input."
+      "id": 6,
+      "question": "Which SDLC phase mainly requires technical skills?",
+      "options": {
+        "A": "Recognition of Need",
+        "B": "Requirements Analysis",
+        "C": "System Design",
+        "D": "Implementation"
+      },
+      "answer": "C",
+      "explanation_bn": "System Design পর্যায়ে Technical Skill সবচেয়ে বেশি প্রয়োজন।"
     },
     {
-      q: "What is the correct sequence of operations performed to compute a single output pixel during convolution?",
-      options: [
-        "Multiply each kernel weight by the pixel value directly underneath it, then sum all of the resulting products",
-        "Add each kernel weight directly to the pixel value beneath it, without any multiplication",
-        "Multiply the entire neighborhood by only the kernel's single largest weight",
-        "Divide each neighborhood pixel by the total number of kernel elements before applying any weights"
-      ],
-      correct: 0,
-      explain: "This is the core of convolution: for the neighborhood currently under the kernel, each pixel is multiplied by the kernel weight in the matching position, and all of those products are summed into one number. You can see this explicitly in the lab's manual for-loop code, where 'convolution = np.sum(kernel * padded_image[i-1:i+2, j-1:j+2])' performs exactly this element-wise multiply followed by a sum."
+      "id": 7,
+      "question": "A feasibility study evaluates—",
+      "options": {
+        "A": "Color scheme",
+        "B": "Logo design",
+        "C": "Technical and economic feasibility",
+        "D": "Typing speed"
+      },
+      "answer": "C",
+      "explanation_bn": "Feasibility Study-তে প্রযুক্তিগত, অর্থনৈতিক, অপারেশনাল ও আইনি দিক যাচাই করা হয়।"
     },
     {
-      q: "cv2.filter2D() technically performs correlation rather than true mathematical convolution (it doesn't flip the kernel). Why does this rarely matter for the filters used in this lab?",
-      options: [
-        "Because most filters used here — identity, averaging, weighted average, and Laplacian — are symmetric, so flipping the kernel 180 degrees produces the exact same kernel anyway",
-        "Because OpenCV always performs true mathematical convolution with kernel flipping, and there is never a difference",
-        "Because correlation can only be applied to color images while convolution can only be applied to grayscale ones",
-        "Because there is no such distinction; the two mathematical terms describe entirely unrelated operations"
-      ],
-      correct: 0,
-      explain: "Mathematically, convolution flips the kernel 180 degrees before sliding it across the image, while correlation applies the kernel directly without flipping. cv2.filter2D() implements correlation. However, symmetric kernels — like the identity, averaging, weighted-average, and Laplacian kernels used throughout this lab — look identical whether flipped or not, so the distinction has no practical effect on these particular results, even though it would matter for asymmetric kernels."
+      "id": 8,
+      "question": "Which document is commonly prepared by a System Analyst?",
+      "options": {
+        "A": "SRS",
+        "B": "Movie Script",
+        "C": "Advertisement",
+        "D": "Poster"
+      },
+      "answer": "A",
+      "explanation_bn": "System Analyst সাধারণত SRS (Software Requirement Specification) প্রস্তুত করে।"
     },
     {
-      q: "Why is normalizing a kernel (dividing every weight by the sum of all the weights) important for filters like the averaging or Gaussian filter?",
-      options: [
-        "It keeps the overall brightness/intensity level of the output image consistent with the input, since the weighted sum is rescaled back into the original pixel-value range",
-        "It converts a color image into grayscale automatically",
-        "It removes the need to pad the image's borders before filtering",
-        "It guarantees that the output image will always appear perfectly sharp"
-      ],
-      correct: 0,
-      explain: "A smoothing filter sums several neighborhood pixels together; without dividing by the number of contributing weights, that sum would be several times larger than any individual pixel value, producing a washed-out, overly bright image. Normalizing — dividing by 9 for a 3x3 average, or by 16 for the [[1,2,1],[2,4,2],[1,2,1]] weighted kernel — rescales the sum back down so it represents a genuine average, keeping brightness consistent with the source image."
+      "id": 9,
+      "question": "UAT stands for—",
+      "options": {
+        "A": "User Acceptance Testing",
+        "B": "User Analysis Tool",
+        "C": "Unified Application Test",
+        "D": "Universal Access Technology"
+      },
+      "answer": "A",
+      "explanation_bn": "UAT-এর পূর্ণরূপ User Acceptance Testing।"
     },
     {
-      q: "What best describes the 'sliding window' behavior shown in the lab's manual for-loop implementations, where nested loops iterate i and j over the padded image?",
-      options: [
-        "The kernel is repositioned over every pixel location in turn, and a new output value is computed from each local neighborhood as the window slides",
-        "The kernel is applied exactly once to the image at a single fixed position near the top-left corner",
-        "The image is split into large, non-overlapping blocks that are each processed completely independently",
-        "The kernel's size increases by one pixel with every iteration of the outer loop"
-      ],
-      correct: 0,
-      explain: "In the manual implementations, the nested for-loops (for i in range(...) and for j in range(...)) move the kernel's anchor point across every single pixel coordinate of the padded image, one step at a time. At each stop, the 3x3 neighborhood directly underneath the kernel is extracted and combined with the kernel weights to produce one output value, which is why the resulting output_image ends up the same size as the original, unpadded image."
+      "id": 10,
+      "question": "Communication is an example of—",
+      "options": {
+        "A": "Hard Skill",
+        "B": "Soft Skill",
+        "C": "Programming Language",
+        "D": "Database"
+      },
+      "answer": "B",
+      "explanation_bn": "Communication একটি গুরুত্বপূর্ণ Interpersonal Skill।"
+    },
+    {
+      "id": 11,
+      "question": "User training is mainly conducted during—",
+      "options": {
+        "A": "Testing",
+        "B": "Implementation",
+        "C": "Coding",
+        "D": "Analysis"
+      },
+      "answer": "B",
+      "explanation_bn": "Implementation পর্যায়ে ব্যবহারকারীদের প্রশিক্ষণ দেওয়া হয়।"
+    },
+    {
+      "id": 12,
+      "question": "System Design mainly includes—",
+      "options": {
+        "A": "Hardware Manufacturing",
+        "B": "Database and Interface Design",
+        "C": "Typing Reports",
+        "D": "Marketing"
+      },
+      "answer": "B",
+      "explanation_bn": "System Design-এ Database ও Interface Design করা হয়।"
+    },
+    {
+      "id": 13,
+      "question": "In a Project-Oriented structure, analysts are—",
+      "options": {
+        "A": "Assigned to one project",
+        "B": "Assigned only to Finance",
+        "C": "Shared across departments",
+        "D": "Not assigned"
+      },
+      "answer": "A",
+      "explanation_bn": "Project-Oriented Structure-এ Analyst একটি নির্দিষ্ট Project-এ কাজ করে।"
+    },
+    {
+      "id": 14,
+      "question": "Pool-Oriented structure means analysts are—",
+      "options": {
+        "A": "Shared among multiple projects",
+        "B": "Assigned permanently to one department",
+        "C": "Working only in HR",
+        "D": "Working remotely"
+      },
+      "answer": "A",
+      "explanation_bn": "Pool-Oriented Structure-এ Analyst প্রয়োজন অনুযায়ী বিভিন্ন Project-এ কাজ করে।"
+    },
+    {
+      "id": 15,
+      "question": "Functional-Oriented structure focuses on—",
+      "options": {
+        "A": "Single department",
+        "B": "Multiple projects",
+        "C": "Freelance work",
+        "D": "Random assignments"
+      },
+      "answer": "A",
+      "explanation_bn": "Functional-Oriented Structure-এ Analyst একটি নির্দিষ্ট Department-এর জন্য কাজ করে।"
+    },
+    {
+      "id": 16,
+      "question": "Who translates user needs into technical specifications?",
+      "options": {
+        "A": "Accountant",
+        "B": "Requirement Analyst",
+        "C": "Cashier",
+        "D": "Customer"
+      },
+      "answer": "B",
+      "explanation_bn": "Requirement Analyst ব্যবহারকারীর চাহিদাকে Technical Specification-এ রূপান্তর করে।"
+    },
+    {
+      "id": 17,
+      "question": "Testing mainly ensures—",
+      "options": {
+        "A": "Beautiful UI",
+        "B": "Correct system functionality",
+        "C": "Low electricity usage",
+        "D": "Fast internet"
+      },
+      "answer": "B",
+      "explanation_bn": "Testing নিশ্চিত করে যে সিস্টেমটি সঠিকভাবে কাজ করছে।"
+    },
+    {
+      "id": 18,
+      "question": "Who prepares user manuals?",
+      "options": {
+        "A": "Documentation Specialist",
+        "B": "Customer",
+        "C": "Receptionist",
+        "D": "Sales Manager"
+      },
+      "answer": "A",
+      "explanation_bn": "Documentation Specialist ব্যবহারকারী নির্দেশিকা প্রস্তুত করে।"
+    },
+    {
+      "id": 19,
+      "question": "Maintenance phase mainly involves—",
+      "options": {
+        "A": "Cooking",
+        "B": "Debugging and Updates",
+        "C": "Painting",
+        "D": "Advertising"
+      },
+      "answer": "B",
+      "explanation_bn": "Maintenance পর্যায়ে Bug Fixing, Update এবং Performance উন্নয়ন করা হয়।"
+    },
+    {
+      "id": 20,
+      "question": "Which statement is correct?",
+      "options": {
+        "A": "Communication is a Soft Skill",
+        "B": "SQL is a Soft Skill",
+        "C": "Leadership is a Technical Skill",
+        "D": "Testing is a Soft Skill"
+      },
+      "answer": "A",
+      "explanation_bn": "Communication একটি Soft Skill, অন্যগুলো ভুল।"
     }
   ]
-},
-{
-  title: "Padding & Border Handling",
-  blurb: "A 3x3 kernel centered on a pixel at the very edge of the image reaches 'off the map.' This section covers how padding solves that problem, and how the choice of border strategy can subtly change your results.",
-  takeaway: "Padding lets kernels operate right up to the image's edges, but the border strategy you pick can quietly shift or darken your output near those edges.",
-  questions: [
-    {
-      q: "Why is the image padded (using something like cv2.copyMakeBorder) before manually convolving it with a 3x3 kernel?",
-      options: [
-        "Padding adds an extra border of pixels so the kernel always has valid neighborhood values, even when it is centered on a pixel at the image's very edge",
-        "Padding permanently increases the image's resolution for the final saved output",
-        "Padding removes noise from the image before any filtering takes place",
-        "Padding converts a grayscale image into a full color image"
-      ],
-      correct: 0,
-      explain: "A 3x3 kernel centered on a pixel in the top row needs a row of pixels 'above' the image that doesn't actually exist. Padding manufactures that missing border artificially — typically one pixel wide for a 3x3 kernel — so the kernel always has a complete 3x3 neighborhood to work with, no matter where its center is positioned, including right at the corners and edges."
-    },
-    {
-      q: "In the lab's manual filtering code, cv2.copyMakeBorder(image, 1, 1, 1, 1, cv2.BORDER_CONSTANT, value=0) is used. What does this specifically do to the padded border pixels?",
-      options: [
-        "It sets all of the newly added border pixels to a constant black value of 0",
-        "It copies pixels from the opposite edge of the image, wrapping the image around itself",
-        "It fills the border pixels with random noise values on every call",
-        "It sets the border pixels to the average intensity value of the entire image"
-      ],
-      correct: 0,
-      explain: "cv2.BORDER_CONSTANT tells OpenCV to fill the padded region with one fixed value rather than deriving it from the image itself, and value=0 specifies that constant as black. So the manual identity- and average-filter examples surround the real image with a one-pixel-wide black frame before convolving, which is a simple but not perfectly artifact-free choice, as later questions in this section explore."
-    },
-    {
-      q: "For a standard 3x3 kernel, how many pixels of padding are typically added to each side of the image before manual convolution?",
-      options: [
-        "1 pixel of padding on each side",
-        "3 pixels of padding on each side",
-        "Half of the image's total width as padding on each side",
-        "No padding is required at all for a 3x3 kernel"
-      ],
-      correct: 0,
-      explain: "The amount of padding needed equals half the kernel size, rounded down. For a 3x3 kernel, that's exactly 1 pixel on each of the four sides — which matches the lab's own code: cv2.copyMakeBorder(image, 1, 1, 1, 1, ...) pads the top, bottom, left, and right by 1 pixel each, giving the 3x3 kernel a full neighborhood everywhere, including at the original image's edges."
-    },
-    {
-      q: "What potential visual side-effect can cv2.BORDER_CONSTANT with value=0 introduce near an image's edges after filtering?",
-      options: [
-        "A darker or slightly black-ish fringe near the borders, because the artificial zero-value padding pulls down the weighted average calculated close to the edges",
-        "The entire image becomes noticeably brighter specifically near its edges",
-        "The colors near the edges become inverted compared to the rest of the image",
-        "The image's edges become perfectly sharp and high-contrast as a direct result"
-      ],
-      correct: 0,
-      explain: "When a smoothing kernel near the border includes some artificially-added black (value 0) pixels in its neighborhood, those zeros drag the computed average down. The result is a subtle darkening or fringing effect concentrated at the outermost rows and columns of the filtered image — an artifact introduced purely by the padding choice rather than anything present in the real image content."
-    },
-    {
-      q: "In the lab's manual median filtering example, the padding constant is set to value=255 rather than 0. Why might this choice matter compared to using 0?",
-      options: [
-        "Padding with 255 (white) instead of 0 (black) changes what artificial values surround the border pixels, which can shift the median computed at edge locations differently than a black border would",
-        "It has no effect at all, since median filtering completely ignores whatever padding values are used",
-        "It secretly converts the median filter into an averaging filter instead",
-        "It guarantees that the final output image will contain absolutely no noise anywhere"
-      ],
-      correct: 0,
-      explain: "Median filtering picks the middle value from a sorted neighborhood, so whichever artificial value is used for padding can end up influencing which value gets sorted into the middle position near the borders. Choosing 255 instead of 0 changes whether the padding acts like an extra bright or extra dark outlier in that sorted list, which can shift the resulting median at edge pixels — a small but real consequence of an implementation detail."
-    },
-    {
-      q: "Besides cv2.BORDER_CONSTANT, what is a general alternative border-handling strategy that avoids introducing artificial black or white pixel values at the edges?",
-      options: [
-        "Reflecting or replicating the nearby real edge pixels outward (for example, BORDER_REFLECT or BORDER_REPLICATE), so the padded region blends naturally with actual image content",
-        "Deleting the border pixels from the final output entirely and physically shrinking the image",
-        "Filling the padded border with randomly generated Gaussian noise values",
-        "Filling the padded border with the maximum possible pixel value of 255, regardless of the image's actual content"
-      ],
-      correct: 0,
-      explain: "Instead of inventing a completely artificial constant value, strategies like BORDER_REFLECT (mirroring nearby pixels back across the edge) or BORDER_REPLICATE (repeating the outermost row/column outward) generate padding values that are derived from the image's own real content. This tends to avoid the artificial dark or bright fringing that a constant-value border like BORDER_CONSTANT with value=0 or 255 can introduce."
-    }
-  ]
-},
-{
-  title: "Averaging (Mean) Filter",
-  blurb: "The simplest smoothing filter there is: blend every pixel in the neighborhood equally. It's fast and effective against random noise, but it doesn't discriminate between noise and genuine detail.",
-  takeaway: "Averaging trades detail for noise reduction — equally, everywhere, without discretion between noise and genuine edges.",
-  questions: [
-    {
-      q: "What calculation does a standard 3x3 averaging (mean) filter perform to compute each output pixel?",
-      options: [
-        "It sums the 9 pixel values inside the 3x3 neighborhood and divides that sum by 9 to obtain their arithmetic mean",
-        "It selects only the single brightest pixel value found anywhere in the neighborhood",
-        "It multiplies all 9 neighborhood pixel values together into one product",
-        "It replaces the pixel with a value taken from a previous video frame"
-      ],
-      correct: 0,
-      explain: "The averaging filter is the most literal smoothing operation: every pixel in the local neighborhood contributes equally, and the output is simply their arithmetic mean. This matches the lab's kernel1 = np.ones((3,3)) divided by 9 — a 3x3 grid of equal weights, each contributing 1/9th, which is exactly what's needed to compute a plain average."
-    },
-    {
-      q: "What is the main advantage of using an averaging filter for image smoothing?",
-      options: [
-        "It is simple and computationally cheap, and it effectively reduces random noise by blending together neighboring pixel values",
-        "It never blurs edges under any circumstances, no matter how it is applied",
-        "It sharpens fine details at the same time as it removes noise",
-        "It requires no kernel and no convolution operation at all"
-      ],
-      correct: 0,
-      explain: "Because random noise tends to push individual pixel values up or down somewhat unpredictably, averaging a group of neighboring pixels tends to cancel out that random variation, since noise in one direction is partially offset by noise in another across the neighborhood. This makes the averaging filter genuinely useful for suppressing mild random noise, and it is one of the cheapest possible filters to compute."
-    },
-    {
-      q: "What is the main disadvantage of the averaging filter?",
-      options: [
-        "It blurs edges and fine details indiscriminately, because it treats every neighboring pixel with equal weight regardless of whether that pixel belongs to the same object or a different one",
-        "It cannot be implemented at all using OpenCV's cv2.filter2D function",
-        "It always increases the amount of noise present in the image rather than reducing it",
-        "It only works correctly on color images and fails entirely on grayscale images"
-      ],
-      correct: 0,
-      explain: "Because the averaging filter gives every neighboring pixel identical weight, it cannot tell the difference between noise and a genuine edge — a pixel sitting right on a boundary between a dark object and a light background gets averaged with neighbors from both sides equally, blurring that boundary. This uniform blurring of all detail, wanted or unwanted, is the fundamental trade-off of the averaging filter."
-    },
-    {
-      q: "In the lab code, kernel1 = np.array([[1,1,1],[1,1,1],[1,1,1]]) is subsequently divided by 9. What is the purpose of that division?",
-      options: [
-        "It normalizes the kernel so the output represents a true average, rather than a sum that would be roughly nine times brighter than the original image",
-        "It converts the averaging kernel into a Laplacian sharpening kernel instead",
-        "It effectively reduces the kernel's size from 3x3 down to 1x1",
-        "It makes the filter completely ignore the center pixel of the neighborhood"
-      ],
-      correct: 0,
-      explain: "Without dividing by 9, summing nine pixel values (each up to 255) would produce values far outside the normal 0-255 range, blowing out the image's brightness. Dividing every weight by 9 — the total count of cells in the 3x3 kernel — rescales that sum back down into a proper average, which is exactly what keeps the smoothed output visually comparable in brightness to the original image."
-    },
-    {
-      q: "How does the averaging filter typically perform on salt-and-pepper (impulse) noise compared to Gaussian noise?",
-      options: [
-        "It performs relatively poorly on salt-and-pepper noise, because it blends the extreme black-and-white impulse values into their neighboring pixels rather than removing them, spreading the noise out as a blur",
-        "It removes salt-and-pepper noise perfectly with absolutely no blurring side effects",
-        "It has no effect whatsoever on any type of image noise",
-        "It handles salt-and-pepper noise better than a median filter does"
-      ],
-      correct: 0,
-      explain: "A salt-and-pepper pixel sits at an extreme value (pure black or pure white), and when it's included in an average, that single extreme value still pulls the computed mean noticeably, smearing the impulse across the neighboring pixels rather than eliminating it. This is precisely why the median filter — which discards outliers instead of averaging them in — is generally the preferred tool for this specific type of noise, as later sections explore."
-    },
-    {
-      q: "If you increase the averaging filter's kernel size from 3x3 to a much larger 9x9, what happens to the result?",
-      options: [
-        "The image becomes progressively more blurred, because each output pixel is now averaged over a much larger neighborhood, which increasingly washes out finer details",
-        "The image becomes noticeably sharper, with more visible edges than before",
-        "The overall processing time required decreases significantly as the kernel grows",
-        "The image's entire color palette becomes inverted"
-      ],
-      correct: 0,
-      explain: "A larger averaging kernel pulls in pixel values from a wider surrounding area, so fine structures and small details get blended together with an increasingly broad swath of neighboring content. The result is progressively heavier blurring as kernel size grows — a direct, general relationship between smoothing filter size and blur strength that applies to virtually every smoothing filter, not just the averaging filter."
-    },
-    {
-      q: "Which OpenCV function was used in the lab to apply the custom 3x3 averaging kernel to the entire image in a single call?",
-      options: [
-        "cv2.filter2D()",
-        "cv2.medianBlur()",
-        "cv2.dilate()",
-        "cv2.Canny()"
-      ],
-      correct: 0,
-      explain: "cv2.filter2D(src=image, ddepth=-1, kernel=kernel1) is the general-purpose convolution function used throughout this lab whenever a custom kernel needs to be applied — it works identically whether the kernel represents an identity filter, an averaging filter, a weighted average, or a Laplacian sharpening kernel, since the function itself is agnostic to what the kernel's numbers represent."
-    },
-    {
-      q: "Conceptually, why is the averaging filter considered a 'linear' filter?",
-      options: [
-        "Its output is computed as a fixed weighted linear combination — a sum of products — of the neighborhood's pixel values",
-        "Because it only produces correct results on images that contain perfectly straight edges",
-        "Because it changes an image's width-to-height aspect ratio in a strictly linear way",
-        "Because it can only be applied to one-dimensional signals, never two-dimensional images"
-      ],
-      correct: 0,
-      explain: "A filter is called linear when its output can be expressed as a fixed weighted sum of the input values, with the weights (the kernel) staying constant regardless of what the actual pixel values are. The averaging filter fits this exactly: it always multiplies each neighborhood pixel by 1/9 and sums the results, with no conditional logic, sorting, or selection involved — the same property shared by the weighted-average and Gaussian filters, but not by the median, min, or max filters."
-    }
-  ]
-},
-{
-  title: "Weighted Average Filter",
-  blurb: "A small but meaningful upgrade on plain averaging: give the center pixel — and its closest neighbors — more say in the result than the pixels sitting further away.",
-  takeaway: "Weighting the center pixel more heavily keeps a little more genuine detail alive compared to a flat, uniform average.",
-  questions: [
-    {
-      q: "How does a weighted average filter, such as [[1,2,1],[2,4,2],[1,2,1]] divided by 16, differ from a plain averaging filter?",
-      options: [
-        "It gives more importance (a higher weight) to pixels located closer to the center of the neighborhood, instead of treating every neighboring pixel equally",
-        "It completely ignores the center pixel of the neighborhood",
-        "It only processes the four corner pixels of the 3x3 kernel and nothing else",
-        "It requires an entirely separate convolution algorithm that cannot use cv2.filter2D"
-      ],
-      correct: 0,
-      explain: "In this kernel, the center weight is 4, the four directly-adjacent (edge-touching) neighbors get weight 2, and the four diagonal corners get only weight 1. This graduated weighting means pixels physically closer to the center have proportionally more influence on the final averaged value than pixels farther away — unlike the plain averaging filter, where every one of the 9 pixels contributes an identical 1/9 share."
-    },
-    {
-      q: "In the weighted average kernel [[1,2,1],[2,4,2],[1,2,1]], why is the kernel divided by 16?",
-      options: [
-        "16 is the sum of all the kernel's individual weights (1+2+1+2+4+2+1+2+1 = 16), so dividing by it normalizes the output and preserves the image's overall brightness",
-        "16 refers to the bit-depth of the image, which is unrelated to the kernel's weight values",
-        "Dividing by 16 is what converts this averaging filter into a sharpening filter",
-        "16 represents the total count of neighboring pixels being processed, which is actually 8, not 16"
-      ],
-      correct: 0,
-      explain: "Just like the plain 3x3 average divides by 9 (the sum of its weights), this weighted kernel must divide by the sum of its own weights to stay normalized — and adding 1+2+1+2+4+2+1+2+1 gives exactly 16. Skipping this normalization step would leave the output roughly 16 times brighter than intended, since the raw weighted sum would far exceed the normal pixel intensity range."
-    },
-    {
-      q: "Compared to a plain average filter, what advantage does a center-weighted average filter typically offer?",
-      options: [
-        "It tends to preserve slightly more detail and produce a somewhat less blurred result, because the center pixel's own value contributes more heavily to the output than in a uniform average",
-        "It removes 100% of every possible noise type while introducing zero blurring whatsoever",
-        "It cannot be implemented at all using cv2.filter2D",
-        "It always produces a completely black output image regardless of input"
-      ],
-      correct: 0,
-      explain: "Because the center pixel and its nearest neighbors dominate the weighted sum more than the farther-away corner pixels do, the resulting output stays somewhat closer to the original center pixel's value than a flat average would. This generally produces gentler, more detail-preserving smoothing compared to giving every one of the 9 pixels an identical 1/9 share of influence."
-    },
-    {
-      q: "The kernel [[1,2,1],[2,4,2],[1,2,1]] is actually a small discrete approximation of which well-known smoothing filter shape?",
-      options: [
-        "A Gaussian (bell-curve) shaped kernel",
-        "A Sobel edge-detection kernel",
-        "A Laplacian sharpening kernel",
-        "An identity kernel"
-      ],
-      correct: 0,
-      explain: "The pattern of weights — highest at the center and tapering off symmetrically toward the edges and corners — mimics the shape of a two-dimensional Gaussian (bell curve) function, just approximated with small whole numbers instead of the smooth, continuously-varying decimal weights that cv2.GaussianBlur() would compute from an actual Gaussian formula. It's essentially a cheap, hand-picked stand-in for a true Gaussian filter."
-    },
-    {
-      q: "What would happen if the weighted average kernel were applied without dividing by the sum of its weights (16)?",
-      options: [
-        "The output image would appear much brighter or overexposed, since the summed intensity at each pixel would be roughly 16 times larger than the correct averaged value",
-        "The output image would show absolutely no visible change compared to the original",
-        "The output image would automatically be converted into a grayscale image",
-        "The kernel would simply fail to run when passed into cv2.filter2D"
-      ],
-      correct: 0,
-      explain: "Without normalization, each output pixel would be the raw weighted sum of its neighbors — a number that can be many times larger than any single valid pixel intensity — rather than a properly scaled average. Depending on how the resulting values are clipped or displayed, this typically shows up as a badly overexposed, blown-out, or saturated-looking image."
-    },
-    {
-      q: "Which statement correctly differentiates a hand-crafted weighted average filter from a Gaussian filter created via cv2.GaussianBlur()?",
-      options: [
-        "A weighted average filter is typically a small, fixed set of hand-picked integer weights that only approximates a bell shape, while cv2.GaussianBlur computes its weights precisely from an actual Gaussian mathematical function based on the specified sigma",
-        "There is no meaningful difference between the two; they are mathematically identical in every implementation",
-        "A weighted average filter can only ever be applied to color images, never to grayscale images",
-        "cv2.GaussianBlur cannot be normalized, unlike a weighted average filter"
-      ],
-      correct: 0,
-      explain: "The lab's [[1,2,1],[2,4,2],[1,2,1]]/16 kernel is a fixed, simplified approximation chosen by hand to loosely resemble a bell curve. cv2.GaussianBlur(), by contrast, generates its kernel weights directly from the mathematical Gaussian formula, using the sigma parameter to control precisely how quickly the weights fall off with distance from the center — giving far finer control over the strength and shape of the blur than a small, fixed integer kernel can offer."
-    }
-  ]
-},
-{
-  title: "Gaussian Filter",
-  blurb: "The industry-standard smoothing filter. Instead of a flat box of equal weights, it weights neighbors by a smooth bell curve — closer pixels matter more, farther ones matter less.",
-  takeaway: "Gaussian filtering blurs 'smartly' by distance, which is exactly why it's the go-to choice for natural-looking smoothing and Gaussian-noise removal.",
-  questions: [
-    {
-      q: "What is the primary effect of applying a Gaussian filter to an image?",
-      options: [
-        "It blurs the image and removes fine detail and noise, using weights that follow a smooth bell-shaped (Gaussian) distribution",
-        "It sharpens edges dramatically while leaving any existing noise completely untouched",
-        "It converts the entire image into a strictly binary black-and-white image",
-        "It rotates the image by exactly 90 degrees"
-      ],
-      correct: 0,
-      explain: "As stated directly in the lab notes, the Gaussian filter's job is to blur an image and remove detail and noise, using a kernel shaped like a Gaussian bell curve. The weighting scheme concentrates the most influence on pixels near the center of the neighborhood and tapers smoothly toward the edges, producing a natural-looking blur rather than the boxier look of a plain averaging filter."
-    },
-    {
-      q: "In the function call cv2.GaussianBlur(src, ksize, sigmaX), what does the sigmaX parameter control?",
-      options: [
-        "The standard deviation of the Gaussian distribution along the X direction, which determines how spread out — and therefore how strong — the resulting blur effect is",
-        "The exact number of color channels that will be processed by the function",
-        "The rotation angle that gets applied to the kernel before convolution",
-        "The specific pixel coordinates at which blurring is allowed to begin"
-      ],
-      correct: 0,
-      explain: "Sigma (standard deviation) is the parameter that shapes how quickly the Gaussian bell curve tapers off. A small sigma concentrates weight tightly around the center pixel, producing a subtle blur, while a larger sigma spreads the weighting across a wider area, producing much stronger blurring — even if the kernel size (ksize) itself stays the same."
-    },
-    {
-      q: "According to the lab notes, what happens if both sigmaX and sigmaY are passed to cv2.GaussianBlur() as 0?",
-      options: [
-        "OpenCV automatically calculates appropriate sigma values on its own, based on the given kernel size (ksize)",
-        "The function immediately throws an error and refuses to execute",
-        "The image is returned completely unchanged, with zero blurring applied",
-        "The specified kernel size is silently forced down to 1x1"
-      ],
-      correct: 0,
-      explain: "As the lab notes explicitly state, if both sigma values are given as zeros, they are calculated from the kernel size. This is a convenient default: rather than manually working out an appropriate standard deviation, you can simply set an odd, positive kernel size and let OpenCV derive a sensible sigma automatically to match it."
-    },
-    {
-      q: "Why does a Gaussian filter generally preserve edges somewhat better than a plain averaging filter of the same size?",
-      options: [
-        "Because Gaussian weights decrease smoothly with distance from the center, giving far less influence to distant pixels than the uniform-weighted averaging filter, which reduces how much the filter blurs across edges",
-        "Because the Gaussian filter does not use any kernel at all during its computation",
-        "Because the Gaussian filter only ever affects pixels that lie along perfectly horizontal edges",
-        "Because Gaussian filters always use a larger kernel size than averaging filters by definition"
-      ],
-      correct: 0,
-      explain: "In a plain averaging filter, a pixel on the far side of an edge counts exactly as much as the pixel right next to the center. In a Gaussian filter, that same far pixel is weighted much more lightly because of its distance from the center, so its influence on the output — and therefore its ability to blur across an edge boundary — is naturally reduced. This graduated weighting is the core reason Gaussian blur tends to look gentler and more natural than box averaging."
-    },
-    {
-      q: "The lab states that Gaussian blurring is highly effective at removing which specific type of noise?",
-      options: [
-        "Gaussian noise",
-        "Salt-and-pepper (impulse) noise",
-        "Motion blur artifacts caused by camera shake",
-        "JPEG compression blocking artifacts"
-      ],
-      correct: 0,
-      explain: "The lab explicitly notes that Gaussian blurring is highly effective in removing Gaussian noise from an image — which makes intuitive sense, since Gaussian noise itself is randomly distributed around a true value, and a Gaussian-weighted average is well-suited to smoothing out that kind of statistically symmetric random variation. Impulse noise like salt-and-pepper is generally better handled by the median filter instead."
-    },
-    {
-      q: "What constraint does cv2.GaussianBlur() place on the width and height values passed as ksize?",
-      options: [
-        "They must both be positive and odd numbers",
-        "They must always be even numbers",
-        "They must always be set to exactly 3",
-        "They must be an exact multiple of the entire image's width"
-      ],
-      correct: 0,
-      explain: "As with virtually every spatial filter kernel discussed in this lab, the kernel width and height passed into cv2.GaussianBlur() must be positive and odd, ensuring the kernel has a single well-defined center pixel that can be aligned with the pixel currently being processed."
-    },
-    {
-      q: "If sigmaY is not explicitly specified in a call to cv2.GaussianBlur() but sigmaX is given, what does OpenCV do?",
-      options: [
-        "It sets sigmaY equal to sigmaX, effectively assuming symmetric blurring strength in both the horizontal and vertical directions",
-        "It sets sigmaY to zero, which completely disables any vertical blurring",
-        "It throws a runtime error and immediately halts execution",
-        "It ignores sigmaX as well and calculates both sigma values purely from the kernel size"
-      ],
-      correct: 0,
-      explain: "As noted in the lab, if only sigmaX is specified, sigmaY is taken as the same as sigmaX. This default assumes you want the blur to spread equally in both directions unless you explicitly tell OpenCV otherwise by supplying a separate sigmaY value."
-    },
-    {
-      q: "How does increasing sigma (the standard deviation) in a Gaussian filter, while keeping the kernel size fixed, generally affect the result?",
-      options: [
-        "It increases the influence of farther-away pixels within that fixed kernel window, producing a noticeably stronger blurring effect",
-        "It has no effect on the output at all, because sigma is purely a cosmetic label with no real influence",
-        "It sharpens the image instead of blurring it",
-        "It reduces the kernel's normalized weight sum to below 1, darkening the result"
-      ],
-      correct: 0,
-      explain: "A larger sigma flattens out the Gaussian bell curve, meaning pixels farther from the center receive relatively more weight than they would with a smaller, tighter sigma. Even without changing the kernel's physical size, this redistribution of weight toward the edges of the neighborhood produces a visibly stronger blur, since more of the neighborhood's variation gets blended into each output pixel."
-    },
-    {
-      q: "Why is the Gaussian filter often preferred over a simple box (average) filter for pre-processing steps, such as before edge detection?",
-      options: [
-        "Its smoother, distance-weighted falloff produces a more natural-looking blur with fewer boxy artifacts, and it better approximates how real optical or sensor blur behaves",
-        "It runs in exactly the same way and always produces identical results to the box filter",
-        "It is technically a nonlinear filter, so it cannot be normalized like other filters",
-        "It amplifies image noise instead of suppressing it, which is desirable before edge detection"
-      ],
-      correct: 0,
-      explain: "Real-world optical and sensor blur tends to fall off smoothly and symmetrically with distance, which is exactly what a Gaussian kernel models. Because of this, pre-blurring with a Gaussian filter before edge detection (like the Sobel operator) tends to suppress noise-driven false edges more gracefully than box averaging, without introducing the artificial blocky patterns that a uniform box kernel can leave behind."
-    },
-    {
-      q: "Based on how its output is computed from the input, what kind of filter is the Gaussian filter classified as?",
-      options: [
-        "A linear filter, because its output is a fixed, weighted linear sum of the neighborhood's pixel values",
-        "A nonlinear filter, because it involves selecting a median value from the neighborhood",
-        "A logical or binary filter, because it can only output either 0 or 255",
-        "A morphological filter, because it internally relies on dilation and erosion"
-      ],
-      correct: 0,
-      explain: "Like the averaging and weighted average filters, the Gaussian filter always computes its output as a fixed weighted sum of neighborhood pixel values — the weights (derived from the Gaussian function) never change based on the actual pixel content itself. This constant, additive combination of inputs is exactly what defines a linear filter, distinguishing it from nonlinear filters like median, min, and max, which involve sorting or selecting values rather than summing them."
-    }
-  ]
-},
-{
-  title: "Median Filter",
-  blurb: "A nonlinear filter that sorts the neighborhood and picks the middle value instead of averaging. Purpose-built for salt-and-pepper noise, where a single averaging pass would just smear the damage around.",
-  takeaway: "When outliers are the problem, sorting beats averaging — that's the median filter's superpower against impulse noise.",
-  questions: [
-    {
-      q: "How does the median filter compute the output value for each pixel?",
-      options: [
-        "It sorts all of the pixel values within the kernel neighborhood and selects the middle (median) value from that sorted list",
-        "It computes the arithmetic mean of the neighborhood, making it identical in behavior to the averaging filter",
-        "It always selects the single maximum value found anywhere in the neighborhood",
-        "It multiplies all the neighborhood values together and then takes the square root of the product"
-      ],
-      correct: 0,
-      explain: "Unlike the averaging or Gaussian filters, the median filter doesn't blend values together at all — it sorts every pixel value in the local neighborhood from smallest to largest and simply picks whichever value lands in the exact middle of that sorted list, discarding the rest. This 'pick a real value, don't blend' behavior is what gives the median filter its distinctive robustness against outliers."
-    },
-    {
-      q: "Why is the median filter considered particularly effective against salt-and-pepper noise?",
-      options: [
-        "Extreme outlier values, like pure black or pure white impulse pixels, rarely end up landing in the middle position of a sorted neighborhood, so they get discarded rather than blended into the output",
-        "Because it averages the extreme outlier values smoothly into the surrounding pixels instead of removing them",
-        "Because applying it always increases the total number of black and white pixels present",
-        "Because it works exclusively on color images and has no effect on grayscale images"
-      ],
-      correct: 0,
-      explain: "A salt-and-pepper pixel sits at an extreme intensity value, far from its true, uncorrupted surroundings. When the neighborhood's values are sorted, that extreme outlier tends to end up at one end of the sorted list — not in the middle — so it simply never gets selected as the median output. This lets the median filter effectively remove impulse noise rather than merely diluting it across neighboring pixels, which is what averaging does instead."
-    },
-    {
-      q: "What are the two required arguments of cv2.medianBlur(src, ksize)?",
-      options: [
-        "The source image, and the kernel size, which must be given as an odd, positive integer",
-        "The source image, and a sigma value that shapes a Gaussian distribution",
-        "Two entirely separate images that get blended together into a single result",
-        "The source image, and a boolean flag indicating whether the image is in color"
-      ],
-      correct: 0,
-      explain: "As the lab notes state directly, this function has just two required arguments: the source image, and the kernel size, which must be an odd, positive integer — for example, cv2.medianBlur(image, 3) applies a 3x3 median filter. Unlike cv2.GaussianBlur(), there's no separate width/height tuple or sigma value to supply; a single odd integer defines a square neighborhood."
-    },
-    {
-      q: "Unlike the linear averaging or Gaussian filters, why is the median filter classified as a nonlinear filter?",
-      options: [
-        "Because its output is based on selecting a value through sorting (an order-statistic operation), rather than computing a fixed weighted linear sum of the neighborhood",
-        "Because it can only be applied to images that are not perfectly rectangular in shape",
-        "Because it requires the image's pixel values to be stored exclusively as floating-point numbers",
-        "Because OpenCV implements median filtering internally using a neural network"
-      ],
-      correct: 0,
-      explain: "A linear filter's output is always some fixed weighted combination — multiply-and-sum — of the input values. The median filter breaks this pattern entirely: it sorts the neighborhood values and picks out a specific rank-ordered element, an operation that cannot be expressed as any fixed set of multiplicative weights applied to the pixels. This sorting-based, order-statistic behavior is the textbook definition of a nonlinear filter."
-    },
-    {
-      q: "What visual property of edges does the median filter tend to preserve better than the averaging filter?",
-      options: [
-        "It tends to preserve sharper edges, because it selects an actual pixel value present in the neighborhood rather than blending values across the edge boundary into a new, intermediate value",
-        "It always completely destroys every edge present in an image",
-        "It converts every edge in the image into a perfectly straight line",
-        "It has no relationship whatsoever to how edges are preserved"
-      ],
-      correct: 0,
-      explain: "Near an edge, an averaging filter blends pixel values from both sides of the boundary into a brand-new intermediate value that didn't originally exist, softening the transition. The median filter, by contrast, always outputs one of the actual pixel values already present in the neighborhood — meaning it's far more likely to pick a value that genuinely belongs to one side of the edge or the other, keeping the boundary comparatively crisp."
-    },
-    {
-      q: "In the manual median filter implementation shown in the lab, which NumPy function is used to compute the median of the 3x3 neighborhood?",
-      options: [
-        "np.median()",
-        "np.mean()",
-        "np.sum()",
-        "np.dot()"
-      ],
-      correct: 0,
-      explain: "The manual code extracts the 3x3 neighborhood array and passes it directly into np.median(neighborhood), which handles the sorting and middle-value selection automatically, then assigns that result to the corresponding output pixel. This directly mirrors what cv2.medianBlur() does internally, just spelled out explicitly with NumPy."
-    },
-    {
-      q: "For a 3x3 neighborhood containing 9 values sorted in ascending order, which position in that sorted list corresponds to the median value used by the filter?",
-      options: [
-        "The 5th value — the exact middle position out of the 9 sorted values",
-        "The 1st value, which is the smallest in the sorted list",
-        "The 9th value, which is the largest in the sorted list",
-        "The average of the 1st and 9th sorted values"
-      ],
-      correct: 0,
-      explain: "With 9 total values (an odd count), sorting them from smallest to largest places exactly 4 values below and 4 values above a single central element — the 5th position. That 5th value is, by definition, the median of the set, which is why 3x3 (and other odd-sized) neighborhoods are convenient: there is always one unambiguous middle element, with no need to average two central values together as you would with an even-sized neighborhood."
-    },
-    {
-      q: "Which type of noise is the median filter generally less effective against compared to Gaussian filtering?",
-      options: [
-        "Gaussian (continuous, smoothly distributed) noise, since a rank-based median doesn't specifically target smoothly varying random deviation the way a distance-weighted average is designed to",
-        "Salt-and-pepper noise, which the median filter actually handles worse than every other type of filter",
-        "No type of noise at all — median filtering removes every kind of image noise perfectly",
-        "Motion blur, which the median filter always removes completely and flawlessly"
-      ],
-      correct: 0,
-      explain: "Gaussian noise perturbs every pixel by a small, smoothly-distributed random amount rather than producing rare extreme outliers, so there's no dramatic outlier for the median filter's sorting-and-selecting mechanism to specifically exploit and discard. A distance-weighted averaging approach, like the Gaussian filter, is generally more effective at smoothing out this kind of continuous random variation than the median filter is."
-    },
-    {
-      q: "Why must the kernel/window size for cv2.medianBlur() always be an odd number?",
-      options: [
-        "An odd-sized window guarantees there is a single, well-defined middle element after sorting, avoiding any ambiguity about which value counts as the median",
-        "Even-sized windows cause OpenCV to crash immediately without throwing any exception",
-        "Odd sizes are required so that the filter can simultaneously perform averaging alongside the median calculation",
-        "It's an arbitrary restriction imposed by OpenCV with no underlying mathematical reason"
-      ],
-      correct: 0,
-      explain: "With an odd total count of pixels (such as 9 for a 3x3 window, or 25 for a 5x5 window), sorting always produces one unambiguous central element. An even-sized window would instead produce two competing 'middle' values, forcing an arbitrary choice (or an extra averaging step) about which one — or what combination — to treat as the median, which is exactly the ambiguity that odd-sized kernels avoid."
-    },
-    {
-      q: "If a single very bright 'salt' pixel (value 255) sits among 8 normal mid-gray pixels in a 3x3 window, what will the median filter output at that location?",
-      options: [
-        "A value close to the surrounding mid-gray pixels, since the single bright outlier gets sorted to one extreme end of the list and excluded from the middle position",
-        "Exactly 255, leaving the bright outlier completely untouched in the output",
-        "The plain average of all 9 values, including the extreme outlier value",
-        "Exactly 0, which would turn the pixel completely black"
-      ],
-      correct: 0,
-      explain: "When the 9 values are sorted, the single 255 outlier lands at the very top of the list — far from the middle 5th position, which will instead be occupied by one of the 8 mid-gray values. Because the filter only outputs that middle value, the extreme salt pixel is effectively discarded, and the output at that location closely matches its true, uncorrupted mid-gray surroundings."
-    }
-  ]
-},
-{
-  title: "Min / Max / Midpoint Filters",
-  blurb: "A family of order-statistic filters that look at the extremes of a neighborhood — its brightest pixel, its darkest pixel, or the midpoint between them — rather than its average or its median.",
-  takeaway: "Min, max, and midpoint filters all key off neighborhood extremes rather than central tendency, and OpenCV's morphological erode/dilate functions give you two of them for free.",
-  questions: [
-    {
-      q: "What does the maximum (max) filter set each output pixel to?",
-      options: [
-        "The highest (brightest) pixel value found anywhere within the neighborhood defined by the kernel",
-        "The lowest pixel value found anywhere within the neighborhood",
-        "The arithmetic average of all the pixel values in the neighborhood",
-        "The pixel value located exactly at the center of the neighborhood, left completely unchanged"
-      ],
-      correct: 0,
-      explain: "As listed in the lab's overview of smoothing filter types, the maximum filter selects the highest pixel value of all those in the kernel — meaning even if only one pixel in the entire neighborhood is bright, that brightness gets propagated to the output, since it dominates the max operation regardless of how dark the other neighbors are."
-    },
-    {
-      q: "Which OpenCV morphological operation was used in the lab as a convenient shortcut to perform maximum filtering?",
-      options: [
-        "cv2.dilate()",
-        "cv2.erode()",
-        "cv2.Canny()",
-        "cv2.medianBlur()"
-      ],
-      correct: 0,
-      explain: "The lab's max filtering example uses max_filtered = cv2.dilate(image, kernel) — dilation is a morphological operation that, for grayscale images with an all-ones structuring element, effectively expands bright regions by replacing each pixel with the maximum value found in its neighborhood, making it a direct, efficient stand-in for a manual maximum filter."
-    },
-    {
-      q: "What visual effect does repeatedly applying a maximum filter tend to have on a grayscale image?",
-      options: [
-        "Bright regions or objects appear to grow or expand, while dark regions correspondingly shrink, since every pixel adopts the brightest nearby value in its neighborhood",
-        "Dark regions expand while bright regions shrink instead",
-        "The entire image becomes a perfectly uniform shade of gray everywhere",
-        "No visible change occurs to the image at all"
-      ],
-      correct: 0,
-      explain: "Because each output pixel takes on the brightest value found nearby, any bright object effectively 'bleeds' its brightness outward into neighboring darker pixels with every pass of the filter. Over repeated applications, this causes bright shapes to visibly grow (dilate) at the expense of surrounding darker areas — the exact morphological behavior that gives cv2.dilate() its name."
-    },
-    {
-      q: "Which OpenCV function was used as a shortcut for minimum filtering in the lab code?",
-      options: [
-        "cv2.erode()",
-        "cv2.dilate()",
-        "cv2.GaussianBlur()",
-        "cv2.filter2D()"
-      ],
-      correct: 0,
-      explain: "The lab's min filtering example uses min_filtered = cv2.erode(image, kernel). Erosion is dilation's morphological counterpart: with an all-ones structuring element applied to a grayscale image, it replaces each pixel with the minimum value found in its neighborhood, effectively 'eroding' or shrinking bright regions from their edges."
-    },
-    {
-      q: "What does the minimum (min) filter set each output pixel to, and what visual effect does it tend to have on an image?",
-      options: [
-        "It sets the pixel to the lowest (darkest) value found in the neighborhood, which tends to make dark regions or objects appear to grow while bright details shrink",
-        "It sets the pixel to the brightest value found in the neighborhood, causing bright regions to grow instead",
-        "It sets the pixel to the mean of the neighborhood, producing a uniform overall blur",
-        "It leaves every pixel in the image completely unchanged"
-      ],
-      correct: 0,
-      explain: "As listed in the lab's overview, the minimum filter selects the least pixel value of all those in the kernel. Since darker values dominate the output wherever they appear nearby, dark regions of an image tend to expand outward while smaller bright details and highlights get eroded away — the direct visual opposite of what the maximum filter produces."
-    },
-    {
-      q: "How is the midpoint filter's output value calculated for a given neighborhood?",
-      options: [
-        "It averages the maximum and minimum pixel values found in the neighborhood together, i.e., (max + min) / 2",
-        "It sums every single pixel value in the neighborhood and divides by the neighborhood's total area, exactly like the averaging filter",
-        "It always outputs a fixed value of 128, regardless of what's actually in the neighborhood",
-        "It selects the median value from the sorted list, making it identical to the median filter"
-      ],
-      correct: 0,
-      explain: "As described in the lab's overview, the mid-point filter computes the average of the maximum and minimum pixel values in the kernel. Unlike a full averaging filter, which considers all 9 (or more) values equally, the midpoint filter only looks at the two most extreme values in the neighborhood and splits the difference between them."
-    },
-    {
-      q: "In what kind of noise scenario is the midpoint filter typically most useful?",
-      options: [
-        "For noise with a roughly symmetric distribution, such as mild Gaussian-like or uniformly distributed noise, since averaging the two extremes tends to cancel out symmetric random variation",
-        "It is specifically designed only for removing motion blur, and nothing else",
-        "It is useful exclusively on color images and provides no benefit on grayscale images",
-        "It performs identically to the median filter under every circumstance"
-      ],
-      correct: 0,
-      explain: "Because the midpoint filter's output depends entirely on the local maximum and minimum, it works best when noise is symmetric around the true underlying value — meaning the highest and lowest observed values in a neighborhood tend to be roughly equidistant from the real signal, so averaging them cancels the noise reasonably well. It performs far worse on skewed or impulse-type noise, where the extremes aren't symmetric around the true value."
-    },
-    {
-      q: "Both cv2.dilate() and cv2.erode() require a structuring element (kernel) as input. In the lab's max and min filtering examples, what shape and size of kernel was used?",
-      options: [
-        "A 3x3 kernel filled entirely with ones, created using np.ones((3,3), np.uint8)",
-        "A 1x1 kernel containing a single zero value",
-        "A 5x5 kernel filled with randomly generated values",
-        "No kernel was required at all for either dilation or erosion"
-      ],
-      correct: 0,
-      explain: "The lab code defines kernel = np.ones((3,3), np.uint8) and reuses this same all-ones 3x3 structuring element for both cv2.dilate() (max filtering) and cv2.erode() (min filtering). With every entry equal to 1, this kernel simply defines a plain 3x3 neighborhood to search for the max or min value, without applying any additional shape constraint."
-    }
-  ]
-},
-{
-  title: "OpenCV Function Specifics",
-  blurb: "The actual function calls and parameters from the lab's code — the syntax behind the theory, including what those arguments to filter2D, GaussianBlur, magnitude, and addWeighted are really doing.",
-  takeaway: "The math only matters once you know exactly which OpenCV call implements it, and what each of its parameters is actually controlling.",
-  questions: [
-    {
-      q: "What does the ddepth=-1 argument mean when calling cv2.filter2D(src=image, ddepth=-1, kernel=kernel1)?",
-      options: [
-        "The output image will have the same pixel data type/depth as the input source image",
-        "The output image will be forcibly converted to 1-bit black-and-white depth",
-        "The function will immediately fail, since -1 is treated as an invalid depth value",
-        "The output image will automatically be converted to a 64-bit floating-point depth"
-      ],
-      correct: 0,
-      explain: "ddepth controls the bit-depth/data type of the resulting output image. Passing -1 is a convenient shorthand telling OpenCV to simply match whatever data type the source image already uses — for the grayscale images loaded in this lab, that keeps the output as the same 8-bit unsigned integer format as the input, without requiring an explicit type conversion."
-    },
-    {
-      q: "Which two arguments are essentially always required by cv2.filter2D()?",
-      options: [
-        "The source image and the kernel used to convolve with it",
-        "Only the kernel, since the source image argument is entirely optional",
-        "The image and an explicit target noise level",
-        "The image and a target file path where the output should be saved"
-      ],
-      correct: 0,
-      explain: "cv2.filter2D() is a general-purpose convolution function, so at minimum it needs to know what to convolve (the source image) and what to convolve it with (the kernel). The ddepth argument is also commonly supplied (often as -1), but the operation is fundamentally defined by pairing an image with a kernel."
-    },
-    {
-      q: "Why did the lab code load the image using cv2.IMREAD_GRAYSCALE for these filtering experiments?",
-      options: [
-        "To simplify the demonstration down to a single intensity channel per pixel, making the convolution math and visualization straightforward instead of juggling three separate color channels",
-        "Because cv2.filter2D can technically only operate on grayscale images and never on color images",
-        "Because grayscale images always load faster than color images, regardless of file size",
-        "Because color images cannot be represented at all as NumPy arrays"
-      ],
-      correct: 0,
-      explain: "Working with a single grayscale intensity channel keeps the convolution examples simple and easy to visualize with imshow(..., cmap='gray') — each pixel is just one number, so the effect of a kernel is easy to reason about directly. In practice, cv2.filter2D() works perfectly well on multi-channel color images too, by applying the same kernel independently to each channel; grayscale is simply a pedagogical simplification here."
-    },
-    {
-      q: "In the code cv2.copyMakeBorder(image, 1, 1, 1, 1, cv2.BORDER_CONSTANT, value=0), what do the four separate '1' arguments represent?",
-      options: [
-        "The number of pixels of padding added to the top, bottom, left, and right edges of the image, respectively",
-        "The number of color channels, rows, columns, and bit depth of the source image",
-        "Four independent kernel weight values used somewhere else in the pipeline",
-        "The pixel coordinates of the four corners of the image, used for cropping"
-      ],
-      correct: 0,
-      explain: "cv2.copyMakeBorder()'s signature accepts the source image followed by four separate integers specifying how many pixels of border to add on the top, bottom, left, and right sides, in that order — here, each is set to 1, matching exactly the single pixel of padding needed on every side for a 3x3 kernel to have a full neighborhood at every image location."
-    },
-    {
-      q: "What does cv2.magnitude(vertical_edges, horizontal_edges) compute in the Sobel operator example?",
-      options: [
-        "The combined edge strength at each pixel, computed as the square root of the sum of the squares of the vertical and horizontal gradient values — essentially their Euclidean magnitude",
-        "The simple, unweighted sum of the two gradient images with no further mathematical operation",
-        "The plain average of the two separate gradient images",
-        "A purely boolean mask that only indicates where an edge exists, with no strength information at all"
-      ],
-      correct: 0,
-      explain: "Given two perpendicular gradient components at each pixel (how fast intensity changes horizontally, and how fast it changes vertically), cv2.magnitude() treats them like the x and y components of a 2D vector and computes that vector's length: sqrt(horizontal² + vertical²). This produces a single combined edge-strength value at every pixel that correctly accounts for edges at any angle, not just perfectly horizontal or vertical ones."
-    },
-    {
-      q: "Why are horizontal_edges and vertical_edges explicitly cast with .astype(np.float32) before computing cv2.magnitude() in the Sobel example?",
-      options: [
-        "Sobel gradient values can be negative and can exceed the standard 0-255 unsigned 8-bit range, so a floating-point type is needed to preserve both sign and magnitude accurately before combining them",
-        "Because cv2.magnitude() only accepts plain text string inputs otherwise",
-        "Because images stored as float32 always load faster from disk than other formats",
-        "Because grayscale images must always be internally represented as float32 by OpenCV convention"
-      ],
-      correct: 0,
-      explain: "The Sobel kernels contain negative weights (like -1 and -2), so raw gradient values naturally include negative numbers representing the direction of intensity change, along with values that can exceed 255 in magnitude. An unsigned 8-bit integer type would clip or wrap these values incorrectly, so converting to float32 first preserves the true signed gradient values, ensuring cv2.magnitude() computes an accurate combined result."
-    },
-    {
-      q: "What is the purpose of cv2.addWeighted(image, 1+k, mask, -k, 0) in the unsharp masking code?",
-      options: [
-        "It combines the original image and the high-frequency detail mask using specified weighting factors, blending them together into the final sharpened output image",
-        "It resizes the image and the mask so that their dimensions match one another",
-        "It converts both the image and the mask into grayscale before combining them",
-        "It saves the blended result directly to a file literally named 'mask'"
-      ],
-      correct: 0,
-      explain: "cv2.addWeighted() computes a weighted sum of two images: here, the original image is weighted by (1+k) and the detail mask is weighted by (-k), with 0 added as an offset. This is precisely the mathematical formula for unsharp masking — boosting the original image by a scaled amount of the extracted detail mask — condensed into a single efficient OpenCV call."
-    },
-    {
-      q: "What does cv2.subtract(image, gaussian_blur) compute in the unsharp masking workflow, and what does the resulting image represent?",
-      options: [
-        "The pixel-wise difference between the original image and its blurred version, producing a 'mask' that highlights the high-frequency detail and edges that were smoothed away during blurring",
-        "The pixel-wise sum of the original and blurred images, producing a brighter combined image",
-        "A completely black image containing no useful information whatsoever",
-        "The plain average of the original image and its blurred version"
-      ],
-      correct: 0,
-      explain: "Since blurring removes fine detail and edges while leaving broad, smooth tonal areas mostly intact, subtracting the blurred version from the original leaves behind primarily the fine detail and edge information that the blur wiped out. This difference image, called the 'mask', is exactly what unsharp masking amplifies and adds back to the original to achieve its sharpening effect."
-    }
-  ]
-},
-{
-  title: "Laplacian Sharpening",
-  blurb: "A second-derivative operator that finds edges by detecting rapid intensity change in any direction — and the classic trick of adding that result back onto the original image to sharpen it.",
-  takeaway: "The Laplacian finds edges by responding to change and ignoring flat regions entirely — adding that response back onto the original is what reveals a visibly sharper image.",
-  questions: [
-    {
-      q: "What type of derivative does the Laplacian operator use to detect edges and details in an image?",
-      options: [
-        "A second-order derivative, which responds to rapid intensity changes (edges) occurring in any direction",
-        "A zero-order derivative, which is really just the original, unmodified pixel value",
-        "A first-order derivative computed only in the horizontal direction",
-        "A first-order derivative computed only in the vertical direction"
-      ],
-      correct: 0,
-      explain: "The Laplacian is a second-derivative operator, meaning it measures the rate of change of the rate of change of intensity. Because it sums second derivatives in both the x and y directions together into one combined value, it responds strongly wherever intensity is changing rapidly regardless of the direction that change is oriented in — unlike first-order, direction-specific operators such as Sobel."
-    },
-    {
-      q: "In the Laplacian kernel used in the lab, [[0,1,0],[1,-4,1],[0,1,0]], what do all of the kernel's weights sum to?",
-      options: [
-        "Zero, which means the filter produces near-zero output in flat, uniform regions and only responds meaningfully where intensity changes occur",
-        "Nine, matching the total number of cells in a 3x3 averaging kernel",
-        "One, identical to the sum used by a properly normalized smoothing filter",
-        "Sixteen, matching the sum used by the weighted average filter"
-      ],
-      correct: 0,
-      explain: "Adding up the kernel's weights gives 0+1+0+1+(-4)+1+0+1+0 = 0. A zero-sum kernel is characteristic of edge/derivative-detecting filters: in a perfectly flat, uniform region of the image, every neighboring pixel is nearly identical, so multiplying by weights that sum to zero produces an output near zero as well. Only where the neighborhood's values genuinely differ from each other does the filter produce a meaningfully nonzero response."
-    },
-    {
-      q: "Why does applying the raw Laplacian filter alone tend to produce a mostly dark image with only faint or bright outlines visible?",
-      options: [
-        "Because the Laplacian's zero-sum kernel produces values near zero in smooth, unchanging areas, and only produces significant nonzero responses right at the edges or fine detail boundaries in the image",
-        "Because the Laplacian filter always inverts the entire image's color palette as a side effect",
-        "Because the Laplacian filter behaves identically to a plain averaging filter",
-        "Because it deletes half of the image's pixels outright during processing"
-      ],
-      correct: 0,
-      explain: "Since the kernel's weights sum to zero, any region of roughly constant intensity — which describes most of a typical photograph — produces an output value close to zero (displayed as dark or black). Only at the boundaries between regions, where pixel intensities genuinely differ from their neighbors, does the filter produce a substantial nonzero response, which is what shows up as the bright or dark 'outline' effect characteristic of raw Laplacian output."
-    },
-    {
-      q: "Why is the Laplacian-filtered result typically added back to the original image, rather than being displayed on its own for sharpening purposes?",
-      options: [
-        "Adding it back reintroduces the enhanced edge and detail information on top of the original intensities, boosting local contrast right at edges while preserving the rest of the image's overall content",
-        "Because displaying the raw Laplacian result by itself is technically impossible in any image viewer",
-        "Because adding it back automatically converts a grayscale image into a full color image",
-        "Because it eliminates any need for a kernel in future processing steps"
-      ],
-      correct: 0,
-      explain: "On its own, the Laplacian output is mostly a near-black image with faint edge information — useful for detecting edges, but not visually meaningful as a finished photograph. Adding that edge-response signal back onto the original pixel values reinforces exactly the regions where intensity is changing rapidly, effectively boosting contrast right at edges while leaving smooth areas largely as they were, which is what produces a visibly sharper-looking final image."
-    },
-    {
-      q: "What is the high-boost kernel [[-1,-1,-1],[-1,9,-1],[-1,-1,-1]] essentially equivalent to?",
-      options: [
-        "An identity kernel combined with a Laplacian-like edge-enhancement kernel folded into a single kernel, so it performs sharpening in one convolution step instead of two separate ones",
-        "A pure averaging/blurring kernel that has no sharpening effect whatsoever",
-        "A kernel that always produces a completely black output image, no matter the input",
-        "A rotation kernel that spins the entire image 180 degrees"
-      ],
-      correct: 0,
-      explain: "This kernel can be thought of as an identity kernel (pass the original pixel through) plus a Laplacian-style kernel (subtract the surrounding neighbors' influence), pre-combined into one set of weights. Applying it in a single cv2.filter2D() call achieves the same 'original plus edge enhancement' effect that a separate Laplacian-then-add-back workflow accomplishes in two steps."
-    },
-    {
-      q: "Why does the high-boost kernel's center weight of 9 make mathematical sense, given its eight surrounding weights of -1?",
-      options: [
-        "The weights sum to 9 minus 8, which equals 1 — preserving overall image brightness (unlike the zero-sum raw Laplacian) while still emphasizing the center pixel relative to its neighbors, producing both sharpening and brightness-normalized output",
-        "The value 9 was chosen completely at random, with no mathematical relationship to the surrounding -1 weights",
-        "The center weight must always equal the total number of rows in the kernel, regardless of what the surrounding weights are",
-        "The value 9 forces the filter's output to always become pure white"
-      ],
-      correct: 0,
-      explain: "Summing the weights gives 9 + (8 × -1) = 9 - 8 = 1. Because this sum equals 1 rather than 0, the kernel is implicitly normalized to preserve the image's overall brightness level in flat regions — unlike the raw zero-sum Laplacian, which drives flat regions toward black. At the same time, the strong positive center weight relative to the negative surrounding weights still emphasizes sharp local contrast, giving a genuinely sharpened but properly-exposed result in a single step."
-    },
-    {
-      q: "In terms of frequency content, what does image sharpening using the Laplacian primarily amplify?",
-      options: [
-        "High-frequency components of the image, such as edges and fine texture, where intensity changes rapidly over a short distance",
-        "Low-frequency components, such as smooth gradients and large flat regions",
-        "The image's color saturation exclusively, with no effect on intensity structure",
-        "The image's overall file compression ratio"
-      ],
-      correct: 0,
-      explain: "In image processing, 'high frequency' refers to content that changes rapidly across nearby pixels — edges, fine textures, and small details — while 'low frequency' refers to smooth, slowly-varying regions. Because the Laplacian responds strongly only where intensity changes quickly, it inherently isolates and, when added back to the original, amplifies exactly the high-frequency content of the image."
-    },
-    {
-      q: "What common side effect can excessive Laplacian sharpening introduce into an image?",
-      options: [
-        "Amplified noise and visible ringing or halo artifacts around edges, since the operator is sensitive to any rapid pixel-to-pixel variation, including random noise, not just genuine object edges",
-        "The image becoming perfectly smooth with absolutely zero visible edges remaining",
-        "The image file size becoming physically impossible for any computer to store",
-        "The image automatically becoming grayscale, even if it started out in full color"
-      ],
-      correct: 0,
-      explain: "Because the Laplacian responds to any rapid local change in intensity, it cannot distinguish between a genuine edge and random pixel-level noise — both look like 'rapid change' to the filter. Applying too strong a Laplacian sharpening effect therefore tends to amplify noise right alongside real edges, and can also introduce exaggerated bright/dark halo artifacts hugging the edges of objects."
-    },
-    {
-      q: "How does the response of a Laplacian filter typically compare to that of a Sobel filter in terms of directionality?",
-      options: [
-        "The Laplacian is generally isotropic (responding similarly to edges in any direction), since it combines second derivatives in both x and y, while the Sobel operator is directional, computing separate horizontal and vertical gradient responses",
-        "The Laplacian only ever detects horizontal edges, behaving exactly like a single Sobel kernel",
-        "The Sobel operator has no directional properties of any kind",
-        "They are mathematically identical operators simply given two different names"
-      ],
-      correct: 0,
-      explain: "Because the Laplacian kernel combines second-derivative information from both the x and y directions into a single symmetric response, it reacts to edges of any orientation roughly equally — a property called isotropy. The Sobel operator, by contrast, uses two separate kernels (sobel_h and sobel_v in this lab) that are each sensitive to a specific direction, requiring an additional combination step (like cv2.magnitude()) to get an orientation-independent result."
-    },
-    {
-      q: "Why is Laplacian sharpening described as fundamentally different in purpose from Gaussian or averaging filters?",
-      options: [
-        "Sharpening filters aim to enhance and emphasize high-frequency detail and edges, whereas smoothing filters like Gaussian and averaging aim to suppress high-frequency detail and reduce noise — the two categories pursue essentially opposite goals",
-        "They are functionally identical operations that have simply been given two different names",
-        "Sharpening filters can only ever be applied to images that have already been blurred beforehand, never to an original photo",
-        "Smoothing filters always run faster than sharpening filters in every implementation, regardless of kernel size"
-      ],
-      correct: 0,
-      explain: "This lab groups filters into two broad categories for a reason: smoothing filters (averaging, weighted average, Gaussian, median, min, max, midpoint) all work to reduce variation and suppress noise, while sharpening filters (Laplacian, unsharp masking, high-boost) work to increase and emphasize variation at edges. Understanding that these two families are pulling in opposite directions is central to choosing the right filter for a given image problem."
-    }
-  ]
-},
-{
-  title: "Unsharp Masking & High Boost Filtering",
-  blurb: "A classic darkroom trick translated into code: blur the image, subtract that blur from the original to isolate detail, then add a scaled amount of that detail back in to sharpen.",
-  takeaway: "Unsharp masking is just: blur, subtract, boost, add back. A simple three-step loop that produces a genuinely powerful sharpening effect.",
-  questions: [
-    {
-      q: "What are the three fundamental steps of the unsharp masking technique, in the correct order?",
-      options: [
-        "(1) Blur the original image, (2) subtract the blurred version from the original to create a detail 'mask', (3) add that mask back to the original image, scaled by a chosen factor",
-        "(1) Sharpen the image first, (2) blur the already-sharpened image, (3) discard the original image entirely",
-        "(1) Convert the image to grayscale, (2) resize the image, (3) save the resulting file",
-        "(1) Apply a median filter, (2) apply an averaging filter, (3) average together the two separate results"
-      ],
-      correct: 0,
-      explain: "This is exactly the sequence shown in the lab's code: gaussian_blur = cv2.GaussianBlur(image, (7,7), 0) creates the blur, mask = cv2.subtract(image, gaussian_blur) isolates the detail lost during blurring, and output_image = cv2.addWeighted(image, 1+k, mask, -k, 0) blends the original and the detail mask back together with a chosen strength k to produce the final sharpened result."
-    },
-    {
-      q: "In the lab code, gaussian_blur = cv2.GaussianBlur(image, (7,7), 0) is used as the first step of unsharp masking. What is the purpose of this blur?",
-      options: [
-        "To create a smoothed reference version of the image, so that subtracting it from the original isolates just the high-frequency edge and detail information",
-        "To permanently reduce the image's resolution for long-term storage purposes",
-        "To convert the image into a completely different, unrelated color space",
-        "To remove the need for any further processing steps after this point"
-      ],
-      correct: 0,
-      explain: "The blurred image represents what's left of the picture once fine detail and edges have been smoothed away — essentially, the low-frequency content only. Subtracting this blurred version from the original then leaves behind mainly the high-frequency information that the blur discarded, which becomes the 'mask' used in the next step to reinforce exactly that missing detail."
-    },
-    {
-      q: "In the code output_image = cv2.addWeighted(image, 1+k, mask, -k, 0), what role does the constant k play?",
-      options: [
-        "It controls the strength or amount of sharpening applied — a larger k increases how strongly the detail mask gets boosted and blended into the final image",
-        "It determines the exact file format the final image will be saved as",
-        "It sets the precise width of the kernel used during the blurring step",
-        "It has no functional effect whatsoever and exists purely for code readability"
-      ],
-      correct: 0,
-      explain: "The formula weights the original image by (1+k) and subtracts k times the detail mask (since the mask's weight is -k). As k increases, more of the extracted high-frequency detail gets added back on top of the original, producing a progressively more aggressive sharpening effect — which is why the lab sets k = 1 as a moderate starting value."
-    },
-    {
-      q: "What does the term 'mask' refer to in the unsharp masking technique, as computed by cv2.subtract(image, gaussian_blur)?",
-      options: [
-        "The difference image, containing mostly edge and fine-detail information that was lost during blurring, which gets amplified and reintroduced to sharpen the final result",
-        "A binary image used strictly to hide or censor sensitive regions of a photo",
-        "A completely separate image file loaded from disk and overlaid on top of the original",
-        "The exact same thing as the Laplacian kernel, simply given a different name"
-      ],
-      correct: 0,
-      explain: "In this context, 'mask' doesn't mean hiding something — it refers to the difference image that captures the high-frequency detail the blurring step smoothed away. This mask is essentially a map of where the image contains fine structure and edges, which is precisely the information that gets scaled and reintroduced to sharpen the final output."
-    },
-    {
-      q: "If k = 0 in the formula output_image = cv2.addWeighted(image, 1+k, mask, -k, 0), what would the result be?",
-      options: [
-        "The output would be identical to the original image, since none of the detail mask is being added or subtracted at all",
-        "The output would be a completely black image",
-        "The output would simply be the blurred image itself",
-        "The output would consist entirely of random noise, unrelated to the original"
-      ],
-      correct: 0,
-      explain: "With k set to 0, the weighting becomes cv2.addWeighted(image, 1, mask, 0, 0) — the original image is kept at full weight, and the mask contributes nothing at all. The formula collapses down to simply returning the original, unmodified image, confirming that k is genuinely the parameter controlling how much sharpening gets applied."
-    },
-    {
-      q: "How does 'high-boost filtering' generally differ from standard unsharp masking in terms of its typical use case?",
-      options: [
-        "High-boost filtering uses an amplification factor (often greater than what standard unsharp masking uses) that can more aggressively boost high-frequency detail while still retaining some of the low-frequency original content, useful when more pronounced sharpening is desired",
-        "High-boost filtering can only ever be applied to video files, never to still images",
-        "High-boost filtering completely removes every edge present in the image",
-        "High-boost filtering is mathematically unrelated to unsharp masking in any way"
-      ],
-      correct: 0,
-      explain: "High-boost filtering is essentially a generalized, more aggressive version of unsharp masking — by pushing the amplification factor higher, more of the extracted detail mask gets emphasized relative to the base image, producing a stronger sharpening effect for cases where standard unsharp masking's typical strength isn't pronounced enough."
-    },
-    {
-      q: "Why might a larger Gaussian blur kernel (such as 7x7 instead of 3x3) be chosen for the blurring step of unsharp masking?",
-      options: [
-        "A larger blur kernel removes a broader range of fine detail before the subtraction step, so the resulting mask captures a wider band of 'detail' information, which can produce a more pronounced sharpening effect once added back",
-        "A larger kernel guarantees the resulting mask will always be completely black",
-        "Kernel size in the blurring step has absolutely no effect on the resulting mask",
-        "A larger kernel actually converts the sharpening filter into a pure noise-removal filter instead"
-      ],
-      correct: 0,
-      explain: "A 7x7 Gaussian blur removes more detail (across a wider spatial scale) than a tighter 3x3 blur would. Since the mask is defined as whatever the blur removed, a larger blur kernel produces a mask containing a broader range of detail — from very fine texture up through moderately larger structures — which changes the character and strength of the final sharpening effect once that mask is added back."
-    },
-    {
-      q: "Both the manual Laplacian-add-back method and unsharp masking aim to sharpen an image. What is a key conceptual similarity between them?",
-      options: [
-        "Both work by isolating high-frequency detail — via a derivative operator in one case, or a blur-and-subtract process in the other — and then reinforcing that detail on top of the original image",
-        "Both techniques require the image to first be converted into a video file before processing",
-        "Both techniques work exclusively on already-grayscale images and cannot process color images",
-        "Neither technique involves any form of subtraction or addition between two images at any point"
-      ],
-      correct: 0,
-      explain: "Despite using different mechanisms to find the 'detail' — the Laplacian directly measures rapid local intensity change, while unsharp masking indirectly isolates detail by subtracting a blurred version from the original — both approaches ultimately follow the same core sharpening principle: extract a signal representing fine detail/edges, then add that signal back on top of the original image to boost its visibility."
-    },
-    {
-      q: "What could happen if the unsharp masking amount (k) is set far too high?",
-      options: [
-        "The image can develop visible halo artifacts, over-exaggerated edges, and amplified noise, making it look unnaturally harsh rather than crisply sharpened",
-        "The image will automatically revert back to its original, unsharpened state on its own",
-        "The image file will fail to open correctly in any image viewer",
-        "The image will become perfectly smooth, with all visible detail removed"
-      ],
-      correct: 0,
-      explain: "Since the detail mask contains both genuine edges and any noise present in the image, cranking k too high amplifies both indiscriminately. Beyond a certain point, this produces an over-processed look with unnaturally bright/dark halos hugging edges and noticeably amplified graininess — the same fundamental risk that overly aggressive Laplacian sharpening carries."
-    },
-    {
-      q: "Why is it generally better to sharpen an image using unsharp masking or high-boost filtering rather than simply increasing the image's overall contrast?",
-      options: [
-        "Because these techniques selectively boost high-frequency edge and detail information, rather than uniformly stretching the entire tonal range, which sharpens perceived detail without necessarily washing out or crushing other, unrelated tonal areas",
-        "Because adjusting contrast is technically impossible to compute on a digital image",
-        "Because unsharp masking and simple contrast adjustment always produce mathematically identical results",
-        "Because sharpening filters don't actually require any image data as input, unlike contrast tools"
-      ],
-      correct: 0,
-      explain: "A global contrast boost stretches every pixel's value relative to the overall tonal range, regardless of whether that pixel sits on an edge or in a smooth, flat area — which can crush shadow or highlight detail unrelated to sharpness at all. Unsharp masking, by contrast, specifically targets the high-frequency detail mask, leaving smooth regions largely untouched while concentrating its effect right where edges and texture actually live."
-    }
-  ]
-},
-{
-  title: "Sobel Operator & Gradient Filtering",
-  blurb: "Directional edge detection using two separate first-derivative kernels — one sensitive to horizontal change, one to vertical — combined into a single measure of edge strength.",
-  takeaway: "Sobel splits edge detection into direction: horizontal and vertical gradients computed separately, then combined by magnitude into one orientation-independent edge map.",
-  questions: [
-    {
-      q: "What is the primary purpose of the Sobel operator in image processing?",
-      options: [
-        "To detect edges by estimating the intensity gradient — the rate of change of pixel intensity — in the horizontal and/or vertical direction",
-        "To smooth an image by averaging together neighboring pixel values",
-        "To compress an image and reduce its overall file size",
-        "To convert a grayscale image into a full, accurate color image"
-      ],
-      correct: 0,
-      explain: "The Sobel operator is a first-order derivative filter designed specifically to estimate how quickly pixel intensity changes across an image, in either the horizontal or vertical direction. Since edges are, by definition, places where intensity changes rapidly, a strong gradient response from the Sobel kernels reliably marks the location of an edge."
-    },
-    {
-      q: "In the lab code, sobel_h = [[-1,-2,-1],[0,0,0],[1,2,1]] is used to detect edges. What direction of edges does this specific kernel emphasize?",
-      options: [
-        "Horizontal edges, since the kernel responds strongly to vertical intensity changes — differences between its top row and bottom row",
-        "Purely diagonal edges oriented at exactly 45 degrees only",
-        "Vertical edges exclusively, making it identical in behavior to sobel_v",
-        "No particular direction at all, since the kernel is fully symmetric in every direction"
-      ],
-      correct: 0,
-      explain: "This kernel subtracts the top row's values from the bottom row's values (weighted more heavily in the middle column), so it produces a strong response wherever intensity changes sharply moving from top to bottom — which is precisely the signature of a horizontal edge (a boundary line running left-to-right through the image). This is why it's named sobel_h, for horizontal edge detection."
-    },
-    {
-      q: "How does sobel_v = [[-1,0,1],[-2,0,2],[-1,0,1]] differ from sobel_h in terms of what it detects?",
-      options: [
-        "It emphasizes vertical edges by responding to horizontal intensity changes — differences between its left column and right column — and is essentially the transpose of the horizontal kernel",
-        "It is mathematically identical to sobel_h, with absolutely no difference between the two",
-        "It only works correctly on color images and fails completely on grayscale images",
-        "It measures the image's overall average brightness rather than any edge information"
-      ],
-      correct: 0,
-      explain: "sobel_v subtracts the left column's values from the right column's values (again weighted more heavily in the middle row), producing a strong response wherever intensity changes sharply moving from left to right — the signature of a vertical edge (a boundary line running top-to-bottom). Notice that sobel_v is literally the transpose of sobel_h, reflecting the fact that vertical and horizontal edge detection are mirror-image problems of each other."
-    },
-    {
-      q: "Why does the lab combine horizontal_edges and vertical_edges using cv2.magnitude() rather than simply adding them together?",
-      options: [
-        "Combining via magnitude — the square root of the sum of squares — correctly represents overall edge strength as a vector length regardless of direction, whereas simple addition could cancel out gradients with opposite signs and misrepresent true edge strength",
-        "Because cv2.magnitude() is required purely for OpenCV licensing compliance reasons",
-        "Because performing simple addition on two arrays is computationally impossible in NumPy",
-        "Because cv2.magnitude() converts the resulting image into a completely different file format"
-      ],
-      correct: 0,
-      explain: "Treating the horizontal and vertical gradient values at a pixel as the two components of a 2D vector, the vector's true length is given by the Pythagorean-style formula sqrt(horizontal² + vertical²) — which is exactly what cv2.magnitude() computes. Simply adding the two raw gradient values together, by contrast, risks positive and negative gradients partially canceling each other out, which would understate or misrepresent the actual edge strength at that location."
-    },
-    {
-      q: "What does the value '2' in the middle row or column of the Sobel kernels (for example, the -2 and 2 entries in sobel_v) represent conceptually?",
-      options: [
-        "An extra weighting given to the pixels directly adjacent (same row) to the center, making the gradient estimate more heavily influenced by the pixels closest to the point being evaluated",
-        "A typo in the kernel definition that carries no real mathematical significance",
-        "The total number of color channels being processed by the filter",
-        "The exact number of edges that will be detected somewhere in the image"
-      ],
-      correct: 0,
-      explain: "Compared to the corner entries (weighted 1), the middle-row entries in sobel_v (or middle-column entries in sobel_h) are weighted more heavily at 2, giving extra emphasis to the pixels closest in line with the center row/column being evaluated. This weighting scheme also provides a small amount of built-in smoothing perpendicular to the gradient direction, making the estimate somewhat more robust than a bare, unweighted difference would be."
-    },
-    {
-      q: "Compared to a simple two-tap gradient (such as just [-1, 1]), what benefit does the full 3x3 Sobel kernel provide?",
-      options: [
-        "It combines gradient estimation with a small amount of smoothing across the perpendicular direction, making it somewhat more robust to noise than a bare single-row or single-column difference",
-        "It provides absolutely no benefit whatsoever and performs strictly worse in every possible case",
-        "It completely eliminates the need for any padding at the image's borders",
-        "It guarantees that the output image will always be rendered in full color"
-      ],
-      correct: 0,
-      explain: "A raw two-pixel difference like [-1, 1] is extremely sensitive to noise, since a single noisy pixel can swing the result significantly. By spreading its weights across a full 3x3 neighborhood — including some smoothing contribution from the rows/columns perpendicular to the main gradient direction — the Sobel kernel produces a gradient estimate that is noticeably less jumpy and more stable in the presence of typical image noise."
-    },
-    {
-      q: "In edge detection generally, what does a large gradient magnitude value at a pixel indicate?",
-      options: [
-        "A large, rapid change in intensity at that location, which typically corresponds to an edge or boundary between two distinct regions of the image",
-        "That the pixel happens to be located exactly at the geometric center of the image",
-        "That the pixel has been affected by JPEG compression artifacts specifically",
-        "That the pixel's red, green, and blue channel values are all perfectly identical"
-      ],
-      correct: 0,
-      explain: "By definition, the gradient magnitude measures how sharply intensity is changing at a given point. A large value means neighboring pixels differ substantially in brightness — exactly the situation you'd expect right at the boundary between, say, a dark object and a light background — which is why gradient magnitude maps are used directly as edge maps in techniques like the Sobel operator."
-    },
-    {
-      q: "What is a key difference between the Sobel operator and the Laplacian operator in terms of derivative order and directionality?",
-      options: [
-        "The Sobel operator computes first-order, direction-specific gradients (horizontal and vertical, calculated separately), while the Laplacian computes a second-order, direction-independent (isotropic) response",
-        "They are identical operators that will always produce exactly the same output image",
-        "The Sobel operator only works on strictly binary images, while the Laplacian only works on color images",
-        "The Laplacian is direction-specific while the Sobel operator is isotropic — which is the reverse of the actual truth"
-      ],
-      correct: 0,
-      explain: "Sobel uses first-order derivatives and deliberately splits its response by direction into two separate kernels, requiring a combination step like cv2.magnitude() to get a full picture of edge strength at every orientation. The Laplacian instead uses second-order derivatives combined directly into one symmetric kernel, giving a single isotropic (direction-independent) response in one step — a fundamentally different mathematical and practical approach to the same general goal of edge detection."
-    }
-  ]
-},
-{
-  title: "Kernel Size Effects & General Review",
-  blurb: "Tying it all together: how kernel size shapes every filter's behavior, and — now that you've met the whole toolbox — how to reason about which filter fits which problem.",
-  takeaway: "Every filter in this lab is either fighting noise or fighting blur. Know which fight you're in before you pick a kernel.",
-  questions: [
-    {
-      q: "As the kernel size of a smoothing (blurring) filter increases — for example, from 3x3 to 15x15 — what is the general trend in the result?",
-      options: [
-        "The image becomes progressively more blurred, since each output pixel is now influenced by a much larger neighborhood, and fine details and small structures increasingly disappear",
-        "The image becomes progressively sharper, with more visible fine detail than before",
-        "The image's file format automatically gets converted to something else",
-        "The processing always becomes faster the larger the kernel gets, with no exceptions"
-      ],
-      correct: 0,
-      explain: "This general rule holds across every smoothing filter covered in the lab — averaging, weighted average, Gaussian, and median alike. A larger kernel pulls information from a wider surrounding area into each output pixel's computation, and the wider that area gets, the more small-scale detail and structure gets blended away, producing progressively heavier blur."
-    },
-    {
-      q: "What is the general relationship between a smoothing filter's kernel size and the amount of noise it removes?",
-      options: [
-        "Larger kernels generally remove more noise, since averaging (or selecting) over a greater number of samples reduces random variation more effectively, but this comes at the cost of increasingly blurring genuine image detail and edges",
-        "Larger kernels always remove noise perfectly with zero blurring side effects, no matter how large they get",
-        "Kernel size has absolutely no relationship to how much noise gets removed",
-        "Smaller kernels always remove more noise than larger kernels do, in every situation"
-      ],
-      correct: 0,
-      explain: "Statistically, averaging over more samples tends to cancel out more random variation, which is why larger smoothing kernels generally suppress noise more thoroughly. But this benefit is inseparable from the cost of increased blurring — the same larger neighborhood that averages away noise also averages away genuine fine detail, which is exactly the trade-off explored throughout this lab's smoothing filter sections."
-    },
-    {
-      q: "Why is choosing an appropriate kernel size often described as a 'trade-off' in spatial filtering?",
-      options: [
-        "Because a kernel size effective enough to remove noise or achieve the desired smoothing/sharpening effect also tends to blur or distort fine image detail more, so practitioners must balance the strength of the effect against how much detail gets preserved",
-        "Because kernel size has zero effect on image quality and is purely a stylistic preference with no consequences",
-        "Because larger kernels always run in exactly the same amount of time as smaller kernels, with no performance difference",
-        "Because OpenCV restricts every single filter in its library to one single, fixed kernel size by design"
-      ],
-      correct: 0,
-      explain: "There's no single 'correct' kernel size — a size small enough to preserve fine detail may not remove enough noise, while a size large enough to remove noise thoroughly will also blur away legitimate detail. This tension is exactly the trade-off that shows up repeatedly across the lab's smoothing filter exercises, and choosing the right size always depends on the specific image and the specific problem being solved."
-    },
-    {
-      q: "Which statement correctly compares the median filter versus the Gaussian filter for denoising an image contaminated with salt-and-pepper noise?",
-      options: [
-        "The median filter is generally better suited to salt-and-pepper (impulse) noise, since it discards outlier extreme values rather than blending them in, whereas the Gaussian filter tends to blur those impulses into visible smudges rather than eliminating them",
-        "The Gaussian filter is always strictly better for every single type of noise, including salt-and-pepper noise",
-        "The two filters perform identically on every type of image noise, with no meaningful difference",
-        "Neither filter has any measurable effect on salt-and-pepper noise whatsoever"
-      ],
-      correct: 0,
-      explain: "This distinction is exactly why the lab's exercises ask you to compare averaging, Gaussian, and median filters directly on salt-and-pepper noise: the median filter's outlier-discarding, sort-based behavior makes it far more effective at removing sharp, extreme impulse noise, while linear filters like Gaussian instead blend those extreme values into their surroundings, spreading rather than eliminating the damage."
-    },
-    {
-      q: "What is the overarching relationship between 'image deblurring' and 'image denoising' as goals in spatial filtering?",
-      options: [
-        "Deblurring generally aims to sharpen or restore detail lost to blur (using operators like the Laplacian or unsharp masking), while denoising aims to suppress unwanted random variation (using smoothing filters like averaging, Gaussian, or median) — the two goals often pull in opposite directions and must be balanced carefully",
-        "They are exactly the same operation under two different names, and always use identical kernels",
-        "Deblurring only ever applies to audio files, and has nothing to do with images at all",
-        "Denoising always requires first converting the image into a video file"
-      ],
-      correct: 0,
-      explain: "Deblurring and sharpening filters push toward amplifying high-frequency detail and edges, while denoising and smoothing filters push toward suppressing that same high-frequency content. Because random noise and genuine fine detail often occupy a similar frequency range, these two goals are frequently in direct tension — sharpening an image can amplify noise, and denoising an image can blur genuine detail — which is precisely why choosing the right filter and the right strength for a given image is such a central skill in this lab."
-    },
-    {
-      q: "Considering all the filters covered in this lab — averaging, weighted average, Gaussian, median, min, max, midpoint, Laplacian, unsharp masking, high-boost, and Sobel — what is the single most important factor that determines whether a filter is used for smoothing or sharpening?",
-      options: [
-        "Whether the filter's kernel weights and design act to suppress high-frequency variation (smoothing, as in averaging, Gaussian, and median) or amplify and emphasize it (sharpening, as in Laplacian, unsharp masking, and Sobel)",
-        "The specific file format the image happens to be saved in once processing is finished",
-        "The particular programming language used to implement the filter's code",
-        "The number of megapixels captured by the original camera sensor that took the photo"
-      ],
-      correct: 0,
-      explain: "Every filter in this lab, no matter how different its kernel looks, ultimately falls into one of two camps based on how it treats high-frequency content: smoothing filters suppress it to reduce noise and detail, while sharpening filters amplify it to enhance edges and fine structure. Recognizing this single organizing principle is the key to understanding why the lab groups its experiments the way it does, and to choosing the right tool the next time you face a real filtering problem."
-    }
-  ]
-}
-];
-
-/* =========================================================
-   APP LOGIC
-   ========================================================= */
-const TOTAL_Q = DATA.reduce((n,c)=>n+c.questions.length,0);
-let state = { screen:'welcome', c:0, q:0 };
-let answered = {}; // key "c-q" -> selectedIndex
-
-const card = document.getElementById('card');
-
-function keyFor(c,q){ return c+'-'+q; }
-
-function answeredCount(){
-  return Object.keys(answered).length;
-}
-
-function conceptAnsweredCount(c){
-  let n=0;
-  for(let i=0;i<DATA[c].questions.length;i++){ if(answered[keyFor(c,i)]!==undefined) n++; }
-  return n;
-}
-
-function updateOverallProgress(){
-  const done = answeredCount();
-  const pct = Math.round((done/TOTAL_Q)*100);
-  document.getElementById('progLabel').textContent = done + ' / ' + TOTAL_Q + ' answered';
-  document.getElementById('progPercent').textContent = pct + '%';
-  document.getElementById('progFill').style.width = pct + '%';
-}
-
-function letterFor(i){ return String.fromCharCode(65+i); }
-
-function render(){
-  updateOverallProgress();
-  if(state.screen==='welcome') return renderWelcome();
-  if(state.screen==='intro') return renderIntro();
-  if(state.screen==='question') return renderQuestion();
-  if(state.screen==='complete') return renderComplete();
-  if(state.screen==='final') return renderFinal();
-}
-
-function renderWelcome(){
-  card.innerHTML = `
-    <div class="welcome">
-      <h2>Learn convolution &amp; spatial filtering, one question at a time.</h2>
-      <p>100 multiple-choice questions covering everything in Lab 3 — kernels, padding, averaging, Gaussian and median filters, min/max/midpoint filters, Laplacian sharpening, unsharp masking, and the Sobel operator. Answer, see why, move on. No scores, no pressure — just build real understanding.</p>
-      <div class="stats">
-        <div class="stat"><div class="n">100</div><div class="l">Questions</div></div>
-        <div class="stat"><div class="n">12</div><div class="l">Concepts</div></div>
-        <div class="stat"><div class="n">1</div><div class="l">Question at a time</div></div>
-      </div>
-      <div class="actions" style="justify-content:flex-start;">
-        <button class="btn btn-primary" onclick="goToConceptIntro(0)">Start Learning →</button>
-      </div>
-    </div>
-  `;
-}
-
-function renderIntro(){
-  const c = DATA[state.c];
-  card.innerHTML = `
-    <div class="concept-intro">
-      <div class="concept-tag">Concept ${state.c+1} of ${DATA.length}</div>
-      <h2>${c.title}</h2>
-      <p>${c.blurb}</p>
-      <div class="actions" style="justify-content:flex-start;">
-        <button class="btn btn-primary" onclick="startConceptQuestions()">Begin (${c.questions.length} questions) →</button>
-      </div>
-    </div>
-  `;
-}
-
-function startConceptQuestions(){
-  state.screen='question';
-  state.q=0;
-  render();
-}
-
-function renderQuestion(){
-  const c = DATA[state.c];
-  const item = c.questions[state.q];
-  const k = keyFor(state.c, state.q);
-  const picked = answered[k];
-  const isAnswered = picked !== undefined;
-
-  let optsHtml = '';
-  item.options.forEach((opt, i)=>{
-    let cls = 'opt';
-    if(isAnswered){
-      cls += ' locked';
-      if(i === item.correct) cls += ' correct';
-      else if(i === picked) cls += ' incorrect';
-      else cls += ' dim';
-    }
-    optsHtml += `<button class="${cls}" onclick="selectOption(${i})" ${isAnswered?'disabled':''}>
-        <span class="letter">${letterFor(i)}</span><span>${opt}</span>
-      </button>`;
-  });
-
-  let explainHtml = '';
-  if(isAnswered){
-    const wasCorrect = picked === item.correct;
-    explainHtml = `
-      <div class="explain show ${wasCorrect?'ok':'no'}">
-        <div class="tag">${wasCorrect? "✓ Correct — here is why" : "✕ Not quite — here is the full picture"}</div>
-        <p>${item.explain}</p>
-      </div>`;
-  }
-
-  const isLastInConcept = state.q === c.questions.length - 1;
-  const nextLabel = isAnswered ? (isLastInConcept ? 'Finish Concept →' : 'Next Question →') : '';
-
-  card.innerHTML = `
-    <div class="q-meta">
-      <div class="concept-tag">${c.title}</div>
-      <div class="q-count">Q${state.q+1} / ${c.questions.length}</div>
-    </div>
-    <p class="q-text">${item.q}</p>
-    <div class="options">${optsHtml}</div>
-    ${explainHtml}
-    <div class="actions">
-      ${isAnswered ? `<button class="btn btn-primary" onclick="goNext()">${nextLabel}</button>` : ''}
-    </div>
-  `;
-}
-
-function selectOption(i){
-  const k = keyFor(state.c, state.q);
-  if(answered[k] !== undefined) return;
-  answered[k] = i;
-  render();
-}
-
-function goNext(){
-  const c = DATA[state.c];
-  if(state.q < c.questions.length - 1){
-    state.q += 1;
-    state.screen = 'question';
-    render();
-  } else {
-    state.screen = 'complete';
-    render();
-  }
-}
-
-function renderComplete(){
-  const c = DATA[state.c];
-  const isLastConcept = state.c === DATA.length - 1;
-  card.innerHTML = `
-    <div class="complete">
-      <div class="complete-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#35c9b0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      </div>
-      <div class="concept-tag">Concept ${state.c+1} of ${DATA.length} complete</div>
-      <h2>${c.title} — done.</h2>
-      <div class="takeaway">${c.takeaway}</div>
-      <div class="actions" style="justify-content:flex-start;">
-        ${isLastConcept
-          ? `<button class="btn btn-primary" onclick="goToFinal()">See Final Summary →</button>`
-          : `<button class="btn btn-primary" onclick="goToConceptIntro(${state.c+1})">Continue to Concept ${state.c+2} →</button>`}
-      </div>
-    </div>
-  `;
-}
-
-function goToConceptIntro(idx){
-  state.c = idx;
-  state.q = 0;
-  state.screen = 'intro';
-  closeMenu();
-  render();
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-
-function goToFinal(){
-  state.screen='final';
-  render();
-}
-
-function renderFinal(){
-  const done = answeredCount();
-  card.innerHTML = `
-    <div class="final">
-      <div class="complete-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#4c8bf5" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.3L22 9.2l-5 4.7 1.3 6.9L12 17.5 5.7 20.8 7 13.9 2 9.2l7.1-.9z"></path></svg>
-      </div>
-      <h2>All 12 concepts complete.</h2>
-      <p style="color:var(--muted); line-height:1.65; font-size:14.5px;">You've worked through ${done} of ${TOTAL_Q} questions across convolution basics, padding, every smoothing filter, every sharpening technique, and the Sobel operator. Revisit any concept below whenever you want to reinforce it.</p>
-      <div class="actions" style="justify-content:flex-start; gap:10px;">
-        <button class="btn btn-primary" onclick="openMenu()">Browse Concepts</button>
-        <button class="btn btn-ghost" onclick="restartAll()">Restart Everything</button>
-      </div>
-    </div>
-  `;
-}
-
-function restartAll(){
-  answered = {};
-  state = { screen:'welcome', c:0, q:0 };
-  closeMenu();
-  render();
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-
-/* ---------- Menu overlay ---------- */
-function openMenu(){
-  const list = document.getElementById('menuList');
-  list.innerHTML = DATA.map((c,idx)=>{
-    const n = conceptAnsweredCount(idx);
-    const total = c.questions.length;
-    const done = n===total;
-    return `<div class="menu-item ${done?'done':''}" onclick="goToConceptIntro(${idx})">
-        <span class="name">${idx+1}. ${c.title}</span>
-        <span class="prog">${done ? '✓ done' : n+'/'+total}</span>
-      </div>`;
-  }).join('');
-  document.getElementById('overlay').classList.add('show');
-}
-function closeMenu(){
-  document.getElementById('overlay').classList.remove('show');
-}
-document.getElementById('overlay').addEventListener('click', (e)=>{
-  if(e.target.id==='overlay') closeMenu();
-});
-
-/* ---------- tiny ambient animation on the kernel mark ---------- */
-(function animateKernelMark(){
-  const cells = document.querySelectorAll('#kernelMark span');
-  let i = 4; // center index stays highlighted mostly; cycle a soft pulse
-  setInterval(()=>{
-    cells.forEach(c=>c.classList.remove('c'));
-    cells[i].classList.add('c');
-    i = (i+1) % cells.length;
-  }, 900);
-})();
-
-render();
-</script>
-<script src="js/site.js"></script>
-</body>
-</html>
+}]

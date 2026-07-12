@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0d10">
+  <title>SAD MCQ Lab — Quiz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/chapter.css">
+</head>
+<body class="site-body">
+
+  <main class="chapter-main">
+    <div class="chapter-content-wrap">
+      <header class="chapter-intro" id="quizHeader">
+        <h1 id="chapterTitle">Loading Chapter...</h1>
+        <div class="chapter-stats" id="chapterStats">
+          <!-- stats injected here -->
+        </div>
+      </header>
+
+      <section class="chapter-review" id="chapterReview" style="display: none;">
+        <!-- chapter overview/review injected here -->
+      </section>
+
+      <div class="mcq-list" id="mcqList">
+        <!-- MCQs injected here by quiz.js -->
+        <div class="loading-state">Fetching MCQs...</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Navigation js -->
+  <script src="js/site.js"></script>
+  <!-- Quiz rendering js -->
+  <script src="js/quiz.js"></script>
+</body>
+</html>

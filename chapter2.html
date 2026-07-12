@@ -1,539 +1,368 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0b0d10">
-<title>DIP MCQ Lab — Point Processing</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/site.css">
-<link rel="stylesheet" href="css/chapter.css">
-</head>
-<body class="chapter-page" data-chapter="2">
-<div class="wrap">
-  <header>
-    <div class="brand">
-      <div class="brand-mark"></div>
-      <div>
-        <h1>Digital Image Processing — MCQ Lab</h1>
-        <span>Point Processing · Intensity Transformations · 100 questions, learn as you go</span>
-      </div>
-    </div>
-    <div class="progress-strip"><div class="progress-mask" id="progressMask"></div><div class="progress-marker" id="progressMarker"></div></div>
-    <div class="progress-label"><span id="progressText">Question <b>0</b> of 100</span><span id="progressConcept">—</span></div>
-  </header>
-
-  <div id="app"></div>
-
-  <footer>Click an option to reveal whether it's correct — blue means correct, red means incorrect. Read the explanation, then continue.</footer>
-</div>
-
-<script>
-const DATA = [
-{
-  name:"Point Processing Basics",
-  formula:"s = T(r) — output intensity s is a function of input intensity r only",
-  desc:"Point processing (also called intensity or gray-level transformation) changes each pixel using only that pixel's own value — no neighboring pixels are involved. Every technique in this lab (negative, log, gamma, contrast stretching, slicing) is built on this one idea.",
-  questions:[
-    {q:"What defines a 'point processing' operation in image enhancement?",
-     opts:["It modifies a pixel based on a neighborhood of surrounding pixels","It modifies a pixel's value using only that pixel's own original value, via s = T(r)","It works only in the frequency domain","It changes the image's physical dimensions"],
-     a:1, ex:"Point processing operations apply a transformation function T to each pixel independently: s = T(r), where r is the input intensity and s is the output intensity. No neighboring pixel values are used, which is exactly what separates point processing from spatial filtering (like smoothing or median filtering), where a whole neighborhood/mask contributes to each output pixel."},
-    {q:"In the general transformation s = T(r), what do r and s represent?",
-     opts:["r is the row number, s is the column number","r is the input pixel intensity, s is the output pixel intensity","r is the image resolution, s is the file size","r is the red channel, s is the saturation"],
-     a:1, ex:"r always denotes the original (input) gray-level value of a pixel, and s denotes the resulting (output) gray-level value after the transformation T is applied. Every technique in this lab — negative, log, gamma, contrast stretching — is just a different choice of the function T."},
-    {q:"Which of the following is NOT a point processing technique?",
-     opts:["Image negative","Log transformation","Median filtering","Gamma (power-law) correction"],
-     a:2, ex:"Median filtering replaces each pixel with the median value taken from a neighborhood (e.g. a 3x3 window) around it, so the output depends on multiple surrounding pixels — that makes it a spatial (neighborhood) filtering operation, not point processing. Negative, log, and gamma transforms all use only the pixel's own value."},
-    {q:"What is the primary purpose of gray-level (intensity) transformations in image enhancement?",
-     opts:["To reduce the file size of the image","To improve the visual quality or suitability of an image for a specific application or further processing","To rotate or resize the image","To convert a grayscale image into an audio signal"],
-     a:1, ex:"Enhancement techniques don't add new information to an image — they re-map existing intensity values so details become easier to see (for a human viewer) or easier to process (for a later algorithm, such as edge detection or segmentation). The 'right' transformation depends entirely on what the image will be used for."},
-    {q:"Low-contrast images most commonly result from:",
-     opts:["Using a very high image resolution","Improper illumination during capture or a small dynamic range of the imaging sensor","Saving the image in PNG instead of JPEG","Displaying the image on a large monitor"],
-     a:1, ex:"As the lab notes, low contrast typically happens due to improper illumination or a non-linear/small dynamic range of an imaging sensor, meaning the pixel values are all crowded into a narrow band instead of spreading across the full 0–255 range. Contrast stretching and histogram equalization exist specifically to fix this."},
-    {q:"If the transformation function T is the identity function (s = r), what happens to the image?",
-     opts:["The image becomes completely black","The image is inverted","The image remains exactly unchanged","The image is converted to binary"],
-     a:2, ex:"s = r means every output pixel equals its input pixel, so applying the identity transform leaves the image untouched. It's a useful mental baseline: negative (s = 255 - r), log, and gamma transforms are all deliberate departures from this identity line, each reshaping the mapping differently."},
-    {q:"What distinguishes a linear point transformation from a nonlinear one?",
-     opts:["Linear transformations only work on color images","In a linear transformation the output is a straight-line (proportional) function of the input; nonlinear transformations follow a curve, like log or a power function","Nonlinear transformations cannot be implemented in code","Linear transformations always brighten the image"],
-     a:1, ex:"A linear transformation plots as a straight line on the r-vs-s graph (e.g. plain negative, or basic contrast stretching between two points), so equal steps in r always produce equal steps in s. Nonlinear transformations such as log and power-law bend that line into a curve, so the same step size in r produces different-sized steps in s depending on where you are on the curve — that's precisely what lets them selectively boost dark or bright regions."},
-    {q:"Enhancement using arithmetic operations (add, subtract, multiply, divide) is typically used for:",
-     opts:["Only converting an image to grayscale","Tasks like detecting differences between two images (subtraction), noise reduction by averaging frames (addition), and masking or shading correction (multiplication/division)","Only compressing the image file","Rotating the image by 90 degrees"],
-     a:1, ex:"Each arithmetic operator has a distinct enhancement role: subtraction highlights change between two images (motion detection, medical mask subtraction), addition/averaging multiple noisy frames of the same scene reduces random noise, and multiplication/division are used for masking a region of interest or correcting uneven illumination (shading correction). These are simple pixel-by-pixel operations between two images or between an image and a constant."}
+[{
+  "chapterId": 2,
+  "title": "System Analysis and System Design",
+  "review": {
+    "summary": "This chapter introduces the concepts of System Analysis, System Design, SDLC, Recognition of Need, Feasibility Study, Project Termination, Candidate System Evaluation, Political Considerations, and SDLC with Prototyping.",
+    "keyTopics": [
+      "System Analysis",
+      "System Design",
+      "Logical Design",
+      "Physical Design",
+      "SDLC",
+      "Recognition of Need",
+      "Feasibility Study",
+      "Project Termination",
+      "Candidate System",
+      "Political Considerations",
+      "SDLC with Prototyping"
+    ]
+  },
+  "theoryOverview": [
+    {
+      "title": "System Analysis",
+      "description": "System Analysis is the process of studying an existing or proposed system to identify problems, requirements, and opportunities for improvement."
+    },
+    {
+      "title": "System Design",
+      "description": "System Design defines how the system will be implemented after requirements are gathered."
+    },
+    {
+      "title": "Logical Design",
+      "description": "Focuses on what the system will do using DFDs, ERDs, and process models."
+    },
+    {
+      "title": "Physical Design",
+      "description": "Focuses on implementation details such as hardware, software, database, UI, and networking."
+    },
+    {
+      "title": "System Development Life Cycle (SDLC)",
+      "description": "SDLC consists of Planning, Analysis, Design, Development, Testing, Implementation, and Maintenance."
+    },
+    {
+      "title": "Recognition of Need",
+      "description": "The first phase where an organization identifies a business problem or opportunity."
+    },
+    {
+      "title": "Feasibility Study",
+      "description": "Evaluates whether a proposed system is technically, economically, legally, operationally, and schedule-wise feasible."
+    },
+    {
+      "title": "Project Termination",
+      "description": "Projects may end because of successful completion, technical failure, budget issues, scope changes, legal issues, or organizational changes."
+    },
+    {
+      "title": "Candidate System Evaluation",
+      "description": "Candidate systems are evaluated based on functionality, usability, reliability, performance, security, scalability, compatibility, cost, and maintainability."
+    },
+    {
+      "title": "SDLC with Prototyping",
+      "description": "A prototype is built quickly, refined using user feedback, and then used to develop the final system."
+    }
+  ],
+  "quiz": [
+    {
+      "id": 1,
+      "question": "What is the primary goal of System Analysis?",
+      "options": [
+        "Coding software",
+        "Understanding the existing system and gathering requirements",
+        "Installing hardware",
+        "Testing applications"
+      ],
+      "correctAnswer": 1,
+      "explanation": {
+        "english": "System Analysis studies the existing system and identifies user requirements.",
+        "bengali": "System Analysis-এর প্রধান উদ্দেশ্য হলো বর্তমান সিস্টেম বুঝা এবং ব্যবহারকারীর চাহিদা সংগ্রহ করা।"
+      }
+    },
+    {
+      "id": 2,
+      "question": "Which document is mainly prepared during System Analysis?",
+      "options": [
+        "DDS",
+        "ERD",
+        "SRS",
+        "Source Code"
+      ],
+      "correctAnswer": 2,
+      "explanation": {
+        "english": "System Analysis produces the Software Requirement Specification (SRS).",
+        "bengali": "System Analysis শেষে Software Requirement Specification (SRS) তৈরি করা হয়।"
+      }
+    },
+    {
+      "id": 3,
+      "question": "System Design mainly defines ______.",
+      "options": [
+        "What the system should do",
+        "How the system will work",
+        "Why users need computers",
+        "How to test software"
+      ],
+      "correctAnswer": 1,
+      "explanation": {
+        "english": "System Design explains how the requirements will be implemented.",
+        "bengali": "System Design ব্যাখ্যা করে Requirements কীভাবে বাস্তবায়ন করা হবে।"
+      }
+    },
+    {
+      "id": 4,
+      "question": "Logical Design mainly focuses on:",
+      "options": [
+        "Hardware",
+        "Network",
+        "What the system does",
+        "Programming Language"
+      ],
+      "correctAnswer": 2,
+      "explanation": {
+        "english": "Logical Design describes processes and data flow.",
+        "bengali": "Logical Design সিস্টেম কী করবে তা বর্ণনা করে।"
+      }
+    },
+    {
+      "id": 5,
+      "question": "Which design specifies hardware and software?",
+      "options": [
+        "Logical Design",
+        "Conceptual Design",
+        "Physical Design",
+        "Strategic Design"
+      ],
+      "correctAnswer": 2,
+      "explanation": {
+        "english": "Physical Design contains implementation details.",
+        "bengali": "Physical Design-এ Hardware, Software এবং Database-এর বিবরণ থাকে।"
+      }
+    },
+    {
+      "id": 6,
+      "question": "Which is the first phase of SDLC?",
+      "options": [
+        "Testing",
+        "Planning",
+        "Implementation",
+        "Design"
+      ],
+      "correctAnswer": 1,
+      "explanation": {
+        "english": "Planning is the first phase of SDLC.",
+        "bengali": "SDLC-এর প্রথম ধাপ হলো Planning।"
+      }
+    },
+    {
+      "id": 7,
+      "question": "Which SDLC phase produces source code?",
+      "options": [
+        "Analysis",
+        "Testing",
+        "Development",
+        "Planning"
+      ],
+      "correctAnswer": 2,
+      "explanation": {
+        "english": "Coding is performed during the Development phase.",
+        "bengali": "Development Phase-এ Source Code লেখা হয়।"
+      }
+    },
+    {
+      "id": 8,
+      "question": "Which testing is performed by end users?",
+      "options": [
+        "Integration Testing",
+        "Unit Testing",
+        "User Acceptance Testing",
+        "Regression Testing"
+      ],
+      "correctAnswer": 2,
+      "explanation": {
+        "english": "User Acceptance Testing is performed by actual users.",
+        "bengali": "User Acceptance Testing (UAT) প্রকৃত ব্যবহারকারীরা করে।"
+      }
+    },
+    {
+      "id": 9,
+      "question": "Which maintenance fixes software bugs?",
+      "options": [
+        "Adaptive",
+        "Preventive",
+        "Corrective",
+        "Perfective"
+      ],
+      "correctAnswer": 2,
+      "explanation": {
+        "english": "Corrective maintenance fixes software defects.",
+        "bengali": "Corrective Maintenance সফটওয়্যারের ত্রুটি বা Bug ঠিক করে।"
+      }
+    },
+    {
+      "id": 10,
+      "question": "Recognition of Need mainly identifies:",
+      "options": [
+        "Programming language",
+        "Business problem or opportunity",
+        "Testing strategy",
+        "Database schema"
+      ],
+      "correctAnswer": 1,
+      "explanation": {
+        "english": "Recognition of Need identifies why a new system is required.",
+        "bengali": "Recognition of Need ধাপে কেন নতুন সিস্টেম প্রয়োজন তা নির্ধারণ করা হয়।"
+      }
+    }
   ]
 },
 {
-  name:"Image Negative",
-  formula:"s = (L - 1) - r",
-  desc:"The negative transformation flips every pixel value around the middle of the intensity range, turning dark regions light and light regions dark — like a photographic film negative.",
-  questions:[
-    {q:"What is the formula for computing the negative of an image?",
-     opts:["s = r + (L-1)","s = (L-1) - r","s = r / (L-1)","s = (L-1) * r"],
-     a:1, ex:"For an image with maximum intensity level (L-1), the negative transformation is s = (L-1) - r. For a standard 8-bit grayscale image, L = 256, so L-1 = 255, and the formula becomes s = 255 - r, which is exactly what the lab's code does with 'negative = 255 - image'."},
-    {q:"For an 8-bit grayscale image, what is the value of (L-1) used in the negative formula?",
-     opts:["100","128","255","256"],
-     a:2, ex:"An 8-bit image has L = 256 possible intensity levels, numbered 0 through 255. So L-1 = 255 is the maximum representable pixel value, and it's this value that every pixel is subtracted from to produce the negative."},
-    {q:"In the lab's example, a pixel with value 91 becomes 164 after the negative transformation. Which calculation confirms this?",
-     opts:["91 + 73 = 164","255 - 91 = 164","91 * 1.8 = 164","(91 + 255) / 2 = 173, rounded to 164"],
-     a:1, ex:"Applying s = (L-1) - r with L-1 = 255 and r = 91 gives s = 255 - 91 = 164, which matches the negative_image output shown in the lab document. This is a direct, pixel-by-pixel check that the formula and the code produce consistent results."},
-    {q:"Is the image negative transformation linear or nonlinear?",
-     opts:["Nonlinear, because it uses subtraction","Linear — it's a straight line with a slope of -1","Nonlinear, because it only affects dark pixels","It is undefined for grayscale images"],
-     a:1, ex:"Plotting s against r for s = (L-1) - r gives a straight line with slope -1, running from (0, 255) down to (255, 0). Since the relationship is a constant proportional change (not a curve), the negative transform is classified as linear, unlike log or gamma transforms."},
-    {q:"What happens if you apply the negative transformation twice to the same image?",
-     opts:["The image becomes completely gray","You get back the original image","The image becomes pure noise","The contrast doubles"],
-     a:1, ex:"Negative is its own inverse: applying s = (L-1) - r and then applying the same formula again gives (L-1) - ((L-1) - r) = r, the original value. So negating an already-negated image restores it exactly, which is a handy sanity check when testing an implementation."},
-    {q:"What kind of image detail does the negative transformation help enhance?",
-     opts:["Fine texture in mid-gray regions only","White or gray detail that is embedded in large, predominantly dark regions of the image","Only edges detected by a Sobel filter","Color saturation in RGB images"],
-     a:1, ex:"When an image has large dark areas that hide subtle lighter details, inverting it turns those areas bright and the subtle detail becomes dark against a light background — which the human eye often perceives more easily. This is one reason negative transforms are used in radiology, where subtle structures embedded in dark film regions become easier to spot once inverted."},
-    {q:"Which real-world application commonly relies on the negative transformation?",
-     opts:["GPS route mapping","Enhancing details in medical images such as mammograms","Audio noise cancellation","3D mesh rendering"],
-     a:1, ex:"Radiologists have historically used negative images (much like a photographic film negative) because certain structures — such as small lesions in mammograms — can stand out more clearly once dark and light regions are swapped. It's a simple, computationally cheap enhancement that requires no parameter tuning."},
-    {q:"In code, why must you be careful with data types (e.g. uint8) when computing 255 - image?",
-     opts:["It doesn't matter, any data type works identically","If the image isn't stored as an 8-bit unsigned integer type, values could wrap around or produce incorrect results outside the expected 0–255 range","Python cannot subtract numbers from arrays","255 - image will always throw an error"],
-     a:1, ex:"Grayscale images are typically stored as uint8 (unsigned 8-bit integers, range 0–255). If the array's data type is something else (e.g. int16 without masking, or float without clipping), the subtraction can behave unexpectedly or the result may need to be cast back to uint8 before display, since imshow expects values within the valid displayable range."},
-    {q:"Comparing the lab's for-loop implementation of negative to the vectorized 'negative = 255 - image' line, what's the key practical difference?",
-     opts:["The for-loop version produces a different mathematical result","Both are mathematically identical, but the vectorized NumPy version is much faster because it avoids Python-level loop overhead","The for-loop version only works on color images","Vectorized operations cannot be used with OpenCV images"],
-     a:1, ex:"Both approaches implement the exact same formula, pixel by pixel, and produce identical output. The difference is performance: NumPy's vectorized subtraction (255 - image) executes in optimized, compiled C code across the whole array at once, while the explicit Python for-loop processes one pixel at a time and is dramatically slower on large images."},
-    {q:"Why might a student be asked to implement the negative transformation twice — once with a for-loop and once with vectorized NumPy — in the same lab?",
-     opts:["To make the lab twice as long for no reason","To help understand the underlying pixel-by-pixel logic (via the loop) while also learning the efficient, production-style approach (via vectorization)","Because OpenCV requires both implementations to work","To test whether the image is color or grayscale"],
-     a:1, ex:"Writing the explicit loop reinforces exactly what the transformation formula does at each individual pixel, which builds intuition. Once that's understood, the vectorized version shows how the same logic is expressed efficiently in practice — this progression from 'explicit and slow' to 'concise and fast' is a common teaching pattern in image processing courses."}
+  "quiz": [
+    {
+      "id": 11,
+      "question": "Which activity is NOT part of the Recognition of Need phase?",
+      "options": [
+        "Problem Identification",
+        "Opportunity Analysis",
+        "Coding the System",
+        "Management Approval"
+      ],
+      "correctAnswer": 2,
+      "explanation": {
+        "english": "Coding is performed during the Development phase, not during Recognition of Need.",
+        "bengali": "Coding Development Phase-এ করা হয়। Recognition of Need ধাপে শুধুমাত্র সমস্যা ও সুযোগ শনাক্ত করা হয়।"
+      }
+    },
+    {
+      "id": 12,
+      "question": "The main purpose of a Feasibility Study is to determine whether a project is ______.",
+      "options": [
+        "Profitable only",
+        "Practical and worth implementing",
+        "Already completed",
+        "Easy to code"
+      ],
+      "correctAnswer": 1,
+      "explanation": {
+        "english": "A feasibility study evaluates whether a proposed system is practical and achievable.",
+        "bengali": "Feasibility Study-এর উদ্দেশ্য হলো প্রকল্পটি বাস্তবায়নযোগ্য ও কার্যকর হবে কিনা তা মূল্যায়ন করা।"
+      }
+    },
+    {
+      "id": 13,
+      "question": "Which feasibility checks whether the required technology is available?",
+      "options": [
+        "Economic Feasibility",
+        "Technical Feasibility",
+        "Legal Feasibility",
+        "Operational Feasibility"
+      ],
+      "correctAnswer": 1,
+      "explanation": {
+        "english": "Technical feasibility determines whether the necessary technology and expertise exist.",
+        "bengali": "Technical Feasibility যাচাই করে প্রয়োজনীয় প্রযুক্তি ও দক্ষতা আছে কিনা।"
+      }
+    },
+    {
+      "id": 14,
+      "question": "Which of the following is NOT a valid reason for project termination?",
+      "options": [
+        "Budget Overrun",
+        "Technical Failure",
+        "Perfect Documentation",
+        "Legal Issues"
+      ],
+      "correctAnswer": 2,
+      "explanation": {
+        "english": "Perfect documentation is not a reason to terminate a project.",
+        "bengali": "Perfect Documentation কখনো Project Termination-এর কারণ নয়।"
+      }
+    },
+    {
+      "id": 15,
+      "question": "Which project termination reason occurs when project costs exceed the planned budget?",
+      "options": [
+        "Technical Failure",
+        "Budget Overrun",
+        "Scope Creep",
+        "Stakeholder Withdrawal"
+      ],
+      "correctAnswer": 1,
+      "explanation": {
+        "english": "Budget overrun occurs when project costs become higher than expected.",
+        "bengali": "Budget Overrun ঘটে যখন প্রকল্পের ব্যয় নির্ধারিত বাজেটের চেয়ে বেশি হয়ে যায়।"
+      }
+    },
+    {
+      "id": 16,
+      "question": "Which factor evaluates whether a candidate system is user-friendly?",
+      "options": [
+        "Reliability",
+        "Scalability",
+        "Usability",
+        "Security"
+      ],
+      "correctAnswer": 2,
+      "explanation": {
+        "english": "Usability measures how easy a system is to learn and use.",
+        "bengali": "Usability দ্বারা বোঝায় একটি সিস্টেম ব্যবহারকারীর জন্য কতটা সহজ।"
+      }
+    },
+    {
+      "id": 17,
+      "question": "Which candidate system factor measures the ability to grow with the organization?",
+      "options": [
+        "Maintainability",
+        "Compatibility",
+        "Scalability",
+        "Cost"
+      ],
+      "correctAnswer": 2,
+      "explanation": {
+        "english": "Scalability determines whether the system can handle future growth.",
+        "bengali": "Scalability নির্দেশ করে ভবিষ্যতে ব্যবহারকারী, ডেটা বা ফিচার বৃদ্ধি পেলেও সিস্টেম কাজ করতে পারবে কিনা।"
+      }
+    },
+    {
+      "id": 18,
+      "question": "Political consideration mainly focuses on ______.",
+      "options": [
+        "Programming Language",
+        "Stakeholder Influence and Organizational Power",
+        "Database Normalization",
+        "Operating System"
+      ],
+      "correctAnswer": 1,
+      "explanation": {
+        "english": "Political considerations analyze stakeholder influence, resistance, and organizational conflicts.",
+        "bengali": "Political Consideration-এ Stakeholder-এর প্রভাব, ক্ষমতা, পরিবর্তনের প্রতিরোধ এবং সাংগঠনিক দ্বন্দ্ব বিশ্লেষণ করা হয়।"
+      }
+    },
+    {
+      "id": 19,
+      "question": "The main advantage of using Prototyping is ______.",
+      "options": [
+        "Eliminates Testing",
+        "Reduces User Feedback",
+        "Improves Requirement Accuracy",
+        "Removes Maintenance"
+      ],
+      "correctAnswer": 2,
+      "explanation": {
+        "english": "Prototyping allows users to provide feedback early, improving requirement accuracy.",
+        "bengali": "Prototype ব্যবহারকারীর কাছ থেকে শুরুতেই মতামত নিয়ে Requirement আরও নির্ভুল করতে সাহায্য করে।"
+      }
+    },
+    {
+      "id": 20,
+      "question": "After the prototype is finalized, which SDLC phase comes next?",
+      "options": [
+        "Maintenance",
+        "System Design",
+        "Project Termination",
+        "Recognition of Need"
+      ],
+      "correctAnswer": 1,
+      "explanation": {
+        "english": "Once the prototype is accepted and refined, the complete System Design begins.",
+        "bengali": "Prototype চূড়ান্ত হওয়ার পর সম্পূর্ণ System Design ধাপ শুরু হয়।"
+      }
+    }
   ]
-},
-{
-  name:"Log Transformation",
-  formula:"s = c · log(1 + r),  where c = 255 / log(1 + r_max)",
-  desc:"The log transformation compresses a wide range of high pixel values into a narrower band while expanding a narrow range of low (dark) pixel values into a wider band — useful when dark detail is hard to see.",
-  questions:[
-    {q:"What is the general formula for the log transformation?",
-     opts:["s = c · log(1 + r)","s = c · r^2","s = (L-1) - r","s = r · log(c)"],
-     a:0, ex:"The log transform is s = c · log(1 + r), where c is a scaling constant and r is the input pixel intensity. The '+1' inside the log avoids taking log(0), which is undefined, since r can legitimately be 0."},
-    {q:"What effect does the log transformation have on an image's pixel values?",
-     opts:["It expands dark (low) pixel values and compresses bright (high) pixel values","It expands bright pixel values and compresses dark pixel values","It has no effect on the dynamic range","It converts all pixels to either 0 or 255"],
-     a:0, ex:"Because log grows quickly at first and then flattens out, small input values (dark pixels) get spread across a wider range of output values, while large input values (bright pixels) get compressed closer together. This makes subtle differences in dark regions more visible, at the cost of reduced differentiation among already-bright pixels."},
-    {q:"What is the role of the constant c in the log transformation formula?",
-     opts:["It has no real purpose and could be removed","It scales the output so the maximum log value maps to the full displayable range (e.g. 255 for 8-bit images)","It determines whether the image is color or grayscale","It sets the image's resolution"],
-     a:1, ex:"Without scaling, log(1+r) values would be much smaller than 255 (since log grows slowly), so the resulting image would look very dark. The constant c = 255 / log(1 + r_max) rescales the output so that the brightest input pixel maps to close to 255, using the full dynamic range for display."},
-    {q:"Given r_max = 255 for an 8-bit image, what is the approximate value of c = 255 / log(1 + r_max) (using natural log)?",
-     opts:["c ≈ 1","c ≈ 46","c ≈ 128","c ≈ 255"],
-     a:1, ex:"ln(1 + 255) = ln(256) ≈ 5.545. Dividing 255 by 5.545 gives c ≈ 45.99, so c is roughly 46. This constant is what stretches the compressed log(1+r) output back out to fill the visible 0–255 range."},
-    {q:"A classic application of the log transformation is:",
-     opts:["Rotating images by arbitrary angles","Displaying the Fourier (frequency-domain) spectrum of an image, which has an extremely large dynamic range","Converting audio to spectrograms","Resizing images without loss of quality"],
-     a:1, ex:"The magnitude of a Fourier transform often spans a huge range of values — a few very large low-frequency components and many tiny high-frequency ones. Displayed directly, only the largest values would be visible. Applying a log transform compresses that huge range down to something a normal 8-bit display can show, revealing structure that would otherwise be invisible."},
-    {q:"Is the log transformation a linear or nonlinear operation?",
-     opts:["Linear, because it uses a constant c","Nonlinear — the output is not a straight-line function of the input","It can be either, depending on the image","Linear only for 8-bit images"],
-     a:1, ex:"A plot of s = c·log(1+r) against r is a curve, not a straight line — it rises steeply for small r and flattens for large r. That non-proportional, curved relationship is what makes it a nonlinear transformation, in contrast to the straight-line negative transform."},
-    {q:"Why is '1' added inside the logarithm, i.e. log(1 + r) instead of log(r)?",
-     opts:["It makes the code run faster","It avoids computing log(0), which is mathematically undefined, since pixel values can be 0","It converts the image to a different color space","It is purely a stylistic choice with no mathematical reason"],
-     a:1, ex:"log(0) is undefined (it tends toward negative infinity), and pixel intensity 0 (pure black) is a completely valid, common value in real images. Adding 1 before taking the log guarantees the argument is always at least 1, so log(1+r) is always well-defined for every possible pixel value from 0 to 255."},
-    {q:"What is a key limitation of the log transformation?",
-     opts:["It cannot be implemented in Python","It permanently deletes color information from RGB images","Because it compresses high-intensity values together, some detail in the brighter regions of the image can be lost or become harder to distinguish","It only works on images smaller than 256x256 pixels"],
-     a:2, ex:"The same curve shape that expands dark detail also squashes bright values closer together. If an image has important detail in its bright regions, log transformation can make those details harder to tell apart, since a wide range of high input values maps to a narrower range of output values."},
-    {q:"Which operation would you use to reverse the effect of a log transform — expanding bright values and compressing dark ones?",
-     opts:["Another log transformation","An inverse-log (exponential) transformation","A simple image negative","A median filter"],
-     a:1, ex:"The inverse-log or exponential transformation does the opposite of log: it expands the higher-value range and compresses the lower-value range. Log and inverse-log form a complementary pair, similarly to how gamma values below 1 and above 1 have opposite effects in power-law transformation."},
-    {q:"In NumPy, which function computes the natural logarithm used in a standard log transformation?",
-     opts:["np.log()","np.log10()","np.exp()","np.sqrt()"],
-     a:0, ex:"np.log() computes the natural logarithm (base e), which is the version typically used in the standard log transformation formula. np.log10() would compute base-10 logarithm instead, which would require a different constant c to normalize output correctly, and np.exp() computes the exponential (the inverse operation)."},
-    {q:"How does the log transformation's curve shape differ from the power-law (gamma) transformation's curve?",
-     opts:["They are mathematically identical in every case","Log transformation has one fixed curve shape (governed only by the constant c), while gamma transformation offers an adjustable family of curves controlled by the exponent γ","Gamma transformation cannot brighten dark regions at all","Log transformation only works on color images"],
-     a:1, ex:"Once you fix c (determined by r_max), the log curve's shape is fixed — there's no extra tuning knob. Power-law transformation, s = c·r^γ, instead gives you a whole family of curves depending on the chosen γ, letting you dial in exactly how aggressively dark or bright regions are expanded, which makes gamma correction more flexible for fine-tuning enhancement strength."},
-    {q:"Why is the log transformation especially useful for images with a very wide dynamic range, such as astronomical or satellite images?",
-     opts:["Because it deletes noise automatically","Because such images often have a few extremely bright pixels and vast areas of dim detail, and log compresses the bright extremes while revealing the dim detail","Because log transformation increases image resolution","Because it converts the image into a vector graphic"],
-     a:1, ex:"Astronomical images might have an extremely bright star alongside faint nebulae or galaxies that are barely above zero intensity. A linear display would either blow out the bright star or leave the faint structures invisible. The log transform's compressive effect on high values and expansive effect on low values lets both extremes become visible in the same displayed image."}
-  ]
-},
-{
-  name:"Power-Law (Gamma) Correction",
-  formula:"s = c · r^γ,  where c = 255 / (255^γ) for 8-bit images",
-  desc:"Power-law (gamma) transformation raises each pixel to an exponent γ. Unlike log transform, gamma gives you a tunable family of curves — one parameter controls how strongly dark or bright regions are stretched.",
-  questions:[
-    {q:"What is the general formula for the power-law (gamma) transformation?",
-     opts:["s = c · r^γ","s = c · log(r)","s = (L-1) - r","s = r + c·γ"],
-     a:0, ex:"The power-law or gamma transformation is s = c · r^γ, where γ (gamma) is the exponent that controls the shape of the transformation curve and c is a scaling constant, usually chosen so the output stays within the displayable range."},
-    {q:"What effect does a gamma value less than 1 (γ < 1) have on an image?",
-     opts:["It darkens the image and compresses dark details","It brightens the image and expands detail in dark regions, similar to log transformation","It has no visible effect","It converts the image to pure black and white"],
-     a:1, ex:"When γ < 1, raising r (which is between 0 and 1 after normalization, or scaled accordingly) to a fractional power increases small values proportionally more than large ones — the curve bulges upward, brightening the image overall and expanding detail hidden in dark shadow regions, much like a log transform does."},
-    {q:"What effect does a gamma value greater than 1 (γ > 1) have on an image?",
-     opts:["It brightens dark regions further","It darkens the image and expands detail in bright regions, compressing dark values further together","It removes all color information","It has the exact same effect as γ = 1"],
-     a:1, ex:"When γ > 1, the transformation curve bows downward: mid and low values are pushed lower (darkened), while high values change comparatively little. This expands contrast among bright areas while compressing dark areas even further together — historically used to correct for the nonlinear light response of CRT display monitors."},
-    {q:"What happens when γ = 1 in the power-law transformation (assuming c is set appropriately)?",
-     opts:["The transformation becomes the identity function — the image is unchanged","The image is inverted","The image becomes completely white","An error occurs since γ cannot equal 1"],
-     a:0, ex:"With γ = 1, s = c · r^1 = c·r, and if c is normalized to 1, this reduces to s = r — the identity transformation, leaving pixel values unchanged. γ = 1 is effectively the 'neutral' baseline from which higher or lower gamma values diverge in opposite directions."},
-    {q:"Historically, what was the original real-world motivation for gamma correction?",
-     opts:["To compress video files","To correct for the nonlinear relationship between input voltage and displayed brightness on CRT monitors","To convert grayscale images to color","To reduce camera shutter speed"],
-     a:1, ex:"Old CRT monitors did not display brightness linearly with input signal — the physical relationship between voltage and light output followed roughly a power law. Gamma correction pre-compensates images so that, after passing through the display's own nonlinear response, the final perceived brightness looks correct to the viewer."},
-    {q:"In the lab's code, why is c calculated as c = 255 / (255^γ)?",
-     opts:["To randomly scale the image","To ensure that when r equals the maximum value (255), the output s also reaches the maximum displayable value (255)","Because OpenCV requires this exact formula for all transformations","To make the image smaller in file size"],
-     a:1, ex:"Plugging r = 255 into s = c · r^γ with c = 255/(255^γ) gives s = (255/255^γ) · 255^γ = 255, confirming the brightest possible input pixel maps to the brightest possible output pixel. This normalization keeps the transformed image within the valid 0–255 display range regardless of which γ is chosen."},
-    {q:"In the lab's Gamma Correction experiment, gamma = 0.5. What is the approximate value of c = 255 / (255^0.5)?",
-     opts:["c ≈ 0.5","c ≈ 15.97","c ≈ 128","c ≈ 255"],
-     a:1, ex:"255^0.5 is the square root of 255, which is approximately 15.97. Dividing 255 by 15.97 gives c ≈ 15.97 as well (255/15.97 ≈ 15.97), since 255 = 15.97 × 15.97. This constant scales the square-root-transformed pixel values back up to the full 0–255 range."},
-    {q:"With gamma = 0.5, what is the overall visual effect on a low-contrast, moderately dark image like the one in the lab?",
-     opts:["The image becomes noticeably darker overall","The image becomes brighter overall, with more visible detail in previously dark regions","The image is unaffected","The image's colors are inverted"],
-     a:1, ex:"Since 0.5 < 1, this gamma value brightens the image and expands contrast in the darker intensity range — consistent with how the lab uses gamma = 0.5 to enhance a low-contrast image, pulling hidden dark detail up into a more visible range."},
-    {q:"Power-law transformation is also commonly known by which other name?",
-     opts:["Histogram equalization","Gamma transformation","Bit-plane slicing","Fourier transformation"],
-     a:1, ex:"'Power-law transformation' and 'gamma transformation' (or gamma correction) refer to the same operation, s = c·r^γ — the term 'gamma' specifically refers to the exponent in the formula, and it's the more commonly used name in photography, displays, and imaging software."},
-    {q:"For γ > 1, what happens to pixels that are already near the maximum value (close to 255)?",
-     opts:["They change drastically, becoming much darker","They remain relatively close to their original value, since high values near the top of the curve change comparatively little","They are forced to exactly 255","They become negative"],
-     a:1, ex:"Near r = 255, a power curve with γ > 1 is close to its maximum and relatively flat there, so bright pixels shift only slightly. Meanwhile mid and low-range pixels, which sit on the steeper part of the curve, get pushed down more substantially — this is why γ > 1 is described as darkening the image overall while leaving highlights comparatively intact."},
-    {q:"When would you prefer power-law (gamma) transformation over log transformation for enhancing an image?",
-     opts:["Never — they are always interchangeable","When you need adjustable control over the enhancement strength via the γ parameter, rather than the single fixed curve that log transformation provides","When the image has no dark regions at all","Power-law only works on binary images"],
-     a:1, ex:"Log transformation applies one specific curve shape (once c is fixed by r_max). Gamma transformation instead exposes γ as a tunable knob — you can try γ = 0.3, 0.5, 0.7, etc. and directly compare results, giving finer control over exactly how much dark detail to pull out or how much bright detail to compress, which is valuable when tuning enhancement for a specific display device or application."},
-    {q:"True or False: The same gamma value works optimally for every image or every display device.",
-     opts:["True — gamma = 0.5 is a universal constant for all enhancement tasks","False — the ideal γ depends on the specific image's characteristics and, historically, on the display device's own response curve","True, but only for medical images","False, because gamma correction cannot be applied to grayscale images"],
-     a:1, ex:"There is no single 'correct' gamma for every situation. Different cameras, sensors, and display devices have different nonlinear response characteristics, and different images need different amounts of dark- or bright-region enhancement. In practice, γ is chosen or tuned based on the specific image and the intended output device or application, which is why experimenting with different γ values (as the lab exercises ask) is so instructive."}
-  ]
-},
-{
-  name:"Contrast Stretching",
-  formula:"output = (r - r_min) · (s2 - s1)/(r_max - r_min) + s1",
-  desc:"Contrast stretching increases the dynamic range of a low-contrast image by remapping pixel values, typically stretching the darkest pixel to 0 and the brightest to 255 (min-max stretching), or thresholding into pure black/white.",
-  questions:[
-    {q:"What is the main purpose of contrast stretching?",
-     opts:["To rotate the image","To increase the dynamic range of gray levels in a low-contrast image","To reduce the image's file size","To convert the image to a different color model"],
-     a:1, ex:"Contrast stretching spreads out a narrow band of pixel intensities across a wider range (ideally the full 0–255 range), making previously subtle differences between pixels more visually distinct. It directly addresses the low dynamic range that causes an image to look flat or washed out."},
-    {q:"According to the lab, low-contrast images most often occur due to:",
-     opts:["High image resolution","Improper illumination or a small dynamic range of the imaging sensor","Using too many colors","Saving in the wrong file format"],
-     a:1, ex:"As with the earlier discussion of point processing basics, low contrast is typically a capture-time problem — poor lighting conditions or sensor limitations compress the true scene's brightness range into a small band of the available 0–255 levels, which contrast stretching then corrects after the fact."},
-    {q:"The lab describes three cases of contrast stretching based on the points (r1,s1) and (r2,s2). What happens when r1 = s1 and r2 = s2?",
-     opts:["The image is inverted","The transformation becomes a simple linear (identity-like) function","The image becomes binary","The image is deleted"],
-     a:1, ex:"When the input and output points coincide (r1 = s1, r2 = s2), the mapping line simply passes through those matching points without changing values differently from input to output in that region — describing a straight-line (linear) transformation rather than a dramatic stretch or a threshold."},
-    {q:"What happens when r1 = r2, s1 = 0, and s2 = L-1 in contrast stretching?",
-     opts:["The transformation becomes a thresholding function, producing a binary image","The image becomes brighter uniformly","Nothing changes","The image's resolution doubles"],
-     a:0, ex:"With r1 equal to r2, there's a single threshold point: any input value below that point maps to s1 = 0 (black) and any value at or above it maps to s2 = L-1 = 255 (white). This produces a sharp binary (two-level) image — exactly the effect implemented in the lab's thresholding code with thresh_value = 128."},
-    {q:"What is 'min-max stretching', as described in the lab?",
-     opts:["Setting (r1,s1) = (rmin, 0) and (r2,s2) = (rmax, L-1) so the darkest pixel maps to 0 and the brightest maps to L-1","Randomly assigning min and max values to pixels","Deleting the darkest and brightest pixels","Averaging the minimum and maximum pixel values"],
-     a:0, ex:"Min-max stretching maps the image's own minimum pixel value to 0 and its own maximum pixel value to L-1 (255 for 8-bit images), linearly stretching everything in between. This makes full use of the available intensity range based on the actual content of that specific image, rather than assuming fixed input bounds."},
-    {q:"In the lab's min-max stretching code, r1, r2 = image.min(), image.max(). What does this guarantee about the output image?",
-     opts:["The output image will have the exact same min and max as the input","The darkest pixel in the output becomes 0 and the brightest becomes 255, maximizing the use of the available dynamic range","The output image will be smaller in size","It guarantees the image becomes a negative"],
-     a:1, ex:"By setting r1 and r2 to the image's actual minimum and maximum pixel values, and mapping them to s1=0 and s2=255 respectively, every pixel in between is linearly stretched proportionally. The result uses the full 0–255 range as effectively as possible, given the specific image's existing content."},
-    {q:"What is the key difference between contrast stretching and histogram equalization?",
-     opts:["They are exactly the same technique with different names","Contrast stretching applies a fixed linear (or piecewise linear) formula based on the image's min/max values, while histogram equalization applies a nonlinear, data-driven mapping based on the cumulative distribution of the whole histogram","Contrast stretching only works on color images","Histogram equalization always produces a darker image than contrast stretching"],
-     a:1, ex:"Contrast stretching is a straightforward linear remap between two chosen or computed points (r1,s1) and (r2,s2). Histogram equalization instead analyzes the entire frequency distribution of pixel values and builds a transformation curve — generally nonlinear — designed to spread that distribution out as evenly as possible, which often gives a stronger, more adaptive enhancement than a simple linear stretch."},
-    {q:"Does contrast stretching (via min-max) preserve the relative order of intensity values in the image?",
-     opts:["No — pixel order can be scrambled arbitrarily","Yes — it's a monotonic transformation, so a pixel that was brighter than another remains brighter after the stretch","No — all pixels become identical","It depends on the image's color depth"],
-     a:1, ex:"Because min-max stretching is a linear (monotonically increasing) mapping, if pixel A had a higher intensity than pixel B before stretching, it will still have a higher intensity than pixel B afterward — only the spacing between values changes, not their relative ranking. This preserves the overall structure and appearance of the image while boosting contrast."},
-    {q:"In the lab's thresholding code with thresh_value = 128, which case of contrast stretching is being implemented?",
-     opts:["Min-max stretching","The linear identity case (r1=s1, r2=s2)","The thresholding case (r1=r2=128, s1=0, s2=255)","None of the cases — this is a separate technique"],
-     a:2, ex:"The code sets every pixel below 128 to 0 and every pixel at or above 128 to 255, which is precisely the thresholding special case of contrast stretching where r1 equals r2 (both equal 128) and the output snaps to either the minimum or maximum displayable value, producing a pure black-and-white binary image."},
-    {q:"Is standard contrast stretching (linear and min-max cases) a linear or nonlinear operation?",
-     opts:["Always nonlinear, like log transformation","Linear (or piecewise linear) — the mapping between input and output follows straight-line segments","It changes between linear and nonlinear randomly per pixel","Neither — it is undefined mathematically"],
-     a:1, ex:"Both the basic linear case and min-max stretching use straight-line mappings between chosen input/output point pairs, making contrast stretching a linear (or, when there are multiple segments, piecewise linear) operation — distinct from the curved, nonlinear behavior of log or gamma transformations."},
-    {q:"What is a key risk of using min-max stretching (image.min(), image.max()) if the image contains a single very bright or very dark outlier pixel (e.g. sensor noise)?",
-     opts:["There is no risk — outliers never affect the result","The stretch gets skewed by the outlier, since rmin/rmax are set by that single extreme pixel, reducing how effectively the rest of the image's real range gets stretched","The image file becomes corrupted","The image automatically becomes grayscale"],
-     a:1, ex:"Because min-max stretching bases its entire mapping on just two extreme pixel values, a single noisy outlier pixel (e.g. one stuck 'hot' pixel at 255 or a dead pixel at 0) can distort r1 and r2, causing the useful range of real image content to be compressed into a much smaller output span than intended — defeating the purpose of the stretch."},
-    {q:"What alternative approach can reduce the outlier sensitivity problem in min-max contrast stretching?",
-     opts:["Always using the full 0–255 range regardless of the image","Using percentile-based stretching — clipping a small percentage of the darkest and brightest pixels before computing rmin and rmax","Blurring the image heavily before stretching","There is no way to reduce this sensitivity"],
-     a:1, ex:"Instead of using the absolute minimum and maximum pixel values, percentile-based stretching ignores a small fraction (e.g. the darkest 1% and brightest 1%) of pixels when determining rmin and rmax. This makes the stretch far more robust to a handful of noisy outlier pixels while still making good use of the image's real dynamic range."}
-  ]
-},
-{
-  name:"Intensity Level Slicing",
-  formula:"Case I: highlight a range [min,max] as high value, rest as low value. Case II: brighten the range, preserve the rest unchanged.",
-  desc:"Intensity level slicing highlights a specific band of gray levels — useful when you care about one narrow range of values (like a particular tissue density in an X-ray) rather than the whole intensity spectrum.",
-  questions:[
-    {q:"What is the general purpose of intensity level slicing?",
-     opts:["To resize an image to a specific resolution","To highlight or emphasize a specific range of gray levels in an image, such as a particular structure or feature","To convert an image into audio data","To remove all color from an image"],
-     a:1, ex:"Rather than transforming every intensity uniformly (as negative, log, or gamma do), intensity level slicing focuses attention on one chosen band of gray values — for example, highlighting a particular density range in an X-ray or CT scan, or flagging defects that fall within a specific intensity range in an industrial inspection image."},
-    {q:"In Case I of intensity level slicing, what happens to pixels within the range of interest versus outside it?",
-     opts:["Pixels inside the range are set to a high value; pixels outside are set to a low value, creating a binary-like highlight","All pixels are set to the same value","Pixels outside the range are deleted from the image","Only pixels outside the range are affected"],
-     a:0, ex:"Case I produces a stark, binary-style result: any pixel whose value falls within the chosen [min, max] range is boosted to a high output value (e.g. 255), while everything else is pushed to a low value (e.g. 0). This makes the selected intensity band immediately obvious against a flat background."},
-    {q:"In Case II of intensity level slicing, how does the treatment of the background differ from Case I?",
-     opts:["Case II also sets the background to 0, identically to Case I","Case II brightens the selected range while preserving the rest of the image's original gray levels, instead of flattening the background to a single value","Case II deletes the background entirely","There is no difference between the two cases"],
-     a:1, ex:"Case II is a gentler variant: pixels in the range of interest are still boosted/brightened, but pixels outside the range keep their original intensity values rather than being forced to a flat background. This preserves surrounding context in the image while still drawing attention to the selected range."},
-    {q:"In the lab's code, minimum_range = 64 and maximum_range = 128, and the else branch sets output_image[i,j] = 0. Which case is this implementing?",
-     opts:["Case II, because it preserves original values","Case I, because pixels outside the range are all set to a flat value (0) rather than kept as original data","Neither — this is log transformation","Both cases simultaneously"],
-     a:0, ex:"Because the else branch unconditionally sets non-matching pixels to 0 rather than to image[i,j] (the original value), the code implements Case I: the range of interest becomes a bright highlight (255) against a completely flattened black background."},
-    {q:"What single code change would convert the lab's intensity slicing example from Case I to Case II?",
-     opts:["Changing 255 to 128 in the if branch","Changing the else branch to output_image[i,j] = image[i,j] instead of 0, so pixels outside the range keep their original value","Removing the for loops entirely","Changing minimum_range and maximum_range to the same value"],
-     a:1, ex:"The lab's own comment even notes this option ('# image[i,j] for second case'). Simply replacing the else branch's 0 with image[i,j] means non-selected pixels retain their original intensity, turning the flat binary highlight of Case I into the context-preserving brighten-and-keep-background behavior of Case II."},
-    {q:"Which application is a good real-world fit for intensity level slicing?",
-     opts:["Converting a video to a slideshow","Highlighting a specific density range in a medical CT/X-ray image or flagging a defect band in an industrial inspection image","Compressing an audio file","Sorting files by name"],
-     a:1, ex:"In medical imaging, different tissue types often fall within characteristic, known intensity ranges. Slicing lets a radiologist or automated system emphasize only that band — for example, highlighting bone density or a specific contrast-enhanced structure — without being distracted by unrelated intensity values elsewhere in the scan."},
-    {q:"How does intensity level slicing differ from simple thresholding (as seen in contrast stretching's Case 2)?",
-     opts:["They are identical techniques under different names","Thresholding splits the image at a single value into two regions (below/above), while slicing selects a specific band or interval of interest which can lie anywhere within the full range","Slicing only works on color images, thresholding only on grayscale","Thresholding cannot produce a binary image"],
-     a:1, ex:"A single threshold divides pixels into exactly two groups based on one cutoff point. Intensity level slicing instead defines two bounds (a minimum and a maximum), isolating a specific interval of interest that might sit anywhere in the middle of the intensity range — for example, values between 64 and 128 — rather than simply splitting everything at one point."},
-    {q:"Is intensity level slicing, as implemented with an if/else range check, a linear or nonlinear operation?",
-     opts:["Linear, since it uses simple comparisons","Nonlinear — it's a piecewise, conditional mapping rather than a single continuous formula","It is undefined whether it's linear or nonlinear","It is always identical to gamma correction"],
-     a:1, ex:"Intensity level slicing doesn't follow one smooth formula across the whole intensity range — its behavior depends on which of several disjoint intervals a pixel's value falls into (inside vs. outside the range of interest, or which sub-range in more complex variants). This conditional, interval-based mapping is a nonlinear transformation, since it can't be expressed as one straight-line or smooth curved formula covering all values."}
-  ]
-},
-{
-  name:"Histogram Processing & Equalization",
-  formula:"Equalization: s = round[(L-1) · CDF(r)], where CDF is the cumulative distribution of pixel intensities",
-  desc:"A histogram counts how many pixels exist at each intensity level. Histogram equalization is a data-driven, automatic technique that redistributes those levels to spread the histogram out and boost overall contrast.",
-  questions:[
-    {q:"What does an image's histogram represent?",
-     opts:["The physical size of the image in pixels","The frequency (count) of pixels at each possible intensity level","The color palette used by the image file format","The compression ratio of the image"],
-     a:1, ex:"A histogram is essentially a bar chart with intensity levels (0–255 for 8-bit images) on the horizontal axis and the number of pixels having each intensity on the vertical axis. It's a compact statistical summary of an image's overall brightness and contrast characteristics, without any information about where those pixels are spatially located."},
-    {q:"What is the primary purpose of histogram equalization?",
-     opts:["To remove all color from an image","To enhance contrast by redistributing intensity values so they are spread more evenly across the available range","To rotate the image histogram by 90 degrees","To compress the image file size"],
-     a:1, ex:"When an image's histogram is bunched up in a narrow range (as in a low-contrast image), histogram equalization computes a transformation that spreads those values out toward a more uniform distribution across the full 0–255 range, boosting overall contrast and revealing detail that was previously compressed into a small band of values."},
-    {q:"Histogram equalization's transformation function is based on which statistical concept?",
-     opts:["The mode of the histogram only","The cumulative distribution function (CDF) of the pixel intensities","The image's file compression algorithm","The standard deviation of the RGB channels"],
-     a:1, ex:"The equalization mapping for each intensity level is derived from the cumulative distribution function (CDF) — essentially a running total of how many pixels have intensity less than or equal to that level, normalized and scaled to the output range. Levels with many pixels 'below' them in the CDF get pushed further along the output range."},
-    {q:"What is the general formula used to compute the new intensity value in histogram equalization?",
-     opts:["s = (L-1) - r","s = round[(L-1) · CDF(r)], where CDF(r) is the normalized cumulative distribution up to intensity r","s = c · log(r)","s = r^2"],
-     a:1, ex:"For each intensity r, you compute the cumulative sum of the histogram up to and including r, normalize it by the total pixel count (giving a value between 0 and 1), and scale by (L-1) — typically 255 — to get the new mapped intensity s. This automatically derives a transformation function directly from the image's own statistics."},
-    {q:"How does histogram equalization fundamentally differ from manual contrast stretching?",
-     opts:["They are the same technique","Histogram equalization automatically derives its transformation from the image's actual intensity distribution (data-driven and generally nonlinear), while contrast stretching uses a manually chosen or min/max-based linear mapping","Contrast stretching always produces better results","Histogram equalization requires manually picking r1 and r2 points"],
-     a:1, ex:"Contrast stretching needs you to pick (or compute via min/max) specific input/output points and applies a straight-line mapping between them. Histogram equalization instead looks at the entire distribution of pixel values and computes a mapping — generally a curve, not a straight line — tailored to that specific image's statistics, with no manual point selection needed."},
-    {q:"After histogram equalization, what does the resulting histogram ideally look like?",
-     opts:["Identical to the original histogram","Flatter and more uniformly spread across the intensity range than before (though rarely perfectly flat for real, discrete images)","Compressed into an even narrower band than before","Completely empty"],
-     a:1, ex:"The theoretical goal is a perfectly flat (uniform) histogram, where each intensity level occurs with equal frequency. In practice, because real images have discrete integer intensity levels and specific pixel counts, the result is only approximately flat — noticeably more spread out than the original, but with some remaining unevenness due to quantization."},
-    {q:"What is a potential drawback of applying global histogram equalization to an entire image?",
-     opts:["It always makes the image completely black","It can over-enhance noise and may not handle images with strong local (regional) contrast variation well, since it uses one single global transformation for the whole image","It cannot be implemented without a GPU","It only works on already high-contrast images"],
-     a:1, ex:"Because global equalization applies one transformation function derived from the whole image's histogram, it treats every region the same way — this can amplify noise in already-noisy areas and can fail to properly enhance a specific region if that region's local contrast characteristics differ significantly from the image's overall average, motivating the development of localized/adaptive methods."},
-    {q:"What technique improves on plain global histogram equalization by processing small local regions of the image separately?",
-     opts:["Bit-plane slicing","Adaptive or local histogram equalization (e.g. CLAHE — Contrast Limited Adaptive Histogram Equalization)","Image negative","Simple thresholding"],
-     a:1, ex:"Adaptive histogram equalization divides the image into smaller tiles and equalizes each region using its own local histogram, then blends the results smoothly. CLAHE additionally 'clips' the histogram before computing the CDF to limit noise amplification — this handles images with varying illumination or localized contrast far better than a single global transformation."},
-    {q:"Which OpenCV function performs automatic (global) histogram equalization on a grayscale image?",
-     opts:["cv2.imread()","cv2.equalizeHist()","cv2.negative()","cv2.resize()"],
-     a:1, ex:"cv2.equalizeHist() takes an 8-bit single-channel (grayscale) image and returns a new image with its histogram automatically equalized using the standard CDF-based mapping — implementing exactly the algorithm students are asked to reproduce manually in the lab's exercises."},
-    {q:"When applying histogram equalization to a color image, what is the recommended approach to avoid distorting colors?",
-     opts:["Equalize the R, G, and B channels completely independently of each other","Convert to a color space that separates brightness from color (like YCrCb or HSV), equalize only the luminance/value channel, then convert back","Histogram equalization cannot be applied to color images at all","Only equalize the blue channel"],
-     a:1, ex:"Equalizing R, G, and B independently can shift the relative balance between channels and introduce unnatural color shifts, since each channel's histogram is stretched differently. Instead, converting to a color space like YCrCb or HSV and equalizing only the luminance (Y) or value (V) channel — which carries brightness information — enhances contrast while leaving the hue/color information (Cr, Cb, or H, S) untouched."},
-    {q:"What are the general steps to implement histogram equalization manually, without using cv2.equalizeHist()?",
-     opts:["Just apply a Gaussian blur to the image","Compute the image's histogram, compute its normalized cumulative distribution (CDF), scale the CDF to the output range, then remap each original pixel using that scaled CDF as a lookup table","Simply multiply every pixel by 2","Sort all pixels from darkest to brightest and reverse the order"],
-     a:1, ex:"The manual process mirrors the mathematical definition: (1) tally how many pixels exist at each intensity level to build the histogram, (2) accumulate those counts into a running cumulative sum (the CDF), (3) normalize and scale that CDF to the 0–(L-1) output range, and (4) use the scaled CDF values as a lookup table to remap every original pixel value to its new equalized value."},
-    {q:"Besides enhancement, what other common use does an image's histogram serve?",
-     opts:["Determining the exact GPS location where the photo was taken","Analyzing overall brightness/contrast characteristics and supporting automatic threshold selection methods, such as Otsu's method","Compressing the image to a smaller file size","Detecting the camera model used"],
-     a:1, ex:"Beyond enhancement, histograms are a diagnostic and analytical tool: they reveal at a glance whether an image is generally dark, bright, low-contrast, or high-contrast, and they underpin automatic thresholding algorithms like Otsu's method, which analyzes the histogram shape to find an optimal separation point between foreground and background pixel populations."},
-    {q:"What does a strongly bimodal histogram (two separate peaks) typically indicate about an image?",
-     opts:["The image file is corrupted","There are likely two dominant intensity groups — often a foreground object and background — which is useful information for choosing a threshold value","The image must be in color, not grayscale","The image has no usable content"],
-     a:1, ex:"A bimodal histogram, with one cluster of pixels around a darker value and another around a lighter value, often corresponds to a simple scene with a clear foreground object against a contrasting background. The 'valley' between the two peaks is frequently used as a natural threshold value for segmenting the object from the background."},
-    {q:"For a typical low-contrast, dark image (histogram clustered near the low end), what does histogram equalization generally achieve?",
-     opts:["It moves all pixels to exactly 128","It increases the effective dynamic range by spreading the clustered low values across a much wider portion of the 0–255 scale, revealing previously hidden detail","It has no measurable effect on such images","It makes the image completely black"],
-     a:1, ex:"Since the pixel values in a dark, low-contrast image are crowded into a narrow low-intensity band, the CDF rises sharply within that band. Equalization maps that steep rise across a much wider output range, effectively 'stretching apart' the tightly packed original values and making subtle tonal differences in the shadows far more visible."},
-    {q:"Is histogram equalization classified as a point processing operation?",
-     opts:["No, because it depends on the whole image's histogram, not just one pixel","Yes — each output pixel is still computed purely from its own input value via s = T(r); T is just derived globally from the whole image's histogram rather than a fixed formula","No, because it always requires a neighborhood of pixels like spatial filtering","It is a frequency-domain operation, not a spatial-domain one"],
-     a:1, ex:"Even though the transformation function T itself is computed by analyzing the entire image's histogram, once that function (the scaled CDF lookup table) is built, applying it to any individual pixel only requires that pixel's own original value — no neighboring pixels are consulted during the actual mapping step. That makes histogram equalization a point processing operation, just one whose T(r) happens to be data-derived rather than fixed by a simple formula."},
-    {q:"Comparing histogram equalization to gamma correction, which statement is most accurate?",
-     opts:["Gamma correction is always superior for every image","Gamma correction applies a fixed-shape formula with a manually chosen exponent, while histogram equalization automatically computes its mapping from the image's own statistics, often giving stronger and more image-specific contrast enhancement","They produce mathematically identical results in every case","Histogram equalization cannot be combined with gamma correction"],
-     a:1, ex:"Gamma correction requires the user to choose γ based on intuition or experimentation, applying the same curve shape regardless of the specific image's content. Histogram equalization instead analyzes that specific image's pixel distribution and computes a custom mapping automatically — the lab's own exercise, which compares both side-by-side, is designed precisely to highlight how differently these two approaches enhance the same dark image."}
-  ]
-},
-{
-  name:"Bit-Plane Slicing",
-  formula:"bit_plane_n = (pixel >> n) & 1,  for n = 0 (LSB) to 7 (MSB) in an 8-bit image",
-  desc:"An 8-bit grayscale pixel is really 8 binary digits stacked together. Bit-plane slicing pulls out each of those 8 bit positions as its own binary image, showing how much each bit contributes to the overall picture.",
-  questions:[
-    {q:"What does bit-plane slicing do to an 8-bit grayscale image?",
-     opts:["It decomposes the image into 8 separate binary images, each representing the contribution of one bit position","It converts the image to a 16-bit format","It reduces the image to a single bit (pure black and white) with no options","It rotates the image bit by bit"],
-     a:0, ex:"Since each 8-bit pixel value is stored as 8 binary digits (bit 0 through bit 7), bit-plane slicing extracts each bit position across every pixel in the image, producing 8 separate binary (0/1) images — one per bit — that together reveal how much each individual bit contributes to the full picture."},
-    {q:"Which bit-plane typically contains the most visually significant information about the image?",
-     opts:["Bit 0 (the least significant bit, LSB)","Bit 7 (the most significant bit, MSB)","All bit-planes contribute equally","Bit 4, the middle bit"],
-     a:1, ex:"The most significant bit (bit 7) represents the largest numerical contribution to each pixel's value (128 out of 255), so it carries the coarse structure and major shapes of the image. Higher-order bit-planes closer to the MSB generally look much more like a recognizable, if lower-detail, version of the original image."},
-    {q:"What does the least significant bit (LSB, bit 0) plane typically look like when displayed?",
-     opts:["An exact copy of the original image","Largely noise-like and random, with little recognizable structure","Completely black with no variation","Identical to the MSB plane"],
-     a:1, ex:"The LSB contributes the smallest possible numerical value (just 1) to each pixel, so its pattern is heavily influenced by fine texture, noise, and small variations rather than the dominant shapes in the scene — when displayed on its own, it typically looks like scattered visual noise rather than a coherent image."},
-    {q:"How do you mathematically extract bit-plane n from a pixel value?",
-     opts:["pixel + n","(pixel >> n) & 1 — right-shift the pixel by n bits, then mask with 1 to isolate that bit","pixel * n","pixel / (2^n) with no rounding"],
-     a:1, ex:"Right-shifting (>>) the pixel value by n positions moves bit n down to the least-significant position, and then applying a bitwise AND with 1 (& 1) isolates just that single bit, discarding all others. The result is either 0 or 1 for each pixel, which can then be scaled (e.g. multiplied by 255) for visible display as a binary image."},
-    {q:"How many distinct bit-planes exist for a standard 8-bit grayscale image?",
-     opts:["4","8","16","256"],
-     a:1, ex:"An 8-bit image stores each pixel using 8 binary digits, numbered bit 0 (LSB) through bit 7 (MSB), so exactly 8 separate bit-planes can be extracted — one corresponding to each bit position in the pixel's binary representation."},
-    {q:"What is one practical application of bit-plane slicing in image compression?",
-     opts:["It has no use in compression","Reconstructing an approximation of the original image using only the higher-order bit-planes (which carry most visual information), discarding lower-order planes to save space","It doubles the file size for higher quality","It converts images to lossless PNG only"],
-     a:1, ex:"Because the higher bit-planes (especially the MSB and next few bits) contain the bulk of the visually important structure, an approximate reconstruction using just the top 3–4 planes can look reasonably close to the original while requiring far less data than storing all 8 planes — a simple form of lossy compression based on bit significance."},
-    {q:"Bit-plane slicing is also useful for which security-related application?",
-     opts:["Firewall configuration","Steganography — hiding secret data within an image by embedding it into the least significant bit plane, since changes there cause minimal visible distortion","Password hashing","Network encryption"],
-     a:1, ex:"Because modifying the LSB plane changes each pixel's value by at most 1, such changes are typically imperceptible to the human eye. This makes the LSB plane a common hiding spot in steganography, where secret data (like a hidden message or watermark) is embedded there without noticeably altering the visible appearance of the image."},
-    {q:"If you wanted to embed a hidden watermark with the least possible visual impact using bit-plane manipulation, which bit-plane would you modify?",
-     opts:["Bit 7 (MSB)","Bit 0 (LSB)","Bit 4","It doesn't matter, all bits have equal visual impact"],
-     a:1, ex:"Modifying the LSB (bit 0) changes each affected pixel's value by only ±1 out of a possible 0–255 range — a change generally too small for the human eye to notice. Modifying the MSB (bit 7), by contrast, can shift a pixel's value by up to 128, causing dramatic and very visible distortion."},
-    {q:"Each individual bit-plane, once extracted, is what type of image?",
-     opts:["A full 8-bit grayscale image with 256 possible values","A binary image, where each pixel is either 0 or 1 (often displayed as 0 or 255)","A color (RGB) image","An image with negative pixel values"],
-     a:1, ex:"Since a single bit can only be 0 or 1, each extracted bit-plane is inherently a binary image — every pixel takes one of exactly two values. For visualization purposes, these are often scaled so that 1 becomes 255 (white) and 0 stays 0 (black), making the plane easy to view."},
-    {q:"Is bit-plane slicing considered a point processing or spatial (neighborhood) processing operation?",
-     opts:["Spatial processing, because it requires a filtering kernel","Point processing — each pixel's bit value is extracted independently from its own value, with no reference to neighboring pixels","Neither — it operates only in the frequency domain","It depends on the image format used"],
-     a:1, ex:"Extracting bit n from a pixel only requires that single pixel's own intensity value — a shift-and-mask operation performed independently for every pixel — with no involvement of any surrounding pixels. This makes bit-plane slicing a point processing technique, in the same family as negative, log, and gamma transformations."}
-  ]
-},
-{
-  name:"Arithmetic & Logic Operations",
-  formula:"Pixel-wise: add, subtract, multiply, divide, AND, OR, NOT, XOR between two images (or an image and a constant)",
-  desc:"Beyond single-image intensity transforms, two images (or an image and a mask/constant) can be combined pixel-by-pixel using arithmetic or logical operators for tasks like difference detection, noise reduction, and masking.",
-  questions:[
-    {q:"What is a common application of image subtraction?",
-     opts:["Increasing image resolution","Detecting differences between two images, such as motion detection, background subtraction, or medical digital subtraction angiography","Converting grayscale to color","Sharpening edges"],
-     a:1, ex:"Subtracting one image from another (pixel by pixel) highlights exactly where the two images differ, while regions that are identical cancel out to near-zero. This is the basis of motion detection (comparing consecutive video frames), background subtraction, and medical techniques like digital subtraction angiography, where a 'before' image is subtracted from an 'after' image to reveal blood vessels filled with contrast dye."},
-    {q:"How can image addition (or averaging multiple images) be used for noise reduction?",
-     opts:["Adding images always increases noise, never reduces it","Averaging several noisy frames of the same static scene tends to cancel out random noise, since the true signal stays consistent while the random noise partially cancels across frames","It has no effect on noise, only brightness","It works only on already noise-free images"],
-     a:1, ex:"If you capture multiple frames of the same unchanging scene, the true underlying signal is the same in every frame, but random noise (e.g. sensor noise) differs randomly from frame to frame. Averaging many such frames together lets the consistent signal reinforce itself while the random noise partially cancels out, effectively reducing noise — a technique widely used in astrophotography and low-light imaging."},
-    {q:"What is a typical use of image multiplication or division in enhancement?",
-     opts:["Rotating the image","Shading correction (compensating for uneven illumination) or masking a specific region of interest by multiplying with a binary mask","Converting the image to a video","Deleting pixels below a certain value"],
-     a:1, ex:"Multiplying an image by a spatially varying correction factor can compensate for uneven illumination across the scene (shading correction), while multiplying by a binary mask (an image of 0s and 1s) can isolate and keep only a specific region of interest, zeroing out everything else — both are common preprocessing steps before further analysis."},
-    {q:"What do logic operations like AND, OR, and NOT typically accomplish when applied to images?",
-     opts:["They can only be applied to text files, not images","They enable masking, combining, or isolating specific regions of an image, often using a binary mask alongside the original image","They automatically resize the image","They convert grayscale images into color"],
-     a:1, ex:"Bitwise logic operations work particularly well with binary masks: ANDing an image with a mask keeps only the pixels where the mask is 'on' (isolating a region of interest), ORing can combine two images or add a shape into a scene, and NOT can invert a mask or a binary image entirely — these are foundational tools for compositing and region extraction."},
-    {q:"What issue can arise from directly applying arithmetic operations like addition or multiplication to pixel values?",
-     opts:["There is never any issue, results always stay valid","Overflow or underflow — resulting values may fall outside the valid 0–255 range for 8-bit images, requiring clipping or normalization","The image automatically becomes a different file format","Arithmetic operations cannot be applied to grayscale images at all"],
-     a:1, ex:"If two bright pixels are added together, the sum can easily exceed 255 (the maximum for an 8-bit image); similarly, subtraction can produce negative values. Without careful handling — clipping results to the valid range or normalizing/rescaling the output — these out-of-range values can wrap around or produce visually incorrect artifacts, so most implementations explicitly clip or cast results appropriately."},
-    {q:"When averaging K independent noisy images of the same scene to reduce noise, what kind of noise does this technique primarily reduce?",
-     opts:["Only compression artifacts","Random noise (such as Gaussian sensor noise), since independent random fluctuations tend to average toward zero as more frames are combined","Only color distortion","Motion blur"],
-     a:1, ex:"Averaging is effective specifically against random, statistically independent noise across frames — as more frames (K) are averaged, the noise's effect diminishes roughly proportional to 1/√K, while the true, consistent signal remains. It does not help with systematic errors (like a fixed sensor defect) that are identical in every frame, since averaging wouldn't cancel something that never varies."},
-    {q:"What is a basic requirement for performing bitwise logic operations (AND, OR, XOR) between two images?",
-     opts:["The two images must be from different cameras","The two images must have the same dimensions (and typically compatible data types), so each pixel has a corresponding pixel in the other image","One image must be in color and the other grayscale","There is no requirement, any two images can be combined"],
-     a:1, ex:"Pixel-wise operations, whether arithmetic or logical, pair up corresponding pixels at the same (row, column) position in both images. If the images have different dimensions, there's no well-defined pairing, so both images (or an image and its mask) must share the same width and height — and typically the same data type — for the operation to be applied correctly."}
-  ]
-},
-{
-  name:"Linear vs Nonlinear Operations",
-  formula:"Linear: H(a·f1 + b·f2) = a·H(f1) + b·H(f2). Nonlinear: this superposition property does not hold.",
-  desc:"A final unifying lens on everything covered: classifying each technique in this lab as linear or nonlinear helps explain why some transformations apply uniform scaling while others selectively reshape specific intensity ranges.",
-  questions:[
-    {q:"What mathematical property defines a linear operation?",
-     opts:["It must always increase brightness","It satisfies additivity and homogeneity (superposition): H(a·f1 + b·f2) = a·H(f1) + b·H(f2)","It must only work on binary images","It must run faster than nonlinear operations"],
-     a:1, ex:"A linear operation preserves the superposition principle: scaling an input and then applying the operation gives the same result as applying the operation and then scaling (homogeneity), and applying the operation to a sum of two inputs gives the same result as summing the individually-processed outputs (additivity). Any operation that fails this test — including all the curved transformations in this lab — is classified as nonlinear."},
-    {q:"Which of the following are examples of linear point operations covered in this lab?",
-     opts:["Log transformation and gamma correction","Image negative and the linear/min-max cases of contrast stretching, since both follow straight-line mappings","Histogram equalization only","Bit-plane slicing only"],
-     a:1, ex:"Image negative (s = (L-1) - r) and the straight-line cases of contrast stretching both plot as straight lines on the input-vs-output graph, satisfying the proportional, straight-line behavior required of a linear operation. In contrast, log and gamma transforms curve, and histogram equalization's mapping is data-derived and generally nonlinear."},
-    {q:"Why are log and power-law (gamma) transformations classified as nonlinear?",
-     opts:["Because they are implemented using for-loops","Because their output is not a straight-line, proportional function of the input — equal steps in r do not produce equal steps in s","Because they only work on color images","Because they require more code than linear operations"],
-     a:1, ex:"Both log and gamma transformations produce curves rather than straight lines: a fixed increase in r produces a different-sized change in s depending on where you are along the curve (larger changes in the dark region for log/low-gamma, for example). This non-proportional, curve-based behavior is exactly what fails the linear superposition test and defines them as nonlinear."},
-    {q:"Why might you deliberately choose a nonlinear transformation over a simple linear one?",
-     opts:["Nonlinear transformations are always faster to compute","Nonlinear transformations can selectively enhance specific intensity ranges (like just the dark shadows, or just the highlights) unevenly, which a uniform linear scaling cannot achieve","Linear transformations cannot be implemented in Python","There is no real reason; linear is always preferable"],
-     a:1, ex:"A linear transformation stretches or shifts all intensity values by the same proportional amount everywhere. If you specifically want to boost detail hidden in dark shadows without over-brightening the highlights (or vice versa), you need a curve whose slope changes across the intensity range — which is exactly what nonlinear operations like log and gamma provide."},
-    {q:"Is histogram equalization classified as a linear or nonlinear operation?",
-     opts:["Always linear, since it uses simple counting","Generally nonlinear — its transformation function, derived from the cumulative distribution, is typically a curve rather than a straight line, even though it is still a monotonic (order-preserving) mapping","It's linear only for grayscale images","It cannot be classified as either"],
-     a:1, ex:"Although histogram equalization's mapping is monotonic (it never reverses the relative order of intensities), the specific shape of that mapping is dictated by the image's cumulative distribution function, which is rarely a straight line for a real image's histogram — it curves based on wherever pixel counts are concentrated. This data-dependent, curved mapping places histogram equalization firmly in the nonlinear category, alongside log and gamma transformations."}
-  ]
-}
-];
-
-/* ---------- state & rendering ---------- */
-let ci = 0, qi = 0, phase = 'intro', answered = false, chosen = -1;
-
-function totalQuestions(){return DATA.reduce((s,c)=>s+c.questions.length,0);}
-function answeredSoFar(){
-  let n = 0;
-  for(let k=0;k<ci;k++) n += DATA[k].questions.length;
-  n += qi;
-  return n;
-}
-
-const app = document.getElementById('app');
-const progressMask = document.getElementById('progressMask');
-const progressMarker = document.getElementById('progressMarker');
-const progressText = document.getElementById('progressText');
-const progressConcept = document.getElementById('progressConcept');
-
-function updateProgress(){
-  const total = totalQuestions();
-  let done = answeredSoFar();
-  if(phase==='final') done = total;
-  const pct = Math.max(0, Math.min(100, (done/total)*100));
-  progressMask.style.width = (100-pct)+'%';
-  progressMarker.style.left = pct+'%';
-  progressText.innerHTML = 'Question <b>'+Math.min(done+ (phase==='question'?1:0), total)+'</b> of '+total;
-  progressConcept.textContent = ci < DATA.length ? DATA[ci].name : 'Complete';
-}
-
-function render(){
-  updateProgress();
-  if(phase==='intro'){
-    const c = DATA[ci];
-    app.innerHTML = `
-      <div class="card">
-        <div class="eyebrow">Concept ${ci+1} of ${DATA.length}</div>
-        <h2 class="concept-title">${c.name}</h2>
-        <p class="concept-desc">${c.desc}</p>
-        <div class="formula">${c.formula}</div>
-        <div class="btn-row"><button class="btn" id="beginBtn">Begin — ${c.questions.length} questions</button></div>
-      </div>`;
-    document.getElementById('beginBtn').onclick = ()=>{ phase='question'; qi=0; answered=false; chosen=-1; render(); };
-  }
-  else if(phase==='question'){
-    const c = DATA[ci];
-    const q = c.questions[qi];
-    const letters = ['A','B','C','D'];
-    app.innerHTML = `
-      <div class="card">
-        <div class="eyebrow">${c.name}</div>
-        <div class="q-count">Question ${qi+1} of ${c.questions.length} in this concept · Overall ${answeredSoFar()+1}/${totalQuestions()}</div>
-        <div class="q-text">${q.q}</div>
-        <div id="opts"></div>
-        <div id="explainWrap"></div>
-        <div class="btn-row" id="btnRow"></div>
-      </div>`;
-    const optsWrap = document.getElementById('opts');
-    q.opts.forEach((opt,i)=>{
-      const div = document.createElement('button');
-      div.className = 'opt';
-      div.innerHTML = `<span class="tag">${letters[i]}</span><span>${opt}</span>`;
-      div.onclick = ()=> selectOption(i);
-      optsWrap.appendChild(div);
-    });
-    if(answered) paintAnswer();
-  }
-  else if(phase==='concept-done'){
-    const c = DATA[ci];
-    app.innerHTML = `
-      <div class="card">
-        <div class="done-icon">&#10003;</div>
-        <div class="eyebrow">Concept Complete</div>
-        <h2 class="concept-title">${c.name}</h2>
-        <p class="concept-desc">You've worked through all ${c.questions.length} questions on this concept. Quick recap of the core idea:</p>
-        <div class="formula">${c.formula}</div>
-        <ul class="recap"><li>${c.desc}</li></ul>
-        <div class="btn-row"><button class="btn" id="contBtn">${ci+1<DATA.length ? 'Continue to next concept' : 'Finish'}</button></div>
-      </div>`;
-    document.getElementById('contBtn').onclick = ()=>{
-      if(ci+1 < DATA.length){ ci++; phase='intro'; }
-      else { phase='final'; }
-      render();
-    };
-  }
-  else if(phase==='final'){
-    app.innerHTML = `
-      <div class="card" style="text-align:center;">
-        <div class="done-icon" style="margin:0 auto 14px;">&#9733;</div>
-        <div class="eyebrow" style="justify-content:center;">All Concepts Complete</div>
-        <h2 class="final-title">100 questions done.</h2>
-        <p class="final-sub">You've worked through gray-level transformations, negative, log, gamma, contrast stretching, intensity slicing, histogram processing, bit-plane slicing, arithmetic/logic operations, and linear vs. nonlinear behavior — with a full explanation on every answer.</p>
-        <div class="btn-row" style="justify-content:center;"><button class="btn ghost" id="restartBtn">Restart from the beginning</button></div>
-      </div>`;
-    document.getElementById('restartBtn').onclick = ()=>{ ci=0; qi=0; phase='intro'; answered=false; chosen=-1; render(); };
-  }
-}
-
-function selectOption(i){
-  if(answered) return;
-  answered = true;
-  chosen = i;
-  paintAnswer();
-}
-
-function paintAnswer(){
-  const c = DATA[ci];
-  const q = c.questions[qi];
-  const optEls = document.querySelectorAll('#opts .opt');
-  optEls.forEach((el,i)=>{
-    el.setAttribute('disabled','true');
-    if(i===q.a) el.classList.add('correct');
-    else if(i===chosen) el.classList.add('wrong');
-    else el.classList.add('dim');
-  });
-  const isCorrect = chosen === q.a;
-  const explainWrap = document.getElementById('explainWrap');
-  explainWrap.innerHTML = `
-    <div class="verdict ${isCorrect?'ok':'no'}">${isCorrect ? '✓ Correct' : '✗ Not quite — the correct answer is highlighted in blue'}</div>
-    <div class="explain">${q.ex}</div>`;
-  const btnRow = document.getElementById('btnRow');
-  const isLast = qi+1 >= c.questions.length;
-  btnRow.innerHTML = `<button class="btn" id="nextBtn">${isLast ? 'Finish this concept' : 'Next question'}</button>`;
-  document.getElementById('nextBtn').onclick = ()=>{
-    if(isLast){ phase='concept-done'; }
-    else { qi++; answered=false; chosen=-1; phase='question'; }
-    render();
-  };
-}
-
-render();
-</script>
-<script src="js/site.js"></script>
-</body>
-</html>
+}]

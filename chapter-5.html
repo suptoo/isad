@@ -1,484 +1,258 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0b0d10">
-<title>Morphological Image Processing — Learn Through MCQs</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/site.css">
-<link rel="stylesheet" href="css/chapter.css">
-</head>
-<body class="chapter-page" data-chapter="5">
-<div class="wrap">
-  <header>
-    <div class="kernel-icon"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-    <h1>Morphological Image Processing</h1>
-    <p class="sub">40 questions, grouped by concept. Pick an answer to see it turn <b style="color:#3d8bff">blue</b> if correct or <b style="color:#ff4d6a">red</b> if not — with a full explanation every time. No score, just understanding.</p>
-  </header>
-
-  <div class="progress-row">
-    <span class="section-tag" id="sectionTag">Concept 1 / 7</span>
-    <span id="qCounter">Question 0 / 40</span>
-  </div>
-  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-
-  <div id="cardHolder"></div>
-
-  <footer>Erosion · Dilation · Opening · Closing · Boundary Extraction · Structuring Elements</footer>
-</div>
-
-<script>
-const sections = [
-{
-  title: "Fundamentals of Morphological Operations",
-  intro: "Morphological transformations are simple, shape-based operations, almost always applied to binary images. Before diving into erosion and dilation, these five questions cover the basic mechanics: what morphology needs as input, and how OpenCV exposes it.",
-  recap: "Morphology works on the shape of foreground objects in binary images, using an original image plus a structuring element (kernel). The kernel's shape and size decide exactly how an operation behaves — that idea underlies everything that follows: erosion, dilation, opening, and closing.",
-  questions: [
+[{
+  "chapter": "Chapter 5 - Information Gathering",
+  "review": {
+    "definition": "Information Gathering is the process of collecting relevant information about existing systems, users, and requirements.",
+    "important_topics": [
+      "Purpose of Information Gathering",
+      "Sources of Information",
+      "Information Gathering Techniques",
+      "Observation",
+      "Interview",
+      "Questionnaire",
+      "Kinds of Information",
+      "Interview vs Questionnaire"
+    ]
+  },
+  "mcqs": [
     {
-      q: "Morphological transformations are simple operations based on what property of an image?",
-      options: ["Pixel intensity histograms","Image shape","Frequency-domain content","Color channel separation"],
-      correct: 1,
-      explain: "Morphological transformations are explicitly described as operations based on the <b>shape</b> of objects in an image, not on intensity statistics or frequency content. They work by probing an image with a small shape (the structuring element) and checking how that shape fits, or doesn't fit, within the foreground regions. This is fundamentally different from filtering in the frequency domain or adjusting a histogram — morphology cares only about the geometric arrangement of foreground and background pixels."
+      "id": 1,
+      "question": "What is the primary goal of Information Gathering?",
+      "options": {
+        "A": "Write program code",
+        "B": "Collect system requirements",
+        "C": "Design database",
+        "D": "Test software"
+      },
+      "answer": "B",
+      "explanation_bn": "Information Gathering-এর মূল উদ্দেশ্য হলো ব্যবহারকারীর চাহিদা ও সিস্টেমের তথ্য সংগ্রহ করা।"
     },
     {
-      q: "What two inputs does a morphological operation need?",
-      options: ["Two separate images to blend","The original image and a structuring element (kernel)","A histogram and a threshold value","An image and a noise map"],
-      correct: 1,
-      explain: "Every morphological operation needs the <b>original image</b> and a <b>structuring element</b> (also called a kernel). The image supplies the foreground/background pattern to be transformed, while the kernel is a small matrix of 1s (and sometimes 0s) that is slid across the image and decides, at each position, whether that neighborhood counts as foreground or background under the operation being applied."
+      "id": 2,
+      "question": "Which is a primary source of information?",
+      "options": {
+        "A": "Manual",
+        "B": "Company Policy",
+        "C": "Users",
+        "D": "Database Backup"
+      },
+      "answer": "C",
+      "explanation_bn": "Users হলো Primary Source কারণ তথ্য সরাসরি তাদের কাছ থেকে সংগ্রহ করা হয়।"
     },
     {
-      q: "Morphological operations are normally performed on which type of image?",
-      options: ["Full-color RGB images","Binary images","Raw RAW-format camera images","Compressed JPEG images only"],
-      correct: 1,
-      explain: "Morphology is normally performed on <b>binary images</b>, where pixels are either foreground (1) or background (0). This binary structure is what makes concepts like 'all pixels under the kernel are 1' (erosion) or 'at least one pixel under the kernel is 1' (dilation) meaningful and easy to evaluate. Grayscale and color versions of morphology exist, but the classic erosion/dilation/opening/closing logic described here is defined on binary images."
+      "id": 3,
+      "question": "Which technique provides detailed and flexible information?",
+      "options": {
+        "A": "Questionnaire",
+        "B": "Interview",
+        "C": "Sampling",
+        "D": "Document Review"
+      },
+      "answer": "B",
+      "explanation_bn": "Interview-এ প্রশ্ন পরিবর্তন করা যায় এবং বিস্তারিত তথ্য পাওয়া যায়।"
     },
     {
-      q: "What decides the exact 'nature' of a morphological operation — i.e., how strongly and in what shape it affects the image?",
-      options: ["The image's file format","The structuring element (kernel) used","The monitor's color calibration","The number of color channels"],
-      correct: 1,
-      explain: "The structuring element, or kernel, decides the nature of the operation. A small 3×3 square kernel erodes or dilates gently and in straight steps, while a larger kernel or a differently shaped one — like an ellipse — changes both how much the image is affected and the geometric character of that change (blocky vs. rounded). Choosing the kernel is the main design decision in any morphological pipeline."
+      "id": 4,
+      "question": "Which technique is best for large groups?",
+      "options": {
+        "A": "Interview",
+        "B": "Observation",
+        "C": "Questionnaire",
+        "D": "Workshop"
+      },
+      "answer": "C",
+      "explanation_bn": "Questionnaire একসাথে অনেক মানুষের কাছ থেকে তথ্য সংগ্রহ করতে পারে।"
     },
     {
-      q: "Which OpenCV function is used to implement the opening and closing operations?",
-      options: ["cv2.threshold()","cv2.Canny()","cv2.morphologyEx()","cv2.filter2D()"],
-      correct: 2,
-      explain: "OpenCV provides <b>cv2.morphologyEx(image, operation_flag, kernel)</b> as the general-purpose function for compound morphological operations. Passing <b>cv2.MORPH_OPEN</b> performs opening (erosion then dilation) and <b>cv2.MORPH_CLOSE</b> performs closing (dilation then erosion) in a single call, instead of manually chaining cv2.erode() and cv2.dilate() yourself."
+      "id": 5,
+      "question": "Observation helps understand?",
+      "options": {
+        "A": "Budget",
+        "B": "Actual workflow",
+        "C": "Programming",
+        "D": "Database Design"
+      },
+      "answer": "B",
+      "explanation_bn": "Observation বাস্তব কাজের ধাপ পর্যবেক্ষণ করতে সাহায্য করে।"
+    },
+    {
+      "id": 6,
+      "question": "Passive Observation means?",
+      "options": {
+        "A": "Participating in work",
+        "B": "Observing without interference",
+        "C": "Interviewing users",
+        "D": "Reading documents"
+      },
+      "answer": "B",
+      "explanation_bn": "Passive Observation-এ বিশ্লেষক শুধু পর্যবেক্ষণ করেন।"
+    },
+    {
+      "id": 7,
+      "question": "Which observation type uses checklists?",
+      "options": {
+        "A": "Passive",
+        "B": "Active",
+        "C": "Structured",
+        "D": "Unstructured"
+      },
+      "answer": "C",
+      "explanation_bn": "Structured Observation-এ Checklist ব্যবহার করা হয়।"
+    },
+    {
+      "id": 8,
+      "question": "Which interview type follows predefined questions?",
+      "options": {
+        "A": "Structured",
+        "B": "Semi-Structured",
+        "C": "Group",
+        "D": "Unstructured"
+      },
+      "answer": "A",
+      "explanation_bn": "Structured Interview-এ প্রশ্ন আগে থেকেই নির্ধারিত থাকে।"
+    },
+    {
+      "id": 9,
+      "question": "Which interview is most flexible?",
+      "options": {
+        "A": "Structured",
+        "B": "Semi-Structured",
+        "C": "Group",
+        "D": "Unstructured"
+      },
+      "answer": "D",
+      "explanation_bn": "Unstructured Interview-এ প্রশ্ন পরিস্থিতি অনুযায়ী পরিবর্তন করা যায়।"
+    },
+    {
+      "id": 10,
+      "question": "Semi-Structured Interview is?",
+      "options": {
+        "A": "No questions",
+        "B": "Fixed questions only",
+        "C": "Mix of planned and follow-up questions",
+        "D": "Written survey"
+      },
+      "answer": "C",
+      "explanation_bn": "এতে নির্ধারিত প্রশ্ন ও Follow-up প্রশ্ন দুটোই থাকে।"
+    },
+    {
+      "id": 11,
+      "question": "Which questionnaire type allows free responses?",
+      "options": {
+        "A": "Closed-ended",
+        "B": "Rating Scale",
+        "C": "Multiple Choice",
+        "D": "Open-ended"
+      },
+      "answer": "D",
+      "explanation_bn": "Open-ended প্রশ্নে ব্যবহারকারী নিজের ভাষায় উত্তর দেয়।"
+    },
+    {
+      "id": 12,
+      "question": "Which question uses Yes/No answers?",
+      "options": {
+        "A": "Rating",
+        "B": "Open-ended",
+        "C": "Closed-ended",
+        "D": "Essay"
+      },
+      "answer": "C",
+      "explanation_bn": "Closed-ended প্রশ্নে নির্দিষ্ট উত্তর যেমন Yes/No থাকে।"
+    },
+    {
+      "id": 13,
+      "question": "Which tool is useful for brainstorming?",
+      "options": {
+        "A": "Workshop",
+        "B": "Interview",
+        "C": "Questionnaire",
+        "D": "Sampling"
+      },
+      "answer": "A",
+      "explanation_bn": "Workshop-এ দলগতভাবে Brainstorming করা হয়।"
+    },
+    {
+      "id": 14,
+      "question": "Which is NOT a type of information needed?",
+      "options": {
+        "A": "Organizational",
+        "B": "Operational",
+        "C": "Programming",
+        "D": "Environmental"
+      },
+      "answer": "C",
+      "explanation_bn": "Programming Information আলাদা তথ্যের ধরন নয়।"
+    },
+    {
+      "id": 15,
+      "question": "Which is a secondary source?",
+      "options": {
+        "A": "User",
+        "B": "Observation",
+        "C": "Existing Documents",
+        "D": "Interview"
+      },
+      "answer": "C",
+      "explanation_bn": "Existing Documents হলো Secondary Source।"
+    },
+    {
+      "id": 16,
+      "question": "Which step comes after collecting data?",
+      "options": {
+        "A": "Prepare",
+        "B": "Document",
+        "C": "Plan",
+        "D": "Interview"
+      },
+      "answer": "B",
+      "explanation_bn": "Data সংগ্রহের পর তা Document করা হয়।"
+    },
+    {
+      "id": 17,
+      "question": "Which interview advantage is correct?",
+      "options": {
+        "A": "Cannot clarify answers",
+        "B": "Flexible",
+        "C": "Very cheap",
+        "D": "No interaction"
+      },
+      "answer": "B",
+      "explanation_bn": "Interview-এর বড় সুবিধা হলো এটি Flexible।"
+    },
+    {
+      "id": 18,
+      "question": "Questionnaires are best for?",
+      "options": {
+        "A": "Complex discussion",
+        "B": "Large user groups",
+        "C": "Observation",
+        "D": "Small meetings"
+      },
+      "answer": "B",
+      "explanation_bn": "অনেক ব্যবহারকারীর কাছ থেকে দ্রুত তথ্য সংগ্রহের জন্য Questionnaire উপযুক্ত।"
+    },
+    {
+      "id": 19,
+      "question": "Which observation limitation is called Hawthorne Effect?",
+      "options": {
+        "A": "Users forget tasks",
+        "B": "Users change behavior when observed",
+        "C": "Analyst sleeps",
+        "D": "Questions are unclear"
+      },
+      "answer": "B",
+      "explanation_bn": "পর্যবেক্ষণ করা হচ্ছে বুঝলে ব্যবহারকারী আচরণ পরিবর্তন করতে পারে।"
+    },
+    {
+      "id": 20,
+      "question": "Which technique creates a preliminary system model?",
+      "options": {
+        "A": "Interview",
+        "B": "Observation",
+        "C": "Prototyping",
+        "D": "Sampling"
+      },
+      "answer": "C",
+      "explanation_bn": "Prototyping-এর মাধ্যমে প্রাথমিক System Model তৈরি করে Feedback নেওয়া হয়।"
     }
   ]
-},
-{
-  title: "Erosion",
-  intro: "Erosion is the first of the two atomic morphological operations. It shrinks the foreground, much like soil erosion wears away land. These questions dig into how it works, what it does to an image, and where it's useful.",
-  recap: "Erosion keeps a foreground pixel only when every pixel under the kernel is also foreground — so it shrinks the white region, thins objects, and strips away anything smaller than the kernel. More iterations mean stronger shrinking, and it's the operation opening relies on to clean up small noise.",
-  questions: [
-    {
-      q: "What is the basic idea behind erosion?",
-      options: ["It sharpens edges by increasing contrast","It erodes away the boundaries of the foreground object, like soil erosion","It fills in small holes inside objects","It rotates the image by a fixed angle"],
-      correct: 1,
-      explain: "Erosion is named after the literal idea of <b>soil erosion</b> — it wears away the outer boundary of the foreground object, layer by layer. Each pass strips off the outermost ring of foreground pixels, so any object subjected to erosion gets visibly smaller and its edges retreat inward, exactly as a coastline erodes under waves."
-    },
-    {
-      q: "Under the erosion rule, a pixel in the original image is kept as foreground only if:",
-      options: ["At least one pixel under the kernel is 1","All pixels under the kernel are 1","The pixel's neighbors sum to an even number","The pixel is at the image border"],
-      correct: 1,
-      explain: "Erosion applies an <b>all-or-nothing</b> rule: a pixel survives as foreground only if <b>every single pixel</b> covered by the kernel at that position is also foreground (1). If even one pixel under the kernel is background (0), the center pixel is eroded away and set to 0. This strict requirement is exactly why erosion shrinks objects — any pixel near an edge fails the 'all 1s' test and gets removed."
-    },
-    {
-      q: "What effect does erosion have on the foreground (white) region of a binary image?",
-      options: ["It increases the white region","It decreases the white region","It leaves the white region unchanged","It converts the white region to gray"],
-      correct: 1,
-      explain: "Erosion <b>decreases</b> the size of the foreground/white region. Because a pixel is only kept if the entire kernel neighborhood is foreground, pixels along the boundary of any shape are the first to be stripped away. The net visual effect is that white objects appear to shrink inward from their edges after erosion."
-    },
-    {
-      q: "Which line of code performs a single erosion pass in OpenCV?",
-      options: ["cv2.dilate(image, kernel, iterations=1)","cv2.erode(image, kernel, iterations=1)","cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)","cv2.threshold(image, 127, 255, cv2.THRESH_BINARY)"],
-      correct: 1,
-      explain: "The function is <b>cv2.erode(image, kernel, iterations=1)</b>. The 'image' argument is the binary input, 'kernel' is the structuring element that defines the neighborhood being checked, and 'iterations' controls how many times erosion is applied in sequence — each additional iteration erodes the already-eroded result further."
-    },
-    {
-      q: "What happens if you increase the 'iterations' parameter when calling cv2.erode()?",
-      options: ["The image is eroded only once regardless of the value","Erosion is applied repeatedly, shrinking the foreground further each time","The kernel size automatically doubles","Nothing changes — iterations only affects dilation"],
-      correct: 1,
-      explain: "Increasing <b>iterations</b> makes cv2.erode() re-apply the same erosion pass that many times in a row, feeding each result back in as the input to the next pass. The foreground shrinks progressively more with each iteration — thin structures can disappear entirely, and larger objects keep losing another ring of boundary pixels every pass, which is a simple way to control how aggressively noise or thin connections are removed."
-    },
-    {
-      q: "Erosion is especially useful for which of the following tasks?",
-      options: ["Filling small black holes inside a white object","Removing small white noise specks and separating weakly-connected objects","Increasing image resolution","Converting a grayscale image to RGB"],
-      correct: 1,
-      explain: "Because erosion removes anything thinner than the kernel, it's well suited to <b>stripping away small white noise specks</b> (isolated foreground pixels smaller than the kernel simply vanish) and to <b>separating objects</b> that are only barely touching — the thin connecting bridge between them gets eroded away, splitting them apart. Filling holes is instead the job of dilation/closing, which work in the opposite direction."
-    }
-  ]
-},
-{
-  title: "Dilation",
-  intro: "Dilation is erosion's mirror image: instead of shrinking the foreground, it grows it. These questions cover the rule dilation follows, its visual effect, and how it complements erosion.",
-  recap: "Dilation keeps a pixel as foreground if at least one pixel under the kernel is foreground, so it grows the white region and can bridge small gaps. It's the exact opposite of erosion, and together the two form the building blocks for opening and closing.",
-  questions: [
-    {
-      q: "How does dilation relate to erosion?",
-      options: ["It is identical to erosion, just renamed","It is the opposite of erosion — it grows the foreground instead of shrinking it","It only works on grayscale images","It is applied only after edge detection"],
-      correct: 1,
-      explain: "Dilation is explicitly the <b>opposite operation to erosion</b>. Where erosion strips pixels away from the boundary of a foreground object, dilation adds pixels onto the boundary, expanding it outward. The two are complementary tools: one shrinks, one grows, and combining them in different orders produces opening and closing."
-    },
-    {
-      q: "Under the dilation rule, a pixel is set to foreground if:",
-      options: ["All pixels under the kernel are foreground","At least one pixel under the kernel is foreground","No pixels under the kernel are foreground","The pixel already was background"],
-      correct: 1,
-      explain: "Dilation uses an <b>'at least one'</b> rule: if even a single pixel covered by the kernel is foreground (1), the center pixel becomes foreground too. This is much more permissive than erosion's 'all pixels must be 1' rule, and it's exactly why dilation expands regions outward — any background pixel that happens to sit near a foreground pixel gets converted to foreground."
-    },
-    {
-      q: "What is the visual effect of dilation on a binary image?",
-      options: ["The white region or foreground object size increases","The white region shrinks and disappears","The image becomes inverted (black becomes white)","Only the image's brightness changes, not its shape"],
-      correct: 0,
-      explain: "Dilation <b>increases the white region</b> — the size of the foreground object grows because background pixels adjacent to existing foreground get converted to foreground. Visually, object boundaries puff outward in every direction the kernel allows, which is why dilation is often used to thicken thin structures or make faint objects more solid."
-    },
-    {
-      q: "Which line of code performs dilation in OpenCV?",
-      options: ["cv2.erode(image, kernel, iterations=1)","cv2.dilate(image, kernel, iterations=1)","cv2.Canny(image, 100, 200)","cv2.blur(image, (5,5))"],
-      correct: 1,
-      explain: "Dilation is performed with <b>cv2.dilate(image, kernel, iterations=1)</b>, mirroring the syntax of cv2.erode(). The kernel argument again defines the neighborhood being checked, and iterations controls how many successive dilation passes are applied — more iterations means the foreground grows further outward each time."
-    },
-    {
-      q: "Dilation is particularly useful for which of the following?",
-      options: ["Removing thin noise specks permanently","Bridging small gaps and thickening broken or faint object boundaries","Reducing an image's file size","Sharpening fine internal texture detail"],
-      correct: 1,
-      explain: "Because dilation grows the foreground outward, it's effective at <b>bridging small gaps</b> between nearby foreground fragments and <b>thickening thin or broken boundaries</b> so an object becomes more solid and continuous. This is the opposite use case from erosion: erosion is for shrinking and removing small unwanted foreground, while dilation is for growing and reconnecting it."
-    },
-    {
-      q: "If you dilate then immediately erode a binary image using the same kernel, which morphological operation have you performed?",
-      options: ["Opening","Closing","Boundary extraction","Thresholding"],
-      correct: 1,
-      explain: "Dilation followed by erosion, using the same structuring element, is by definition the <b>closing</b> operation. This ordering first expands the foreground enough to swallow small background gaps and holes, then shrinks it back down by the same amount — restoring the overall object size while leaving those small holes filled in."
-    }
-  ]
-},
-{
-  title: "Opening",
-  intro: "Opening combines erosion and dilation in a specific order to clean up noise without permanently shrinking objects. These questions test the order, the purpose, and the size-preserving behavior that makes opening so useful.",
-  recap: "Opening is erosion followed by dilation. Erosion removes anything too small for the kernel (like salt noise) and dilation then restores what's left to roughly its original size — but anything erosion deleted entirely stays gone. Net effect: noise disappears, real objects keep their shape.",
-  questions: [
-    {
-      q: "How is the opening operation constructed?",
-      options: ["Dilation followed by erosion","Erosion followed by dilation","Two erosions in a row","Erosion followed by thresholding"],
-      correct: 1,
-      explain: "Opening is defined as <b>erosion followed by dilation</b>, using the same structuring element for both steps. The erosion pass first strips away anything too small or too thin to survive, and the dilation pass then grows what remains back outward, restoring most of the original size for surviving structures while permanently discarding anything erosion wiped out completely."
-    },
-    {
-      q: "What is opening primarily useful for?",
-      options: ["Filling small black holes inside foreground objects","Removing small noise, particularly small isolated white specks (salt noise)","Extracting the boundary of an object","Converting color images to binary"],
-      correct: 1,
-      explain: "Opening is primarily used for <b>removing noise</b>, especially small isolated white specks scattered across the background (salt noise). Because these specks are typically smaller than the kernel, the initial erosion pass erases them completely; since nothing remains at those locations, the following dilation pass has nothing left there to grow back, so the noise is gone for good."
-    },
-    {
-      q: "Which line of code performs the opening operation in OpenCV?",
-      options: ["cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)","cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)","cv2.erode(cv2.dilate(image, kernel), kernel)","cv2.dilate(image, kernel, iterations=2)"],
-      correct: 1,
-      explain: "Opening is performed with <b>cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)</b>. Internally this is equivalent to calling cv2.erode() and then feeding that result into cv2.dilate() with the same kernel, but morphologyEx bundles both steps into a single, convenient call using the MORPH_OPEN flag."
-    },
-    {
-      q: "What happens to an isolated white speck that is smaller than the structuring element after opening?",
-      options: ["It grows larger than before","It is removed entirely and does not come back","It stays exactly the same size","It turns into a black hole"],
-      correct: 1,
-      explain: "A speck smaller than the kernel fails erosion's 'all pixels under the kernel must be 1' test at every position that covers it, so erosion <b>deletes it completely</b>, leaving nothing behind at that location. Since the following dilation step only grows pixels that already exist, and nothing survived there, the speck cannot be regenerated — it's simply gone, which is exactly why opening is effective for salt-noise removal."
-    },
-    {
-      q: "Why does opening approximately preserve the size of large objects even though it starts with erosion?",
-      options: ["Because erosion is skipped for large objects","Because the subsequent dilation regrows the parts of a large object that erosion removed, since enough of the object survived the erosion step","Because opening only uses a 1x1 kernel","Because opening automatically resizes the image back to its original resolution"],
-      correct: 1,
-      explain: "For an object larger than the kernel, erosion only strips away its outer boundary layer while a solid core survives intact. The following dilation pass then <b>regrows outward from that surviving core</b>, roughly restoring the object's original boundary and size. This is the key distinction from erosion alone: opening's second step gives back what the first step removed, but only where something was left to grow from — which is why small specks vanish while large shapes keep their size."
-    },
-    {
-      q: "In opening, which operation is applied first?",
-      options: ["Dilation is applied first, then erosion","Erosion is applied first, then dilation","Both are applied simultaneously","Neither — opening uses subtraction only"],
-      correct: 1,
-      explain: "In opening, <b>erosion always comes first</b>, followed by dilation. Reversing that order — dilation first, then erosion — is a completely different operation called closing, which has the opposite effect: it fills small holes instead of removing small specks. The order of the two steps is what defines whether you get opening or closing."
-    }
-  ]
-},
-{
-  title: "Closing",
-  intro: "Closing is opening's counterpart: dilation first, then erosion. It's built for the opposite noise problem — small dark holes and gaps inside an otherwise solid object.",
-  recap: "Closing is dilation followed by erosion. Dilation first fills in small background holes and gaps by growing the foreground into them, and erosion then shrinks the boundary back down — leaving those small holes closed while the object's overall size is roughly preserved.",
-  questions: [
-    {
-      q: "How is the closing operation constructed?",
-      options: ["Erosion followed by dilation","Dilation followed by erosion","Dilation applied twice","Erosion applied twice"],
-      correct: 1,
-      explain: "Closing is the reverse of opening: it's constructed as <b>dilation followed by erosion</b>, using the same structuring element for both steps. Dilation first expands the foreground so it swallows small background gaps and holes, and erosion then shrinks the boundary back down by roughly the same amount, leaving the newly-filled holes closed while restoring the outer boundary close to its original position."
-    },
-    {
-      q: "What is closing primarily useful for?",
-      options: ["Removing small white noise specks in the background","Closing small holes inside foreground objects and filling small black points (pepper noise)","Detecting edges using gradient magnitude","Rotating an object to align its axis"],
-      correct: 1,
-      explain: "Closing is primarily useful for <b>filling small holes inside foreground objects</b> and closing up small black points scattered on the object — commonly called pepper noise. Because dilation grows the foreground first, small dark gaps that are smaller than the kernel get completely swallowed by the surrounding white region, and the erosion step afterward doesn't undo this since there's no gap left to reappear."
-    },
-    {
-      q: "Which line of code performs the closing operation in OpenCV?",
-      options: ["cv2.morphologyEx(image, cv2.MORPH_OPEN, kernel)","cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)","cv2.dilate(image, kernel, iterations=1)","cv2.erode(image, kernel, iterations=1)"],
-      correct: 1,
-      explain: "Closing is performed with <b>cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)</b>. This applies dilation followed by erosion using the same kernel in one call, exactly mirroring how MORPH_OPEN implements opening but with the two underlying steps swapped in order."
-    },
-    {
-      q: "What is the key difference between opening and closing?",
-      options: ["Opening uses a bigger kernel than closing","Opening is erosion-then-dilation and removes small foreground specks; closing is dilation-then-erosion and fills small background holes","There is no real difference — they produce identical results","Closing only works on color images, opening only on grayscale"],
-      correct: 1,
-      explain: "The two operations use the same building blocks in <b>opposite order for opposite goals</b>. Opening (erode → dilate) removes small bright specks that stick out from the foreground, while closing (dilate → erode) fills in small dark holes or gaps that dip into the foreground. Practically: use opening to clean 'salt' noise on the background, and closing to clean 'pepper' noise (holes) inside objects."
-    },
-    {
-      q: "A small black hole inside a white object that is smaller than the structuring element — what happens to it after closing?",
-      options: ["It grows larger","It is filled in completely and disappears","It stays exactly the same","It turns into a white speck outside the object"],
-      correct: 1,
-      explain: "Since the hole is smaller than the kernel, the dilation step grows the surrounding white foreground inward from every direction until it <b>completely covers and fills the hole</b>. The subsequent erosion step then shrinks the outer boundary of the object back down, but because the hole no longer exists as separate background, erosion has nothing there to re-expose — the hole stays filled."
-    },
-    {
-      q: "Does closing significantly shrink the overall size of a large foreground object?",
-      options: ["Yes, closing always shrinks objects the same way erosion does","No, closing approximately preserves the object's overall size while filling small internal holes","Yes, closing always doubles the object's size","No, closing has no effect on binary images at all"],
-      correct: 1,
-      explain: "Closing <b>approximately preserves the overall size</b> of a large object. The dilation step temporarily grows the boundary outward and fills interior holes, but the following erosion step, using the same kernel, shrinks that boundary back down to roughly its starting position. The net effect on the object's outer silhouette is small; the visible change is mainly that small holes inside it are now gone."
-    }
-  ]
-},
-{
-  title: "Boundary Extraction",
-  intro: "Once you understand erosion, extracting an object's boundary is a short step away: subtract an eroded version of the image from the original. These questions dig into why that subtraction produces exactly the outline.",
-  recap: "Boundary extraction works by computing boundary = image − erosion. Erosion removes only the outer ring of foreground pixels while leaving the interior untouched, so subtracting it from the original cancels out everything except that outer ring — the boundary. A larger structuring element erodes more layers, producing a thicker extracted boundary.",
-  questions: [
-    {
-      q: "How is the boundary of a binary object typically extracted using morphology?",
-      options: ["By applying cv2.Canny() to the binary image","By subtracting an eroded version of the image from the original image","By dilating the image twice","By thresholding the image at a higher value"],
-      correct: 1,
-      explain: "The boundary is extracted with the formula <b>boundary = image − erosion</b>: first erode the image to get a version with its outer layer stripped away, then subtract that eroded image from the original. What's left is exactly the thin ring of pixels that erosion removed — the object's boundary."
-    },
-    {
-      q: "In the formula boundary = image - erosion, what does the resulting image represent?",
-      options: ["The entire interior of the object","The outer ring of pixels that erosion removed — i.e., the object's boundary","A blurred version of the object","The background region only"],
-      correct: 1,
-      explain: "The result of image minus erosion is precisely the set of pixels that were foreground in the original image but were <b>stripped away by erosion</b>. Since erosion only removes the outermost layer of foreground pixels (and leaves interior pixels untouched), what remains after the subtraction is exactly that thin outer layer — the object's boundary outline."
-    },
-    {
-      q: "Why does subtracting the eroded image from the original leave only the boundary, rather than the whole object?",
-      options: ["Because subtraction always produces a random pattern","Because erosion doesn't change interior pixels, so those cancel out in the subtraction, leaving only the pixels erosion removed near the edge","Because the original and eroded images are unrelated","Because erosion converts the entire image to background"],
-      correct: 1,
-      explain: "Interior pixels of a large-enough object satisfy erosion's 'all pixels under the kernel are 1' condition and survive unchanged — so they appear as foreground in both the original and the eroded image, and <b>cancel out to zero</b> during subtraction. Only boundary pixels, which fail that condition and get erased by erosion, are present in the original but absent from the eroded version, so they're the only ones left standing out after the subtraction."
-    },
-    {
-      q: "If a larger structuring element were used for the erosion step before boundary extraction, what would happen to the extracted boundary?",
-      options: ["The boundary would disappear completely","The extracted boundary would become thicker, since erosion removes more layers of pixels","The extracted boundary would become thinner than a single pixel","Nothing would change regardless of kernel size"],
-      correct: 1,
-      explain: "A larger structuring element makes erosion strip away <b>more layers</b> of pixels from the object's edge in a single pass, not just the outermost one. Since boundary extraction captures everything erosion removed, using a bigger kernel produces a visibly thicker boundary ring in the result, rather than the thin single-pixel-wide outline you'd get from a minimal 3×3 kernel."
-    },
-    {
-      q: "Which two operations are combined to perform boundary extraction as described here?",
-      options: ["Dilation and thresholding","Erosion and image subtraction","Opening and closing","Rotation and cropping"],
-      correct: 1,
-      explain: "Boundary extraction combines just <b>erosion and a simple image subtraction</b> — no dilation, opening, or closing is involved. First erode the binary image to shrink the foreground, then subtract that eroded result from the original image; the difference is the object's outline. It's one of the simplest practical applications of a single atomic morphological operation."
-    }
-  ]
-},
-{
-  title: "Structuring Elements & Related Transforms",
-  intro: "The final stretch covers how the shape of the structuring element changes results, plus three related transforms often paired with morphology: the morphological gradient, top-hat, and black-hat.",
-  recap: "The structuring element's shape matters as much as its size — circular kernels handle curved shapes more naturally than square ones. Beyond the four core operations, the morphological gradient (dilation − erosion) highlights edges, top-hat (image − opening) pulls out small bright details, and black-hat (closing − image) pulls out small dark details. Together, opening and closing form a simple, effective way to clean both salt and pepper noise from a binary image.",
-  questions: [
-    {
-      q: "What role does the shape of the structuring element (e.g., square vs. circular) play in a morphological operation?",
-      options: ["It has no effect — only the total pixel count of the kernel matters","It determines the geometric/directional bias of the result; circular kernels produce smoother, more isotropic effects on curved shapes than square kernels","It only affects grayscale images, never binary ones","It changes the color of the output image"],
-      correct: 1,
-      explain: "The kernel's shape controls the <b>directional character</b> of the operation, not just its strength. A square kernel processes pixels along rigid horizontal/vertical/diagonal directions, which can introduce blocky, corner-like artifacts on curved objects. A circular (elliptical) kernel treats all directions more evenly, so operations like dilation or erosion on rounded shapes tend to preserve smooth, natural-looking curves instead of squaring them off."
-    },
-    {
-      q: "What does cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5,5)) create?",
-      options: ["A random noise pattern of size 5x5","A 5x5 circular/elliptical-shaped kernel with less directional bias than a square kernel","A 5x5 all-zero kernel that disables morphology","A grayscale gradient filter"],
-      correct: 1,
-      explain: "This call creates a <b>5×5 elliptical (circular) structuring element</b> instead of the default rectangular one. Using MORPH_ELLIPSE in place of a plain NumPy square array changes which pixels within the 5×5 neighborhood actually count as part of the kernel — corners are excluded to approximate a circle — which is especially useful when processing images with curved or rounded shapes."
-    },
-    {
-      q: "The morphological gradient is computed as:",
-      options: ["Original image minus opening of the image","Dilation of the image minus erosion of the image","Closing minus original image","Erosion plus dilation, divided by two"],
-      correct: 1,
-      explain: "The morphological gradient is defined as <b>dilation − erosion</b>. Since dilation expands the foreground outward and erosion shrinks it inward, subtracting the smaller (eroded) result from the larger (dilated) result leaves exactly the band of pixels near an object's boundary — effectively highlighting the outline or edge of the object, similar in spirit to an edge detector."
-    },
-    {
-      q: "The top-hat transform is defined as:",
-      options: ["Closing of the image minus the original image","Original image minus the opening of the image","Dilation minus erosion","Original image minus the closing of the image"],
-      correct: 1,
-      explain: "Top-hat is defined as <b>original image − opening(image)</b>. Since opening removes small bright details smaller than the kernel while keeping large structures intact, subtracting the opened image from the original leaves behind only those small bright details that opening erased — making top-hat useful for isolating small bright objects or uneven bright highlights against a more uniform background."
-    },
-    {
-      q: "The black-hat transform is defined as:",
-      options: ["Original image minus closing of the image","Closing of the image minus the original image","Dilation minus the original image","Opening minus erosion"],
-      correct: 1,
-      explain: "Black-hat is defined as <b>closing(image) − original image</b>. Closing fills in small dark gaps/holes smaller than the kernel while leaving large structures alone, so subtracting the original from the closed image leaves behind only those small dark regions that closing filled in — making black-hat useful for isolating small dark spots or holes against a brighter surrounding area."
-    },
-    {
-      q: "Which combination best removes both salt noise (small white specks) and pepper noise (small black holes) from a binary image?",
-      options: ["Erosion alone, applied many times","Dilation alone, applied many times","Opening (to remove salt noise) combined with closing (to fill pepper noise)","Boundary extraction repeated twice"],
-      correct: 2,
-      explain: "Salt and pepper noise need <b>opposite fixes</b>, so a single operation can't handle both. Opening (erosion then dilation) is exactly what's needed to erase small white specks scattered on the background, since erosion deletes them and dilation doesn't bring back what's gone. Closing (dilation then erosion) is exactly what's needed to fill small black holes inside the foreground. Applying opening and then closing (or vice versa) with a well-chosen kernel size cleans up both noise types in one pipeline."
-    }
-  ]
-}
-];
-
-// Flatten into a linear list of steps
-const steps = [];
-sections.forEach((sec, sIdx) => {
-  steps.push({type:'intro', sectionIndex:sIdx});
-  sec.questions.forEach((q, qIdx) => {
-    steps.push({type:'question', sectionIndex:sIdx, qIndex:qIdx});
-  });
-  steps.push({type:'summary', sectionIndex:sIdx});
-});
-steps.push({type:'complete'});
-
-const totalQuestions = sections.reduce((acc,s)=>acc+s.questions.length,0);
-
-let stepPos = 0;
-let questionsSeen = 0;
-
-const holder = document.getElementById('cardHolder');
-const sectionTag = document.getElementById('sectionTag');
-const qCounter = document.getElementById('qCounter');
-const progressFill = document.getElementById('progressFill');
-
-function updateProgress(sIdx){
-  sectionTag.textContent = `Concept ${sIdx+1} / ${sections.length}`;
-  qCounter.textContent = `Question ${questionsSeen} / ${totalQuestions}`;
-  progressFill.style.width = (questionsSeen/totalQuestions*100) + '%';
-}
-
-function render(){
-  const step = steps[stepPos];
-  holder.innerHTML = '';
-
-  if(step.type === 'intro'){
-    const sec = sections[step.sectionIndex];
-    updateProgress(step.sectionIndex);
-    const card = document.createElement('div');
-    card.className = 'card intro-card';
-    card.innerHTML = `
-      <span class="num">Concept ${step.sectionIndex+1} of ${sections.length}</span>
-      <h2>${sec.title}</h2>
-      <p>${sec.intro}</p>
-      <button class="btn" id="nextBtn">Start this concept →</button>
-    `;
-    holder.appendChild(card);
-    document.getElementById('nextBtn').onclick = advance;
-  }
-
-  else if(step.type === 'question'){
-    const sec = sections[step.sectionIndex];
-    const q = sec.questions[step.qIndex];
-    questionsSeen++;
-    updateProgress(step.sectionIndex);
-
-    const card = document.createElement('div');
-    card.className = 'card';
-    const letters = ['A','B','C','D'];
-    card.innerHTML = `
-      <div class="q-count">${sec.title} — Question ${step.qIndex+1} of ${sec.questions.length}</div>
-      <p class="q-text">${q.q}</p>
-      <div class="options">
-        ${q.options.map((opt,i)=>`
-          <button class="opt" data-i="${i}">
-            <span class="letter">${letters[i]}</span>
-            <span>${opt}</span>
-          </button>
-        `).join('')}
-      </div>
-      <div id="explainHolder"></div>
-    `;
-    holder.appendChild(card);
-
-    const optionEls = card.querySelectorAll('.opt');
-    optionEls.forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const chosen = parseInt(btn.dataset.i);
-        handleAnswer(q, chosen, optionEls, card);
-      });
-    });
-  }
-
-  else if(step.type === 'summary'){
-    const sec = sections[step.sectionIndex];
-    updateProgress(step.sectionIndex);
-    const isLast = step.sectionIndex === sections.length - 1;
-    const card = document.createElement('div');
-    card.className = 'card summary-card';
-    card.innerHTML = `
-      <span class="check">✓ Concept complete</span>
-      <h2>${sec.title}</h2>
-      <p>${sec.recap}</p>
-      <button class="btn" id="nextBtn">${isLast ? 'Finish quiz →' : 'Continue to next concept →'}</button>
-    `;
-    holder.appendChild(card);
-    document.getElementById('nextBtn').onclick = advance;
-  }
-
-  else if(step.type === 'complete'){
-    qCounter.textContent = `Question ${totalQuestions} / ${totalQuestions}`;
-    progressFill.style.width = '100%';
-    sectionTag.textContent = 'All concepts done';
-    const card = document.createElement('div');
-    card.className = 'card summary-card';
-    card.innerHTML = `
-      <span class="check">✓✓✓</span>
-      <h2>All 40 questions complete</h2>
-      <p>You've worked through fundamentals, erosion, dilation, opening, closing, boundary extraction, and structuring elements / related transforms. Restart any time to reinforce a concept.</p>
-      <button class="btn ghost" id="restartBtn">↺ Restart from the beginning</button>
-    `;
-    holder.appendChild(card);
-    document.getElementById('restartBtn').onclick = ()=>{
-      stepPos = 0; questionsSeen = 0; render();
-      window.scrollTo({top:0, behavior:'smooth'});
-    };
-  }
-
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-
-function handleAnswer(q, chosen, optionEls, card){
-  const isCorrect = chosen === q.correct;
-  optionEls.forEach((btn,i)=>{
-    btn.classList.add('locked');
-    if(i === q.correct){
-      btn.classList.add('correct');
-    } else if(i === chosen){
-      btn.classList.add('incorrect');
-    } else {
-      btn.classList.add('faded');
-    }
-    btn.disabled = true;
-  });
-
-  const explainHolder = card.querySelector('#explainHolder');
-  const tagHtml = isCorrect
-    ? `<span class="tag right">✓ Correct</span>`
-    : `<span class="tag wrong">✕ Not quite — here's the correct answer</span>`;
-  const box = document.createElement('div');
-  box.className = 'explain' + (isCorrect ? '' : ' wrong-tint');
-  box.innerHTML = `${tagHtml}<div>${q.explain}</div>`;
-  explainHolder.appendChild(box);
-
-  const nextBtn = document.createElement('button');
-  nextBtn.className = 'btn';
-  nextBtn.textContent = 'Next question →';
-  nextBtn.onclick = advance;
-  explainHolder.appendChild(nextBtn);
-
-  nextBtn.scrollIntoView({behavior:'smooth', block:'nearest'});
-}
-
-function advance(){
-  stepPos++;
-  render();
-}
-
-render();
-</script>
-<script src="js/site.js"></script>
-</body>
-</html>
+}]

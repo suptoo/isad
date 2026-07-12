@@ -1,7 +1,5 @@
 /**
- * DIP MCQ Lab — shared navigation & site chrome
- * NOTE: This file controls navigation/layout only.
- * MCQ text, explanations, and chapter content in HTML files must never be edited.
+ * System Analysis and Design MCQ — shared navigation & site chrome
  */
 (function () {
   "use strict";
@@ -10,73 +8,78 @@
     {
       id: 1,
       file: "chapter1.html",
-      title: "OpenCV Basics",
-      topic: "Image I/O, display, color channels & transforms",
-      questions: 100,
-      concepts: 10,
+      title: "Information System Analysis and Design",
+      topic: "Types of systems, elements, and characteristics",
       color: "#3568e0",
     },
     {
       id: 2,
       file: "chapter2.html",
-      title: "Point Processing",
-      topic: "Intensity transforms, histograms & bit-planes",
-      questions: 100,
-      concepts: 10,
+      title: "System Analysis and System Design",
+      topic: "SDLC, Logical vs Physical Design, Feasibility",
       color: "#f2a65a",
     },
     {
       id: 3,
       file: "chapter-3.html",
-      title: "Convolution & Filtering",
-      topic: "Kernels, smoothing, sharpening & Sobel",
-      questions: 100,
-      concepts: 12,
+      title: "The System Analyst",
+      topic: "Roles, responsibilities, and skills required",
       color: "#35c9b0",
     },
     {
       id: 4,
       file: "chapter-4.html",
-      title: "Edge Detection",
-      topic: "Laplacian, Sobel, Prewitt & Canny",
-      questions: 60,
-      concepts: 6,
+      title: "System Planning & Investigation",
+      topic: "Identifying problems and fact-finding techniques",
       color: "#ffb454",
     },
     {
       id: 5,
       file: "chapter-5.html",
-      title: "Morphological Processing",
-      topic: "Erosion, dilation, opening & closing",
-      questions: 40,
-      concepts: 7,
+      title: "Information Gathering",
+      topic: "Interviews, Questionnaires, and Observations",
       color: "#3d8bff",
     },
     {
       id: 6,
       file: "chapter-6.html",
-      title: "Convolution & Filtering — Overview",
-      topic: "Full chapter overview — kernel size effects & general review",
-      questions: 100,
-      concepts: 12,
-      color: "#4c8bf5",
+      title: "Tools of Structured Analysis",
+      topic: "DFD, Data Dictionary, Decision Trees",
+      color: "#8b5cf6",
+    },
+    {
+      id: 7,
+      file: "chapter-7.html",
+      title: "Feasibility Study",
+      topic: "Technical, Economic, and Operational Evaluation",
+      color: "#ec4899",
+    },
+    {
+      id: 8,
+      file: "chapter-8.html",
+      title: "Evaluation Methods",
+      topic: "NPV, Cash Flow, Payback Period, Break-Even",
+      color: "#f43f5e",
+    },
+    {
+      id: 9,
+      file: "chapter-9.html",
+      title: "System Design",
+      topic: "Logical vs Physical, Coupling, and Cohesion",
+      color: "#10b981",
     },
   ];
 
-  const STORAGE_KEY = "dip-mcq-last-chapter";
+  const STORAGE_KEY = "sad-mcq-last-chapter";
 
   function getCurrentChapterId() {
-    const body = document.body;
-    const fromAttr = body.getAttribute("data-chapter");
-    if (fromAttr) return parseInt(fromAttr, 10);
-
-    const path = (window.location.pathname || "").split("/").pop() || "";
-    const match = CHAPTERS.find((c) => c.file === path);
-    return match ? match.id : null;
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("ch")) return parseInt(params.get("ch"), 10);
+    return null;
   }
 
   function chapterLink(ch) {
-    return ch.file;
+    return `quiz.html?ch=${ch.id}`;
   }
 
   function rememberVisit(id) {
@@ -96,7 +99,6 @@
         `<span class="num">${ch.id}</span>` +
         `<span class="info">` +
         `<span class="title">${ch.title}</span>` +
-        `<span class="meta">${ch.questions} Q · ${ch.concepts} concepts</span>` +
         `</span>` +
         `</a>` +
         `</li>`
@@ -123,11 +125,10 @@
     header.className = "site-header";
     header.setAttribute("role", "banner");
     header.innerHTML =
-      `<a href="home.html" class="site-brand" aria-label="DIP MCQ Lab home">` +
-      `<span class="site-brand-mark" aria-hidden="true"></span>` +
+      `<a href="home.html" class="site-brand" aria-label="SAD MCQ Lab home">` +
       `<span class="site-brand-text">` +
-      `<span class="site-brand-title">DIP MCQ Lab</span>` +
-      `<span class="site-brand-sub">CSE 4106 · Digital Image Processing</span>` +
+      `<span class="site-brand-title">SAD MCQ Lab</span>` +
+      `<span class="site-brand-sub">System Analysis and Design</span>` +
       `</span>` +
       `</a>` +
       (current
@@ -155,7 +156,7 @@
       `<h2>${isHome ? "All Chapters" : "Jump to chapter"}</h2>` +
       `<button type="button" class="site-drawer-close" id="siteDrawerClose" aria-label="Close menu">×</button>` +
       `</div>` +
-      `<p class="site-drawer-label">6 chapters · 500 questions</p>` +
+      `<p class="site-drawer-label">${CHAPTERS.length} chapters loaded</p>` +
       `<ul class="site-chapter-links">${buildChapterLinks(currentId)}</ul>` +
       `<p class="site-drawer-label" style="margin-top:18px">Site</p>` +
       `<ul class="site-chapter-links">` +
@@ -227,17 +228,15 @@
           ? `<span class="chapter-tag accent">Continue where you left off</span>`
           : "";
       return (
-        `<a href="${chapterLink(ch)}" class="chapter-card" data-chapter="${ch.id}">` +
+        `<a href="${chapterLink(ch)}" class="chapter-card" style="--ch-color: ${ch.color}" data-chapter="${ch.id}">` +
         `<div class="chapter-card-head">` +
         `<span class="chapter-card-num">${ch.id}</span>` +
         `<h2>${ch.title}</h2>` +
         `</div>` +
         `<p class="chapter-card-desc">${ch.topic}</p>` +
         `<div class="chapter-card-foot">` +
-        `<span class="chapter-tag">${ch.questions} questions</span>` +
-        `<span class="chapter-tag">${ch.concepts} concepts</span>` +
         resume +
-        `<span class="chapter-card-cta">Start →</span>` +
+        `<span class="chapter-card-cta">Start Quiz →</span>` +
         `</div>` +
         `</a>`
       );
@@ -248,15 +247,7 @@
     injectSiteChrome();
     renderHomeCards();
 
-    const totalQ = CHAPTERS.reduce((s, c) => s + c.questions, 0);
-    const totalC = CHAPTERS.reduce((s, c) => s + c.concepts, 0);
-
-    const qEl = document.getElementById("homeTotalQuestions");
-    const cEl = document.getElementById("homeTotalConcepts");
     const chEl = document.getElementById("homeTotalChapters");
-
-    if (qEl) qEl.textContent = String(totalQ);
-    if (cEl) cEl.textContent = String(totalC);
     if (chEl) chEl.textContent = String(CHAPTERS.length);
   }
 
@@ -266,5 +257,5 @@
     init();
   }
 
-  window.DIP_SITE = { CHAPTERS, getCurrentChapterId, rememberVisit };
+  window.SAD_SITE = { CHAPTERS, getCurrentChapterId, rememberVisit };
 })();

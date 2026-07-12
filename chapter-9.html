@@ -1,0 +1,317 @@
+[{
+  "chapter_review": {
+    "chapter_no": 9,
+    "chapter_name": "System Design",
+    "overview": "System Design is the phase of SDLC where the logical requirements obtained during system analysis are converted into a physical blueprint for implementation. It defines how the system will be developed including architecture, database, modules, interfaces, security, inputs, outputs, and processing. The chapter also discusses Structured Design, Functional Decomposition, Structure Charts, Module Coupling, Module Cohesion, and their relationships. Finally, it explains development activities and personnel allocation required to build a quality information system.",
+    "important_topics": [
+      "Definition of System Design",
+      "Logical Design",
+      "Physical Design",
+      "Stages of System Design",
+      "Steps in System Design Process",
+      "System Design Deliverables",
+      "Importance of System Design",
+      "Structured Design",
+      "Functional Decomposition",
+      "Top-down Approach",
+      "Hierarchy",
+      "Modularity",
+      "Reusability",
+      "Structure Chart",
+      "Module Coupling",
+      "Module Cohesion",
+      "Relationship between Coupling and Cohesion",
+      "Personnel Allocation"
+    ],
+    "key_points": [
+      "Logical Design describes WHAT the system should do.",
+      "Physical Design describes HOW the system will be implemented.",
+      "System Design converts requirements into implementation blueprint.",
+      "Structured Design follows Top-down methodology.",
+      "Functional Decomposition divides a large problem into smaller modules.",
+      "Structure Chart represents module hierarchy.",
+      "Low Coupling is desirable.",
+      "High Cohesion is desirable.",
+      "High Cohesion + Low Coupling = Good Design.",
+      "System Design Document (SDD) is a major deliverable."
+    ],
+    "exam_tips_bn": [
+      "Logical Design ও Physical Design এর পার্থক্য অবশ্যই মুখস্থ রাখো।",
+      "System Design Process-এর ৮টি স্টেজ পরীক্ষায় খুব গুরুত্বপূর্ণ।",
+      "Structure Chart এবং Functional Decomposition থেকে MCQ আসে।",
+      "Low Coupling এবং High Cohesion সবচেয়ে গুরুত্বপূর্ণ Concept।",
+      "System Design Deliverables ও Personnel Allocation থেকে সংক্ষিপ্ত প্রশ্ন আসতে পারে।"
+    ]
+  },
+  "mcqs": [
+    {
+      "id": 1,
+      "question": "What is the primary purpose of System Design?",
+      "options": [
+        "Collect user requirements",
+        "Convert requirements into implementation blueprint",
+        "Test the completed software",
+        "Maintain the system"
+      ],
+      "correct_answer": "Convert requirements into implementation blueprint",
+      "explanation_bn": "System Design-এর মূল উদ্দেশ্য হলো Analysis-এ পাওয়া Requirement-কে বাস্তব Implementation Blueprint-এ রূপান্তর করা।"
+    },
+    {
+      "id": 2,
+      "question": "Logical Design mainly focuses on ______.",
+      "options": [
+        "Hardware selection",
+        "Network devices",
+        "What the system should do",
+        "Programming language"
+      ],
+      "correct_answer": "What the system should do",
+      "explanation_bn": "Logical Design-এ System কী কাজ করবে (What) সেটি নির্ধারণ করা হয়। এখানে DFD, ERD ইত্যাদি ব্যবহৃত হয়।"
+    },
+    {
+      "id": 3,
+      "question": "Physical Design mainly focuses on ______.",
+      "options": [
+        "What the system should do",
+        "Why the system is needed",
+        "How the system will be built",
+        "Who will use the system"
+      ],
+      "correct_answer": "How the system will be built",
+      "explanation_bn": "Physical Design-এ Hardware, Software, Database, UI ইত্যাদি ব্যবহার করে System কীভাবে তৈরি হবে তা নির্ধারণ করা হয়।"
+    },
+    {
+      "id": 4,
+      "question": "Which diagram is commonly used in Logical Design?",
+      "options": [
+        "DFD",
+        "Flowchart",
+        "Gantt Chart",
+        "PERT Chart"
+      ],
+      "correct_answer": "DFD",
+      "explanation_bn": "Logical Design-এর গুরুত্বপূর্ণ টুল হলো Data Flow Diagram (DFD)।"
+    },
+    {
+      "id": 5,
+      "question": "Which of the following belongs to Physical Design?",
+      "options": [
+        "DFD",
+        "ERD only",
+        "Database, Hardware and UI Design",
+        "Requirement Analysis"
+      ],
+      "correct_answer": "Database, Hardware and UI Design",
+      "explanation_bn": "Physical Design-এ Database, Hardware, Software, Network ও User Interface ডিজাইন করা হয়।"
+    },
+    {
+      "id": 6,
+      "question": "Which stage defines screen layouts, menus and navigation?",
+      "options": [
+        "Process Design",
+        "User Interface Design",
+        "Security Design",
+        "Output Design"
+      ],
+      "correct_answer": "User Interface Design",
+      "explanation_bn": "Screen Layout, Menu এবং Navigation-এর নকশা User Interface Design পর্যায়ে করা হয়।"
+    },
+    {
+      "id": 7,
+      "question": "Which stage determines the format of reports and dashboards?",
+      "options": [
+        "Output Design",
+        "Input Design",
+        "Database Design",
+        "Architecture Design"
+      ],
+      "correct_answer": "Output Design",
+      "explanation_bn": "Report, Dashboard এবং অন্যান্য Output-এর Format ও Layout Output Design পর্যায়ে নির্ধারণ করা হয়।"
+    },
+    {
+      "id": 8,
+      "question": "Which deliverable is produced after completing the System Design phase?",
+      "options": [
+        "User Manual",
+        "System Design Document (SDD)",
+        "Source Code",
+        "Test Report"
+      ],
+      "correct_answer": "System Design Document (SDD)",
+      "explanation_bn": "System Design-এর সবচেয়ে গুরুত্বপূর্ণ Deliverable হলো System Design Document (SDD)।"
+    },
+    {
+      "id": 9,
+      "question": "Structured Design follows which approach?",
+      "options": [
+        "Bottom-up",
+        "Top-down",
+        "Object-first",
+        "Random"
+      ],
+      "correct_answer": "Top-down",
+      "explanation_bn": "Structured Design একটি Top-down Approach অনুসরণ করে যেখানে বড় System-কে ছোট Module-এ ভাগ করা হয়।"
+    },
+    {
+      "id": 10,
+      "question": "Which is the main goal of Functional Decomposition?",
+      "options": [
+        "Increase hardware cost",
+        "Divide a complex system into manageable modules",
+        "Reduce user interaction",
+        "Increase coupling"
+      ],
+      "correct_answer": "Divide a complex system into manageable modules",
+      "explanation_bn": "Functional Decomposition-এর মাধ্যমে বড় ও জটিল System-কে ছোট ছোট Module-এ ভাগ করা হয় যাতে Design, Coding ও Maintenance সহজ হয়।"
+    }
+  ]
+},
+{
+  "mcqs": [
+    {
+      "id": 11,
+      "question": "Which concept in Functional Decomposition starts with the overall system and then divides it into smaller subsystems?",
+      "options": [
+        "Bottom-up Approach",
+        "Top-down Approach",
+        "Agile Development",
+        "Rapid Prototyping"
+      ],
+      "correct_answer": "Top-down Approach",
+      "explanation_bn": "Top-down Approach-এ প্রথমে পুরো System বিবেচনা করা হয়, এরপর ধাপে ধাপে ছোট ছোট Subsystem ও Module-এ ভাগ করা হয়।"
+    },
+    {
+      "id": 12,
+      "question": "Which property means each module performs a single well-defined task?",
+      "options": [
+        "Coupling",
+        "Hierarchy",
+        "Modularity",
+        "Testing"
+      ],
+      "correct_answer": "Modularity",
+      "explanation_bn": "Modularity বলতে বোঝায় প্রতিটি Module একটি নির্দিষ্ট এবং সুস্পষ্ট কাজ সম্পন্ন করবে।"
+    },
+    {
+      "id": 13,
+      "question": "A Structure Chart is mainly used to represent ______.",
+      "options": [
+        "Database tables",
+        "Program execution time",
+        "Hierarchical relationship among modules",
+        "Network topology"
+      ],
+      "correct_answer": "Hierarchical relationship among modules",
+      "explanation_bn": "Structure Chart-এর মাধ্যমে Module-এর Hierarchy এবং তাদের পারস্পরিক সম্পর্ক দেখানো হয়।"
+    },
+    {
+      "id": 14,
+      "question": "In a Structure Chart, the top-level module usually represents the ______.",
+      "options": [
+        "Database",
+        "Main control module",
+        "Output report",
+        "User interface"
+      ],
+      "correct_answer": "Main control module",
+      "explanation_bn": "Structure Chart-এর সর্বোচ্চ Module সাধারণত Main Control Module নির্দেশ করে।"
+    },
+    {
+      "id": 15,
+      "question": "What does Low Coupling indicate?",
+      "options": [
+        "Modules are highly dependent",
+        "Modules are independent",
+        "Modules are duplicated",
+        "Modules cannot communicate"
+      ],
+      "correct_answer": "Modules are independent",
+      "explanation_bn": "Low Coupling মানে Module-গুলোর মধ্যে Dependency কম থাকে, ফলে Maintenance ও Reusability বৃদ্ধি পায়।"
+    },
+    {
+      "id": 16,
+      "question": "Which type of cohesion is considered the best?",
+      "options": [
+        "Logical Cohesion",
+        "Sequential Cohesion",
+        "Functional Cohesion",
+        "Temporal Cohesion"
+      ],
+      "correct_answer": "Functional Cohesion",
+      "explanation_bn": "Functional Cohesion সবচেয়ে ভালো কারণ একটি Module শুধুমাত্র একটি নির্দিষ্ট কাজ সম্পন্ন করে।"
+    },
+    {
+      "id": 17,
+      "question": "High Cohesion means ______.",
+      "options": [
+        "A module performs unrelated tasks",
+        "A module performs one well-defined task",
+        "Modules depend heavily on each other",
+        "System has many databases"
+      ],
+      "correct_answer": "A module performs one well-defined task",
+      "explanation_bn": "High Cohesion নির্দেশ করে যে একটি Module একটি নির্দিষ্ট ও সম্পর্কিত কাজ সম্পন্ন করে।"
+    },
+    {
+      "id": 18,
+      "question": "Which combination represents a good software design?",
+      "options": [
+        "High Coupling + Low Cohesion",
+        "Low Coupling + High Cohesion",
+        "High Coupling + High Cohesion",
+        "Low Coupling + Low Cohesion"
+      ],
+      "correct_answer": "Low Coupling + High Cohesion",
+      "explanation_bn": "ভালো Software Design-এর মূল নীতি হলো High Cohesion এবং Low Coupling। এতে Module স্বাধীন থাকে এবং সহজে Maintain করা যায়।"
+    },
+    {
+      "id": 19,
+      "question": "Who is mainly responsible for coding the system?",
+      "options": [
+        "System Analyst",
+        "Designer",
+        "Programmer",
+        "Tester"
+      ],
+      "correct_answer": "Programmer",
+      "explanation_bn": "Programmer-এর প্রধান কাজ হলো Design অনুযায়ী Source Code লেখা।"
+    },
+    {
+      "id": 20,
+      "question": "Who verifies and validates the developed system?",
+      "options": [
+        "System Analyst",
+        "Designer",
+        "Programmer",
+        "Tester"
+      ],
+      "correct_answer": "Tester",
+      "explanation_bn": "Tester System-এর Verification ও Validation করে এবং ত্রুটি শনাক্ত করে।"
+    }
+  ],
+  "chapter_summary_bn": {
+    "important_revision_points": [
+      "System Design = Requirement → Implementation Blueprint",
+      "Logical Design = What the system does",
+      "Physical Design = How the system is built",
+      "Structured Design follows Top-down Approach",
+      "Functional Decomposition divides a large system into smaller modules",
+      "Structure Chart shows module hierarchy and relationships",
+      "Low Coupling is always desirable",
+      "High Cohesion is always desirable",
+      "Best Design = High Cohesion + Low Coupling",
+      "Major Deliverable = System Design Document (SDD)",
+      "System Analyst supervises design activities",
+      "Designer prepares architecture and module design",
+      "Programmer writes the code",
+      "Tester performs verification and validation"
+    ],
+    "last_minute_exam_tips": [
+      "Logical Design vs Physical Design পার্থক্য অবশ্যই মনে রাখবে।",
+      "System Design Process-এর স্টেজগুলো MCQ-এর জন্য গুরুত্বপূর্ণ।",
+      "Structure Chart, Functional Decomposition এবং Structured Design থেকে প্রায়ই প্রশ্ন আসে।",
+      "Low Coupling এবং High Cohesion পরীক্ষার সবচেয়ে গুরুত্বপূর্ণ Concept।",
+      "Personnel Allocation-এর Role (Analyst, Designer, Programmer, Tester) মুখস্থ রাখবে।"
+    ]
+  }
+}]

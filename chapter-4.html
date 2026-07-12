@@ -1,661 +1,257 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0b0d10">
-<title>Edge Detection — Concept Review</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/site.css">
-<link rel="stylesheet" href="css/chapter.css">
-</head>
-<body class="chapter-page" data-chapter="4">
-<div class="wrap">
-
-  <header>
-    <div class="kernel" id="kernelViz"></div>
-    <div class="head-text">
-      <div class="eyebrow">CSE 4106 · Digital Image Processing Sessional</div>
-      <h1>Edge Detection — Concept Review</h1>
-      <div class="subtitle">60 questions, six concepts, one at a time. Pick an answer to see the full reasoning — right or wrong. No scoring, just understanding.</div>
-    </div>
-  </header>
-
-  <div class="progress-outer"><div class="progress-inner" id="progressBar"></div></div>
-  <div class="progress-meta">
-    <span id="progressLabel">Question 0 of 60</span>
-    <span class="hl" id="conceptLabel"></span>
-  </div>
-
-  <div class="concept-nav" id="conceptNav"></div>
-
-  <div class="stage" id="stage"></div>
-
-  <footer>Built for learning, not marks — take your time on each explanation.</footer>
-</div>
-
-<script>
-/* ============================= DATA ============================= */
-const CONCEPTS = [
-{
-  name: "Edge Detection Fundamentals",
-  intro: "Before diving into specific operators, get comfortable with what an edge actually is and why detecting it matters. These cover the core vocabulary: gradients, derivatives, and the general goal of edge detection.",
-  kernel: [[12,45,78],[34,67,91],[23,56,89]],
-  questions: [
+[{
+  "chapter": "System Planning and Initial Investigation",
+  "review": {
+    "title": "Chapter Review",
+    "summary": [
+      "System Planning is the first phase of SDLC where the need for a new or improved system is identified.",
+      "Initial Investigation determines whether a project should continue by studying the problem and project feasibility.",
+      "The objectives are to identify business problems, define system scope, evaluate feasibility, recommend actions, and prepare preliminary plans.",
+      "The six major steps are: Problem Identification, Feasibility Study, Fact-Finding, Define System Scope, Preliminary System Proposal, and Management Approval.",
+      "Fact-finding techniques include Interviews, Questionnaires, Observation, and Document Analysis.",
+      "Deliverables include Problem Statement, Feasibility Report, Project Scope Document, and Preliminary Plan.",
+      "This phase minimizes project risk, prevents unnecessary development, aligns projects with business goals, and establishes realistic expectations."
+    ]
+  },
+  "mcqs": [
     {
-      q: "What is edge detection primarily used for in image processing?",
-      options: ["Increasing the image's resolution","Finding the boundaries of objects within an image","Compressing the image file size","Adjusting the image's color balance"],
-      correct: 1,
-      explain: "Edge detection is an image processing technique used to find the boundaries of objects within an image, exactly as stated in the lab notes. It works by detecting discontinuities in brightness — sudden jumps or drops in pixel intensity that usually mark where one object or region ends and another begins. This makes it a foundational step for tasks like image segmentation, object recognition, and shape analysis. It has nothing to do with resolution, file compression, or color correction — those are separate branches of image processing entirely."
+      "id": 1,
+      "question": "Which SDLC phase includes System Planning?",
+      "options": {
+        "A": "Implementation",
+        "B": "Testing",
+        "C": "Initial Phase",
+        "D": "Maintenance"
+      },
+      "answer": "C",
+      "explanation_bn": "System Planning হলো SDLC-এর প্রথম ধাপ যেখানে নতুন বা উন্নত সিস্টেমের প্রয়োজন নির্ধারণ করা হয়।"
     },
     {
-      q: "Edge detection primarily works by finding what kind of change in an image?",
-      options: ["Changes in file format","Discontinuities in brightness","Repeating color patterns","Changes in the image's aspect ratio"],
-      correct: 1,
-      explain: "By definition, edge detection works by detecting discontinuities in brightness — places where pixel intensity changes abruptly rather than smoothly. A flat wall in a photo has almost no intensity change from pixel to pixel, so no edge is detected there; the boundary between the wall and a dark doorway produces a sharp jump in intensity, which edge operators pick up on. File format, color patterns, and aspect ratio are unrelated to how edges are computed — edge detection only cares about the intensity signal within the image data."
+      "id": 2,
+      "question": "The primary purpose of Initial Investigation is to:",
+      "options": {
+        "A": "Write code",
+        "B": "Design database",
+        "C": "Determine project feasibility",
+        "D": "Test software"
+      },
+      "answer": "C",
+      "explanation_bn": "Initial Investigation-এর মূল উদ্দেশ্য হলো প্রকল্পটি বাস্তবায়নযোগ্য কিনা তা নির্ধারণ করা।"
     },
     {
-      q: "Which of the following is a stated application of edge detection in the lab?",
-      options: ["Noise generation","Image segmentation","Color balancing","File compression"],
-      correct: 1,
-      explain: "The lab explicitly states that edge detection is used for image segmentation — partitioning an image into meaningful regions, like separating a road from the sky, or an object from its background. Once edges are found, they act as natural boundaries that segmentation algorithms can use to group pixels into distinct regions. Noise generation, color balancing, and compression are unrelated goals; noise is usually the enemy of clean edge detection rather than something it produces."
+      "id": 3,
+      "question": "Which is NOT an objective of System Planning?",
+      "options": {
+        "A": "Evaluate feasibility",
+        "B": "Define project scope",
+        "C": "Allocate preliminary resources",
+        "D": "Write program code"
+      },
+      "answer": "D",
+      "explanation_bn": "System Planning-এ কোড লেখা হয় না; এটি পরবর্তী ধাপে করা হয়।"
     },
     {
-      q: "In a digital image, an 'edge' typically corresponds to:",
-      options: ["A perfectly smooth, uniform region","A boundary between two regions of differing intensity","Random sensor noise","A repeated texture pattern"],
-      correct: 1,
-      explain: "An edge is, at its core, a boundary between two regions of differing intensity — for example, the line where a dark tire meets a bright road surface. Smooth uniform regions produce almost no gradient response and therefore aren't edges. Random noise can sometimes be mistaken for edges by naive detectors (which is why Gaussian blurring or Canny's smoothing step exist), but true edges are meaningful structural boundaries, not sensor artifacts. Repeating textures may contain many small edges, but 'an edge' itself refers to a single intensity boundary, not the pattern as a whole."
+      "id": 4,
+      "question": "What is the first step of System Planning?",
+      "options": {
+        "A": "Fact Finding",
+        "B": "Problem Identification",
+        "C": "Proposal",
+        "D": "Approval"
+      },
+      "answer": "B",
+      "explanation_bn": "সবার আগে বিদ্যমান সমস্যা বা সুযোগ চিহ্নিত করতে হয়।"
     },
     {
-      q: "What kind of mathematical operators are used to compute the image gradients needed for edge detection?",
-      options: ["Median filters","Derivative-based (gradient) operators","Simple Gaussian blur only","Histogram equalization"],
-      correct: 1,
-      explain: "Edge detection relies on derivative-based operators that estimate how quickly pixel intensity is changing at each point — mathematically, the gradient of the image. Kernels like Sobel, Prewitt, and Laplacian are convolution masks specifically designed to approximate first or second derivatives. Median filters and Gaussian blur are smoothing tools that reduce noise but don't measure change themselves (though blur is often used before differentiation to improve robustness). Histogram equalization only redistributes intensity values for contrast — it doesn't measure spatial change at all."
+      "id": 5,
+      "question": "Which feasibility is NOT mentioned in the lecture?",
+      "options": {
+        "A": "Technical",
+        "B": "Economic",
+        "C": "Operational",
+        "D": "Political"
+      },
+      "answer": "D",
+      "explanation_bn": "Lecture-এ Technical, Economic এবং Operational feasibility উল্লেখ করা হয়েছে।"
     },
     {
-      q: "First-order edge detection operators like Sobel and Prewitt are based on:",
-      options: ["The second derivative of image intensity","The first derivative (gradient) of image intensity","The Fourier transform of the image","Random pixel sampling"],
-      correct: 1,
-      explain: "Sobel and Prewitt are both first-order operators, meaning they approximate the first derivative (the gradient) of image intensity in the horizontal and vertical directions. A large first derivative at a pixel means intensity is changing rapidly there, signalling a likely edge. This differs from second-order operators like the Laplacian, which look at the rate of change of the gradient itself and find edges at zero-crossings instead. Fourier transforms and random sampling are unrelated techniques from other areas of signal processing."
+      "id": 6,
+      "question": "Fact-Finding mainly involves:",
+      "options": {
+        "A": "Coding",
+        "B": "Data Collection",
+        "C": "Deployment",
+        "D": "Maintenance"
+      },
+      "answer": "B",
+      "explanation_bn": "Fact-Finding-এর কাজ হলো প্রয়োজনীয় তথ্য সংগ্রহ করা।"
     },
     {
-      q: "Second-order edge detection operators like the Laplacian are based on:",
-      options: ["The first derivative of intensity","The second derivative of image intensity","A color histogram","A wavelet transform"],
-      correct: 1,
-      explain: "The Laplacian operator is a second-order derivative operator — it measures the rate of change of the gradient rather than the gradient itself. Practically, this means it looks for zero-crossings (points where the second derivative flips sign) rather than peaks, a different mathematical signature of an edge than the peak-based approach first-order operators use. This is why the Laplacian kernel [[0,1,0],[1,-4,1],[0,1,0]] has a different structure than the directional Sobel/Prewitt kernels — it's isotropic and reacts to change in every direction at once."
+      "id": 7,
+      "question": "Which technique collects information from many users efficiently?",
+      "options": {
+        "A": "Observation",
+        "B": "Interview",
+        "C": "Questionnaire",
+        "D": "Coding"
+      },
+      "answer": "C",
+      "explanation_bn": "বেশি সংখ্যক ব্যবহারকারীর তথ্য সংগ্রহে Questionnaire সবচেয়ে কার্যকর।"
     },
     {
-      q: "Why is the image typically converted to grayscale (cv2.IMREAD_GRAYSCALE) before edge detection?",
-      options: ["Color information is irrelevant to human vision","Edge operators are designed to work on single-channel intensity data, simplifying gradient computation","Grayscale images load faster from disk only","Python requires grayscale for all image tasks"],
-      correct: 1,
-      explain: "Edge operators like Sobel, Prewitt, Laplacian, and Canny are built to compute intensity gradients on a single channel of data. Grayscale collapses the three RGB channels into one brightness value per pixel, letting these kernels operate directly without deciding how to combine gradients across three separate color channels. It's not that color is meaningless to human vision — it's that the mathematics of these operators is defined for single-channel intensity, and grayscale is the natural input. Loading speed and Python's requirements aren't the actual reason."
+      "id": 8,
+      "question": "Observation technique means:",
+      "options": {
+        "A": "Watching existing workflows",
+        "B": "Writing reports",
+        "C": "Programming",
+        "D": "Testing"
+      },
+      "answer": "A",
+      "explanation_bn": "Observation-এ বর্তমান কাজের ধারা সরাসরি পর্যবেক্ষণ করা হয়।"
     },
     {
-      q: "Multi-scale edge detection, mentioned in the lab title, refers to:",
-      options: ["Detecting edges at only one fixed image resolution","Detecting edges at multiple resolutions/scales to capture features of different sizes","Detecting only horizontal edges across the image","Detecting edges separately in each color channel"],
-      correct: 1,
-      explain: "Multi-scale edge detection means analyzing the image at several different resolutions or smoothing levels, so both fine, small-scale details and larger, coarse structures get properly detected. A single fixed scale might catch fine texture edges but miss a large, gradual boundary, or vice versa. Combining information across scales — for example, applying Gaussian blur at different kernel sizes before edge detection, as the exercise suggests — produces a more complete, robust edge map. It's unrelated to horizontal-only detection or separating color channels."
+      "id": 9,
+      "question": "Which document defines system boundaries?",
+      "options": {
+        "A": "Problem Statement",
+        "B": "Project Scope Document",
+        "C": "Budget Sheet",
+        "D": "Test Plan"
+      },
+      "answer": "B",
+      "explanation_bn": "Project Scope Document-এ সিস্টেম কী করবে এবং কী করবে না তা নির্ধারণ করা হয়।"
     },
     {
-      q: "What does 'edge linking' refer to in the context of this lab?",
-      options: ["Merging two separate images into one","Connecting broken or discontinuous edge segments into continuous boundaries","Linking pixels that share the same color value","Compressing the final edge map to save space"],
-      correct: 1,
-      explain: "Edge linking is the step of connecting broken, discontinuous edge segments — extremely common outputs of raw edge detectors due to noise, weak gradients, or occlusion — into continuous, meaningful boundaries. Without edge linking, an object's outline detected by Sobel or Canny might appear as disconnected dashes rather than one solid contour, making further analysis like shape recognition much harder. It has nothing to do with merging separate images, matching pixel colors, or file compression; it's specifically about restoring continuity to an already-computed edge map."
+      "id": 10,
+      "question": "Scope creep can be avoided by:",
+      "options": {
+        "A": "Coding",
+        "B": "Testing",
+        "C": "Clearly defining scope",
+        "D": "Maintenance"
+      },
+      "answer": "C",
+      "explanation_bn": "সুস্পষ্ট Scope নির্ধারণ করলে Scope Creep এড়ানো যায়।"
+    },
+    {
+      "id": 11,
+      "question": "Who approves the project before detailed analysis?",
+      "options": {
+        "A": "Developer",
+        "B": "Customer",
+        "C": "Management",
+        "D": "Tester"
+      },
+      "answer": "C",
+      "explanation_bn": "Management Approval পাওয়ার পরই বিস্তারিত বিশ্লেষণ শুরু হয়।"
+    },
+    {
+      "id": 12,
+      "question": "Which deliverable summarizes technical, economic and operational feasibility?",
+      "options": {
+        "A": "Scope Document",
+        "B": "Feasibility Report",
+        "C": "Project Charter",
+        "D": "Test Report"
+      },
+      "answer": "B",
+      "explanation_bn": "Feasibility Report-এ বিভিন্ন ধরনের feasibility-এর সারসংক্ষেপ থাকে।"
+    },
+    {
+      "id": 13,
+      "question": "Which is a fact-finding technique?",
+      "options": {
+        "A": "Observation",
+        "B": "Compilation",
+        "C": "Execution",
+        "D": "Deployment"
+      },
+      "answer": "A",
+      "explanation_bn": "Observation হলো Fact-Finding-এর অন্যতম গুরুত্বপূর্ণ পদ্ধতি।"
+    },
+    {
+      "id": 14,
+      "question": "Which phase reduces project risks early?",
+      "options": {
+        "A": "Implementation",
+        "B": "Testing",
+        "C": "Planning and Initial Investigation",
+        "D": "Maintenance"
+      },
+      "answer": "C",
+      "explanation_bn": "এই ধাপেই ঝুঁকি আগে থেকেই শনাক্ত করা যায়।"
+    },
+    {
+      "id": 15,
+      "question": "A Preliminary Plan usually contains:",
+      "options": {
+        "A": "Source Code",
+        "B": "Resource, Schedule and Budget",
+        "C": "Database",
+        "D": "Test Cases"
+      },
+      "answer": "B",
+      "explanation_bn": "Preliminary Plan-এ প্রয়োজনীয় Resource, Schedule ও Budget-এর ধারণা দেওয়া হয়।"
+    },
+    {
+      "id": 16,
+      "question": "Which technique reviews existing reports and records?",
+      "options": {
+        "A": "Interview",
+        "B": "Observation",
+        "C": "Document Analysis",
+        "D": "Questionnaire"
+      },
+      "answer": "C",
+      "explanation_bn": "Document Analysis-এ পুরোনো রিপোর্ট ও নথি বিশ্লেষণ করা হয়।"
+    },
+    {
+      "id": 17,
+      "question": "Which is NOT a deliverable?",
+      "options": {
+        "A": "Problem Statement",
+        "B": "Feasibility Report",
+        "C": "Project Scope Document",
+        "D": "Compiled Software"
+      },
+      "answer": "D",
+      "explanation_bn": "Compiled Software এই ধাপের Deliverable নয়।"
+    },
+    {
+      "id": 18,
+      "question": "The retail company example automated:",
+      "options": {
+        "A": "Payroll",
+        "B": "Inventory Tracking",
+        "C": "Banking",
+        "D": "Hospital Management"
+      },
+      "answer": "B",
+      "explanation_bn": "উদাহরণে Inventory Tracking System অটোমেট করার সুপারিশ করা হয়েছিল।"
+    },
+    {
+      "id": 19,
+      "question": "Which activity follows Fact-Finding?",
+      "options": {
+        "A": "Define System Scope",
+        "B": "Coding",
+        "C": "Testing",
+        "D": "Maintenance"
+      },
+      "answer": "A",
+      "explanation_bn": "Fact-Finding-এর পরে System Scope নির্ধারণ করা হয়।"
+    },
+    {
+      "id": 20,
+      "question": "Final outcome of Initial Investigation is:",
+      "options": {
+        "A": "Management Approval",
+        "B": "Software Release",
+        "C": "Maintenance",
+        "D": "System Testing"
+      },
+      "answer": "A",
+      "explanation_bn": "সবশেষে Management-এর অনুমোদন নেওয়া হয় যাতে Detailed Analysis শুরু করা যায়।"
     }
   ]
-},
-{
-  name: "Laplacian Edge Detection",
-  intro: "The Laplacian is your first taste of a second-order operator. These questions dig into the specific kernel used in the lab, how it differs fundamentally from first-order methods, and why it needs careful handling.",
-  kernel: [[0,1,0],[1,-4,1],[0,1,0]],
-  questions: [
-    {
-      q: "The Laplacian operator detects edges by looking for:",
-      options: ["Zero-crossings in the second derivative of intensity","Peaks in the image's color histogram","The direction of maximum gradient","The single darkest pixel value in the image"],
-      correct: 0,
-      explain: "Because the Laplacian is a second-order derivative operator, it doesn't look for a peak in the gradient like first-order operators do — it looks for zero-crossings, points where the second derivative changes sign. Near a genuine edge, intensity rises then falls (or vice versa) in a way that produces exactly this kind of sign flip. Histogram peaks, gradient direction, and single dark pixels are concepts from other parts of image processing and don't describe how the Laplacian identifies an edge location."
-    },
-    {
-      q: "What best describes the Laplacian kernel used in the lab, [[0,1,0],[1,-4,1],[0,1,0]]?",
-      options: ["A first-order derivative kernel that only detects horizontal edges","A second-order, isotropic kernel sensitive to intensity change in all directions","A smoothing kernel that blurs the image","A color-conversion kernel"],
-      correct: 1,
-      explain: "This kernel is a discrete approximation of the second-order Laplacian, and it's isotropic — it responds to intensity changes equally regardless of orientation, unlike Sobel or Prewitt which have separate horizontal and vertical kernels. The four neighboring pixels (up, down, left, right) are each weighted +1 and summed, then compared against the center pixel weighted -4; the result highlights points where the center differs sharply from its surroundings in any direction. It is not a smoothing kernel (those have all-positive weights summing to 1) and has nothing to do with color conversion."
-    },
-    {
-      q: "A key disadvantage of Laplacian edge detection compared to Sobel or Canny is:",
-      options: ["It runs significantly slower on all hardware","It is highly sensitive to noise, since it computes a second derivative","It cannot be implemented using convolution","It only works on already-binary images"],
-      correct: 1,
-      explain: "Second derivatives amplify high-frequency variation far more aggressively than first derivatives, so small amounts of noise can produce large, spurious responses in the Laplacian output. This is why it's often paired with a Gaussian blur beforehand (forming the Laplacian of Gaussian, or LoG) to tame this sensitivity before differentiating. It's not inherently slower than other convolution-based methods, it's implemented via straightforward convolution (as shown with cv2.filter2D), and it works on standard grayscale images, not just binary ones."
-    },
-    {
-      q: "Which OpenCV function does the lab use to apply the Laplacian kernel to the image?",
-      options: ["cv2.Canny()","cv2.filter2D()","cv2.Sobel()","cv2.blur()"],
-      correct: 1,
-      explain: "The lab applies the custom-defined Laplacian kernel using cv2.filter2D(image, -1, kernel), which performs a generic 2D convolution between the image and any supplied kernel. This is reused later for the Sobel and Prewitt kernels too, since all three are just different convolution masks applied the same way. cv2.Canny() implements the full multi-step algorithm internally rather than taking a raw kernel, cv2.Sobel() is OpenCV's dedicated built-in function (not used here since the lab defines its own kernels), and cv2.blur() performs simple averaging smoothing, unrelated to edge detection."
-    },
-    {
-      q: "What is the purpose of the center value -4 in the Laplacian kernel [[0,1,0],[1,-4,1],[0,1,0]]?",
-      options: ["It brightens the overall image","It subtracts four times the center pixel from the sum of its four neighbors, highlighting rapid local intensity changes","It rotates the kernel by 90 degrees","It normalizes the image's color balance"],
-      correct: 1,
-      explain: "When this kernel convolves over the image, it computes (sum of the four neighbors) minus (4 × center pixel). If the center pixel resembles its neighbors — a flat region — this is close to zero, meaning no edge. But if the center differs sharply from its surroundings, the result is a large positive or negative value, flagging that location as a likely edge. The -4 weight is precisely what makes the center pixel act as the reference being compared against its four-directional neighborhood; it has nothing to do with brightening, rotation, or color balance."
-    },
-    {
-      q: "Because the Laplacian is described as an isotropic operator, this means:",
-      options: ["It only responds to edges running in one specific direction","It responds roughly equally to edges in all orientations","It deliberately ignores diagonal edges","It requires separate tuning for horizontal and vertical edges"],
-      correct: 1,
-      explain: "Isotropic means 'the same in all directions.' Unlike Sobel or Prewitt, which use two separate kernels tuned for horizontal and vertical edges respectively, the Laplacian uses one combined kernel that reacts to intensity change regardless of orientation — vertical, horizontal, or diagonal all trigger a similar response. This is convenient since you don't need two passes combined via magnitude, but it also means you lose the directional information that Sobel's separate X and Y components provide."
-    },
-    {
-      q: "A common best practice before applying Laplacian edge detection (standard in real-world use) is:",
-      options: ["Applying Gaussian blurring first to reduce noise sensitivity","Applying histogram equalization only, with no blurring","Rotating the image by 45 degrees","Inverting all pixel colors"],
-      correct: 0,
-      explain: "Because the plain Laplacian is so sensitive to noise, it's standard practice to smooth the image with a Gaussian blur first. This combined approach is formally known as the Laplacian of Gaussian (LoG), and is specifically referenced in the lab's outcome questions as a way to make second-order edge detection more robust. Histogram equalization affects contrast distribution but doesn't reduce high-frequency noise the way blurring does, and rotating or inverting the image has no bearing on noise sensitivity at all."
-    },
-    {
-      q: "Compared to Sobel, does the Laplacian output directly provide edge direction/orientation information?",
-      options: ["Yes, always, since it uses two separate kernels like Sobel","No — the Laplacian is a single scalar-valued operator and doesn't inherently encode gradient direction the way Sobel's separate X/Y components do","Only when applied to color images","Only for perfectly vertical edges"],
-      correct: 1,
-      explain: "Sobel computes two separate results — horizontal and vertical gradients — which can be combined into both a magnitude and a direction (via arctan of vertical/horizontal). The Laplacian, by contrast, produces a single combined scalar value per pixel from one isotropic kernel, so there's no separate directional component to extract; it tells you an edge exists and roughly how strong it is, but not which way it's oriented. This is a real practical trade-off between choosing Sobel versus the Laplacian."
-    }
-  ]
-},
-{
-  name: "Sobel Edge Detection",
-  intro: "Sobel is the workhorse first-order operator in this lab — two kernels, one per direction, combined into a single gradient magnitude. Know which kernel does what, and how they're merged.",
-  kernel: [[-1,-2,-1],[0,0,0],[1,2,1]],
-  questions: [
-    {
-      q: "In the lab code, which kernel is assigned to sobel_h for horizontal edge detection?",
-      options: ["[[-1,0,1],[-2,0,2],[-1,0,1]]","[[-1,-2,-1],[0,0,0],[1,2,1]]","[[0,1,0],[1,-4,1],[0,1,0]]","[[1,1,1],[0,0,0],[-1,-1,-1]]"],
-      correct: 1,
-      explain: "The lab defines sobel_h as np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]]). The top row is negative, the middle row is all zeros, and the bottom row is positive — this pattern makes the kernel respond strongly to intensity changing from top to bottom (a vertical gradient), which is how it picks out horizontally-oriented edges. Option A is actually the code's sobel_v kernel, option C is the earlier Laplacian kernel, and option D is a mirrored variant not used in this lab."
-    },
-    {
-      q: "Which kernel does the lab assign to sobel_v for vertical edge detection?",
-      options: ["[[-1,-2,-1],[0,0,0],[1,2,1]]","[[-1,0,1],[-2,0,2],[-1,0,1]]","[[0,1,0],[1,-4,1],[0,1,0]]","[[2,0,-2],[0,0,0],[-2,0,2]]"],
-      correct: 1,
-      explain: "The lab defines sobel_v as np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]]). The left column is negative and the right column is positive, with zeros down the middle — this makes the kernel respond strongly to intensity changing left-to-right (a horizontal gradient), which is how it detects vertically-oriented edges. Option A is the code's sobel_h from the previous question, option C is the Laplacian kernel, and option D uses weight values that don't appear in this lab's code."
-    },
-    {
-      q: "After computing horizontal_edges and vertical_edges, how does the lab code combine them into a single Sobel result?",
-      options: ["By simply adding the two arrays together","Using cv2.magnitude(vertical_edges, horizontal_edges), which computes sqrt(v² + h²) at each pixel","By multiplying the two arrays element-wise","By subtracting vertical_edges from horizontal_edges"],
-      correct: 1,
-      explain: "The code calls sobel = cv2.magnitude(vertical_edges, horizontal_edges), computing the Euclidean magnitude (square root of sum of squares) of the two gradient components at every pixel — the standard definition of gradient magnitude, √(Gx² + Gy²). Simple addition or subtraction wouldn't correctly represent the combined strength of two perpendicular gradients, and element-wise multiplication has no meaningful interpretation here. This magnitude value represents the overall 'edge-ness' of each pixel regardless of orientation."
-    },
-    {
-      q: "Why does the code cast horizontal_edges and vertical_edges to np.float32 before combining them?",
-      options: ["To reduce the file size of the resulting image","To avoid overflow/underflow from negative gradient values and preserve precision during the magnitude computation","Because matplotlib cannot display integer arrays","To automatically convert the grayscale image to full color"],
-      correct: 1,
-      explain: "The original image is 8-bit unsigned (0–255 only), but gradient computations naturally produce negative values (a dark-to-light transition gives a large positive number, light-to-dark gives a large negative one). If the data stayed unsigned 8-bit, negative results would wrap around incorrectly, corrupting the gradient values. Casting to float32 gives enough range and precision to represent these signed intermediate values correctly, especially since cv2.magnitude() then squares and square-roots them. This has nothing to do with file size, matplotlib's requirements, or color conversion."
-    },
-    {
-      q: "The Sobel kernels weight the row/column adjacent to the center with a factor of 2. What is the purpose of this weighting?",
-      options: ["It's arbitrary and has no effect on the result","It gives more importance to pixels closer to the center, effectively combining differentiation with a small amount of smoothing","It reduces the kernel size from 3x3 to 2x2","It converts the operator into a second-order derivative"],
-      correct: 1,
-      explain: "The extra weight of 2 (compared to Prewitt's uniform weighting of 1) gives Sobel a built-in smoothing effect alongside its differentiation — essentially a combination of a simple derivative and local averaging. This makes Sobel somewhat more resistant to noise than Prewitt, since the weighting reduces the influence of isolated noisy pixels relative to their more heavily-weighted neighbors. It doesn't change the kernel's size (still 3x3) and it remains a first-order operator, not second-order."
-    },
-    {
-      q: "What does the gradient magnitude computed by cv2.magnitude represent in Sobel edge detection?",
-      options: ["The direction of the edge only, not its strength","The overall strength/intensity of the edge at each pixel, combining both horizontal and vertical gradient components","The exact color of the edge","The amount of noise present at each pixel"],
-      correct: 1,
-      explain: "The magnitude combines the horizontal and vertical gradient responses into a single number per pixel representing how strong the overall intensity change is at that location, regardless of orientation. A high magnitude means a sharp, well-defined edge; a low magnitude means a relatively flat region. It doesn't tell you direction (that would need an angle from the two components), has no relation to color since the input is grayscale, and isn't a noise measurement — though noisy images can produce spuriously high values, which is a limitation, not the intended meaning."
-    },
-    {
-      q: "Sobel is classified as a first-order derivative method because:",
-      options: ["It computes the second derivative of intensity","It approximates the first derivative (rate of change) of image intensity in the x and y directions","It relies on Fourier-domain frequency analysis","It uses only a single 3x3 kernel"],
-      correct: 1,
-      explain: "Sobel's two kernels are discrete approximations of ∂I/∂x and ∂I/∂y — the partial derivatives of intensity with respect to horizontal and vertical directions. This is the defining trait of a first-order operator: measuring the rate of change of intensity, as opposed to second-order operators like the Laplacian, which measure the rate of change of that rate of change. Sobel uses two 3x3 kernels (not one), and it operates purely in the spatial domain via convolution, with no Fourier transform involved."
-    },
-    {
-      q: "How does Sobel's weighting scheme differ structurally from Prewitt's?",
-      options: ["Sobel emphasizes the row/column nearest the center with a weight of 2, while Prewitt uses uniform weights of 1, giving Sobel a built-in smoothing advantage","Sobel operates on color images while Prewitt only works on grayscale","Sobel requires no kernel at all","Sobel is a non-linear operator while Prewitt is linear"],
-      correct: 0,
-      explain: "Sobel's horizontal kernel is [[-1,-2,-1],[0,0,0],[1,2,1]] while Prewitt's is [[-1,-1,-1],[0,0,0],[1,1,1]] — the only structural difference is Sobel doubling the weight of the row adjacent to the gradient direction. This gives Sobel a mild smoothing effect that makes it somewhat less sensitive to isolated noisy pixels than Prewitt's uniform weighting. Both operate on grayscale intensity data, both are linear convolution-based operators, and neither is restricted to color images."
-    },
-    {
-      q: "How did the lab code arrange the four Sobel-related visualizations for display?",
-      options: ["As a single combined imshow call with no subplots","Using fig.add_subplot(141) through fig.add_subplot(144) to create a 1x4 grid of subplots","Using cv2.imshow() exclusively with no matplotlib involved","As a histogram plot instead of images"],
-      correct: 1,
-      explain: "The code creates a figure and adds four subplots using fig.add_subplot(141) through fig.add_subplot(144) — the three-digit shorthand means a 1-row-by-4-column grid, with each call selecting the 1st through 4th position. Each subplot then displays one image (original, horizontal edges, vertical edges, combined magnitude) with imshow and a title via title.set_text(). This differs from a single combined call, from OpenCV's own cv2.imshow() (matplotlib is used throughout instead), and it's an image grid, not a histogram."
-    },
-    {
-      q: "If an image has a strong vertical edge (a sharp intensity change from left to right), which of the code's Sobel results should show the strongest response?",
-      options: ["horizontal_edges (from sobel_h)","vertical_edges (from sobel_v), since vertical edges correspond to a horizontal intensity gradient","Neither — Sobel cannot detect vertical edges","Both equally, always, regardless of edge orientation"],
-      correct: 1,
-      explain: "A vertical edge (like the boundary of an upright pole) means intensity changes as you move left-to-right, which is precisely the horizontal gradient sobel_v (left-negative, right-positive columns) is designed to detect. sobel_h, by contrast, detects vertical gradients — intensity changing top-to-bottom — corresponding to horizontal edges, not vertical ones. This directional pairing (horizontal gradient ↔ vertical edge, and vice versa) is a common point of confusion but is exactly why both kernels are needed and then combined."
-    },
-    {
-      q: "What is a notable limitation of the Sobel operator despite its built-in smoothing?",
-      options: ["It cannot be implemented using convolution at all","It is still noise-sensitive, since it's fundamentally a derivative operator, just less so than the Laplacian","It cannot detect any diagonal edges whatsoever","It requires running Canny first as a preprocessing step"],
-      correct: 1,
-      explain: "Even though Sobel's weighting scheme provides some built-in smoothing compared to Prewitt, it's still a derivative-based operator, and any derivative amplifies noise to some degree — just less severely than a second-order operator like the Laplacian. Sobel does respond to diagonal edges too (both kernels contribute some response, captured in the combined magnitude), and it's implemented via ordinary convolution using cv2.filter2D(). It's also completely standalone and doesn't require Canny first — in fact, Canny internally uses a Sobel-like gradient computation as one of its own steps."
-    },
-    {
-      q: "In the exercise, what effect would applying a large Gaussian blur (e.g., 15x15) before Sobel edge detection have?",
-      options: ["Edges would become sharper and more numerous","Small details and noise would be smoothed away, resulting in fewer but more robust, prominent detected edges","There would be no effect on the output at all","The image dimensions would increase"],
-      correct: 1,
-      explain: "A large Gaussian blur averages each pixel with a wide neighborhood, smoothing out fine texture, small noise fluctuations, and subtle intensity variations before Sobel even runs. Sobel then only responds strongly to the larger, more significant intensity transitions that survive the blurring, so fewer total edges are detected — but the ones that remain tend to be real structural boundaries rather than noise-induced false positives. This trade-off is exactly what the exercise asks you to observe across blur sizes like 3x3, 9x9, and 15x15."
-    }
-  ]
-},
-{
-  name: "Prewitt Edge Detection",
-  intro: "Prewitt looks almost identical to Sobel on the surface, but the small differences in kernel weighting matter. See if you can spot exactly what changes — and what stays the same.",
-  kernel: [[-1,-1,-1],[0,0,0],[1,1,1]],
-  questions: [
-    {
-      q: "What is the key structural difference between the Prewitt and Sobel kernels?",
-      options: ["Prewitt uses uniform weights of 1 for all off-center row/column values, instead of Sobel's weighted value of 2 at the center row/column","Prewitt operates on color images while Sobel only works on grayscale","Prewitt uses a 5x5 kernel while Sobel uses 3x3","Prewitt has no vertical-direction kernel at all"],
-      correct: 0,
-      explain: "The defining difference is purely in weighting: Prewitt's kernels use a uniform weight of 1 throughout the non-zero row or column (e.g., [-1,-1,-1] / [1,1,1]), while Sobel doubles the weight of the row or column closest to the center (e.g., [-1,-2,-1] / [1,2,1]). Both are still 3x3 kernels, both operate on grayscale intensity data, and both have separate horizontal and vertical variants — the lab defines prewitt_h and prewitt_v just as it defined sobel_h and sobel_v."
-    },
-    {
-      q: "Which kernel does the lab assign to prewitt_h?",
-      options: ["[[-1,-2,-1],[0,0,0],[1,2,1]]","[[-1,-1,-1],[0,0,0],[1,1,1]]","[[0,1,0],[1,-4,1],[0,1,0]]","[[1,0,-1],[1,0,-1],[1,0,-1]]"],
-      correct: 1,
-      explain: "The lab defines prewitt_h as np.array([[-1, -1, -1], [0, 0, 0], [1, 1, 1]]) — every value in the top row is -1 and every value in the bottom row is +1, with no extra weighting on the middle column, unlike Sobel's [-1,-2,-1] pattern. Option A is actually the Sobel horizontal kernel, option C is the earlier Laplacian kernel, and option D is a column-oriented kernel not used in this lab."
-    },
-    {
-      q: "Which kernel does the lab assign to prewitt_v?",
-      options: ["[[-1,0,1],[-1,0,1],[-1,0,1]]","[[-1,-2,-1],[0,0,0],[1,2,1]]","[[0,1,0],[1,-4,1],[0,1,0]]","[[1,1,1],[0,0,0],[-1,-1,-1]]"],
-      correct: 0,
-      explain: "The lab defines prewitt_v as np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]]) — every value in the left column is -1 and every value in the right column is +1, with uniform weighting down each column, unlike Sobel's vertical kernel which doubles the middle-row weight. Option B is the Sobel horizontal kernel, option C is the Laplacian kernel, and option D is simply a sign-flipped version of prewitt_h, not the actual vertical kernel."
-    },
-    {
-      q: "Because Prewitt doesn't weight the center row/column more heavily like Sobel does, it is generally:",
-      options: ["More resistant to noise than Sobel","Slightly more sensitive to noise than Sobel, since it lacks Sobel's extra smoothing effect from the weighted center","Exactly identical in noise performance to Sobel in every case","Unusable on grayscale images"],
-      correct: 1,
-      explain: "Sobel's extra weighting on the center row/column gives it a mild built-in smoothing effect that dampens the influence of any single noisy pixel. Prewitt, with uniform weighting, doesn't have that same damping, so an isolated noisy pixel has slightly more relative influence — making Prewitt marginally more noise-sensitive in practice, even though the difference is often subtle. It absolutely works on grayscale images (both operators are designed for grayscale intensity data), and the noise difference, while real, is not dramatic."
-    },
-    {
-      q: "How is the final Prewitt edge magnitude computed in the lab code, mirroring the Sobel approach?",
-      options: ["Using cv2.Canny() on the two directional results","Using cv2.magnitude(vertical_edges, horizontal_edges)","By simply adding the two directional arrays","By applying cv2.filter2D() a second time with no magnitude step"],
-      correct: 1,
-      explain: "Just like the Sobel section, the Prewitt section combines its horizontal_edges and vertical_edges using sobel = cv2.magnitude(vertical_edges, horizontal_edges) — the variable name is reused, but the underlying computation (Euclidean magnitude of two perpendicular gradient components) is identical in structure. Canny is an entirely separate multi-step algorithm not used here, simple addition wouldn't give a mathematically correct combined gradient strength, and no second filter2D call is needed once the directional edge arrays already exist."
-    },
-    {
-      q: "Both Sobel and Prewitt are examples of which broader category of edge operator?",
-      options: ["Second-order derivative operators","First-order (gradient-based) edge detection operators","Frequency-domain filters","Non-linear machine learning models"],
-      correct: 1,
-      explain: "Sobel and Prewitt both approximate the first derivative (gradient) of image intensity in two perpendicular directions and combine the results into a single magnitude — placing them firmly in the first-order category. This contrasts with second-order operators like the Laplacian, which instead look at zero-crossings in the second derivative. Neither involves frequency-domain analysis, and neither is a learned/trained model — they are both fixed, hand-designed linear convolution kernels."
-    },
-    {
-      q: "If simplicity of computation (equal weighting, no extra emphasis) is the priority over maximal noise robustness, which operator best fits?",
-      options: ["Canny","Prewitt","Laplacian of Gaussian","Hough transform"],
-      correct: 1,
-      explain: "Prewitt's defining trait is its uniform weighting scheme — every off-center value in the active row or column is simply ±1, with no extra emphasis anywhere, making it conceptually and computationally the simplest of the gradient kernels here. Canny adds several extra steps (smoothing, non-max suppression, hysteresis) for cleaner results at the cost of complexity; Laplacian of Gaussian adds a full Gaussian pass before differentiating; and the Hough transform isn't an edge detector at all — it's a shape-detection technique applied after edges already exist."
-    },
-    {
-      q: "True or False: Both Sobel and Prewitt outputs need to be cast to float32 before combining with cv2.magnitude(), to avoid overflow issues from the image's unsigned 8-bit type.",
-      options: ["True","False"],
-      correct: 0,
-      explain: "This is true, and the lab demonstrates it explicitly for both operators: horizontal_edges and vertical_edges are each cast with .astype(np.float32) right after filter2D, before being passed into cv2.magnitude(). Since gradient results can be negative and the original image is unsigned 8-bit (0–255, no negatives allowed), skipping this cast would cause negative values to wrap around incorrectly, silently corrupting the result. This precaution applies identically to both the Sobel and Prewitt sections, since they follow the same computational pattern."
-    }
-  ]
-},
-{
-  name: "Canny Edge Detection",
-  intro: "Canny is the most sophisticated operator in this lab — a multi-stage pipeline rather than a single kernel. Expect questions on its stages, its two thresholds, and why it consistently outperforms simpler methods.",
-  kernel: [[100,150,200],[80,255,90],[60,40,20]],
-  questions: [
-    {
-      q: "What are the general steps of the Canny edge detection algorithm, in the correct order?",
-      options: ["Thresholding first, then Gaussian blurring","Noise reduction (Gaussian blur), gradient calculation, non-maximum suppression, then double thresholding with hysteresis edge tracking","Gradient calculation only, with no other steps","Color balancing, followed by edge linking"],
-      correct: 1,
-      explain: "Canny follows a specific pipeline: first it reduces noise with a Gaussian blur, then computes intensity gradients (magnitude and direction, typically via Sobel-like operators internally), then applies non-maximum suppression to thin edges to single-pixel width, and finally performs double thresholding combined with hysteresis-based edge tracking to decide which edges are kept. Doing thresholding before blurring, skipping steps, or involving color balancing wouldn't match how the algorithm is actually designed — order matters because each stage depends on the previous one's output."
-    },
-    {
-      q: "In cv2.Canny(image, THRESHOLD1, THRESHOLD2), what do THRESHOLD1 and THRESHOLD2 represent?",
-      options: ["The image's width and height in pixels","The lower and upper thresholds used in the hysteresis thresholding step, to classify pixels as strong, weak, or non-edges","The size in pixels of the Gaussian blur kernel","Indices selecting which color channel to process"],
-      correct: 1,
-      explain: "THRESHOLD1 and THRESHOLD2 are the lower and upper bounds used during hysteresis thresholding: pixels with gradient magnitude above THRESHOLD2 are immediately classified as strong (definite) edges, pixels below THRESHOLD1 are discarded as non-edges, and pixels in between are weak edges that survive only if connected to a strong edge. They have nothing to do with image dimensions, blur kernel size (cv2.Canny() handles its own default internally), or color channel selection, since the function expects single-channel grayscale input."
-    },
-    {
-      q: "In the lab, THRESHOLD2 is set to 200 (the upper threshold). What role does this specific value play?",
-      options: ["Pixels with gradient magnitude above 200 are immediately classified as strong, definite edges","It sets the overall brightness of the output image","It determines the minimum detectable line length","It has no functional effect on the algorithm's output"],
-      correct: 0,
-      explain: "THRESHOLD2, the upper bound in Canny's hysteresis thresholding, marks the cutoff above which a pixel's gradient magnitude is considered strong enough to be automatically classified as an edge. In the lab's example, any pixel with gradient magnitude above 200 is guaranteed to appear as an edge, regardless of its neighbors. This is distinct from brightness settings and line-length parameters (which belong to the separate Hough transform), and it very much does affect the output — raising or lowering it directly changes how many strong edges are detected."
-    },
-    {
-      q: "What role does THRESHOLD1 (the lower threshold, set to 100 in the lab) play in Canny's hysteresis thresholding?",
-      options: ["Pixels below this value are automatically treated as definite edges","Pixels with gradient magnitude between THRESHOLD1 and THRESHOLD2 are classified as weak edges, kept only if connected to a strong edge","It controls the overall image contrast","It has no functional role in the algorithm"],
-      correct: 1,
-      explain: "THRESHOLD1 marks the lower boundary of the 'maybe' zone: any pixel with gradient magnitude between THRESHOLD1 (100) and THRESHOLD2 (200) is labeled a weak edge candidate. These are only retained in the final output if spatially connected to a pixel already classified as strong — this connectivity check is the 'hysteresis' part, and it helps recover faint but genuine edge continuations while discarding isolated noise. Pixels below THRESHOLD1 are discarded entirely, and it clearly has a significant effect on output, not none."
-    },
-    {
-      q: "Why does Canny apply Gaussian smoothing as its very first step?",
-      options: ["To deliberately sharpen edges before detecting them","To reduce noise in the image before gradient computation, since noise can create false, spurious edge responses","To convert the grayscale image into color","To resize the image to a standard dimension"],
-      correct: 1,
-      explain: "Since gradient-based edge detection is inherently sensitive to noise (small random fluctuations can look like tiny edges to a derivative operator), Canny starts by smoothing the image with a Gaussian blur to suppress this noise before any gradients are computed. This preprocessing step is a major reason Canny tends to produce cleaner, more reliable results than a raw Sobel or Laplacian pass with no smoothing applied beforehand. It doesn't sharpen edges, and has nothing to do with color conversion or resizing."
-    },
-    {
-      q: "What does 'non-maximum suppression' accomplish within the Canny algorithm?",
-      options: ["It removes all detected edges from the image entirely","It thins edges by keeping only local maxima in gradient magnitude along the gradient direction, producing thin, precise edge lines","It intentionally thickens and blurs the detected edges","It converts the edge map into a color-coded overlay"],
-      correct: 1,
-      explain: "After computing gradient magnitude and direction at every pixel, non-maximum suppression scans along each pixel's gradient direction and keeps only the pixel representing a true local maximum, suppressing all neighbors along that direction that aren't the peak. The result is that thick, blurry gradient responses collapse into thin, one-pixel-wide edge lines that precisely mark the true edge location. It doesn't remove all edges (only the redundant, non-maximal ones), doesn't thicken anything, and has nothing to do with color overlays."
-    },
-    {
-      q: "What is 'hysteresis thresholding' used for within the Canny pipeline?",
-      options: ["Classifying pixels as strong, weak, or non-edges using two thresholds, and retaining weak edges only when they connect to strong ones","Adjusting the overall contrast and brightness of the image","Rotating the image to align edges with the coordinate axes","Detecting sudden changes in color hue only"],
-      correct: 0,
-      explain: "Hysteresis thresholding is Canny's final decision-making stage: using THRESHOLD1 and THRESHOLD2, each candidate edge pixel is sorted into strong (kept), weak (kept only if connected to a strong pixel), or non-edge (discarded). This connectivity-based approach lets Canny recover faint but genuine edges trailing off from a strong, clear edge, while still rejecting isolated noisy pixels — producing more continuous boundaries than a simple single-threshold cutoff. It's unrelated to contrast adjustment, rotation, or hue detection."
-    },
-    {
-      q: "What is a key advantage of Canny edge detection compared to Sobel or Laplacian alone?",
-      options: ["It is always computationally faster than every other method, with no exceptions","It combines noise suppression, precise thin-edge localization, and reduced false edges via its multi-stage design","It requires no parameters or tuning whatsoever","It only works correctly on color images"],
-      correct: 1,
-      explain: "Canny's advantage comes from its layered design: Gaussian smoothing reduces noise-driven false edges, non-maximum suppression produces thin, precisely localized edges instead of thick blurry ones, and hysteresis thresholding with two thresholds reduces both missed edges and spurious noise-triggered ones compared to a single fixed cutoff. It's not necessarily faster (it does more computation, not less), it does require tuning its two thresholds, and it operates on grayscale images just like the other operators in this lab."
-    },
-    {
-      q: "If you lower the Canny thresholds significantly, e.g. from (100, 200) to (50, 100), what would you expect in the output?",
-      options: ["Fewer edges detected overall, with fine details lost","More edges detected, including finer, weaker details — and potentially more noise-induced false edges","No change at all in the resulting edge map","The image would become completely blurred"],
-      correct: 1,
-      explain: "Lower thresholds mean pixels with weaker gradient magnitudes now qualify as strong or weak candidates, so the algorithm becomes more permissive and detects additional fainter details a higher threshold would have discarded. This is a trade-off: while some genuinely subtle real edges get captured, so does more noise, since the bar for 'significant enough' has been relaxed across the board. This is exactly the comparison the lab's exercise asks you to explore between (50,100) and higher settings like (200,250)."
-    },
-    {
-      q: "Conversely, using higher thresholds like (200, 250) instead of (50, 100) would generally result in:",
-      options: ["More noise being detected in the output","Fewer, but stronger and more significant edges being kept, at the risk of missing subtler real edges","No edges being detected at all under any circumstance","The image being inverted in color"],
-      correct: 1,
-      explain: "Raising the thresholds makes the algorithm stricter — only pixels with strong, clear gradient magnitude pass the upper threshold as automatic strong edges, and the narrower or higher weak-edge window means fewer faint candidates get reconnected via hysteresis. The result is a cleaner edge map dominated by only the most prominent boundaries, but at the cost of potentially missing subtler, lower-contrast edges a lower threshold would have caught. It's the opposite of lowering thresholds, not a total absence of edges, and unrelated to color inversion."
-    },
-    {
-      q: "When comparing Canny, Sobel, and Laplacian outputs on the same image, which typically produces the cleanest, thinnest edge map?",
-      options: ["Laplacian, due to its second-order sensitivity","Canny, due to its multi-stage refinement including non-maximum suppression and hysteresis thresholding","Sobel, because it uses two separate kernels","All three produce visually identical results"],
-      correct: 1,
-      explain: "Canny is specifically engineered to produce thin, well-localized, relatively noise-free edges through Gaussian smoothing, non-maximum suppression, and two-threshold hysteresis — steps that neither Sobel nor Laplacian include on their own. Raw Sobel and Laplacian outputs tend to be thicker, less precisely localized, and typically noisier, especially the Laplacian given its second-derivative noise sensitivity. This is exactly why the lab explicitly asks students to compare all three side-by-side and discuss the differences."
-    },
-    {
-      q: "Which single OpenCV function implements the entire multi-step Canny algorithm in one call?",
-      options: ["cv2.filter2D()","cv2.Canny()","cv2.Sobel()","cv2.Laplacian()"],
-      correct: 1,
-      explain: "cv2.Canny(image, THRESHOLD1, THRESHOLD2) is a single, self-contained function handling the entire pipeline — smoothing, gradient computation, non-maximum suppression, and hysteresis thresholding — without requiring manual chaining, unlike the Laplacian, Sobel, and Prewitt sections earlier where a raw kernel is manually convolved via cv2.filter2D(). cv2.Sobel() is OpenCV's dedicated Sobel gradient function (one stage, not full Canny), and cv2.Laplacian() is similarly just one stage."
-    },
-    {
-      q: "Internally, Canny commonly computes its intensity gradients using which underlying approach?",
-      options: ["A Sobel-like gradient operator","A discrete Fourier transform","A median filtering pass","The Hough transform"],
-      correct: 0,
-      explain: "Canny's gradient computation stage typically uses a Sobel-style operator internally to estimate magnitude and direction of intensity change at each pixel, after the initial Gaussian smoothing. This is one reason Sobel is worth understanding on its own — it's not just standalone but also a building block inside more sophisticated pipelines like Canny. It does not rely on Fourier transforms, median filtering, or the Hough transform, which serves a completely different purpose applied after edges already exist."
-    },
-    {
-      q: "Why is Canny generally preferred over simple Sobel/Prewitt-plus-thresholding in practical computer vision applications?",
-      options: ["It requires more manual tuning with no corresponding benefit in output quality","It combines noise reduction, precise edge localization via non-max suppression, and robust edge continuity via hysteresis, producing cleaner and more reliable results overall","It deliberately ignores gradient magnitude information","It only functions correctly on strictly binary images"],
-      correct: 1,
-      explain: "Canny's multi-stage design directly addresses the weaknesses of using Sobel or Prewitt alone with a single fixed threshold: noise is suppressed early via Gaussian blur, edges are thinned precisely via non-maximum suppression, and the double-threshold hysteresis approach avoids the harsh all-or-nothing behavior of a single cutoff by recovering genuine faint edges connected to strong ones. While Canny requires tuning two thresholds instead of one, this added complexity is generally worthwhile given the cleaner results — exactly why it's often the default choice in production pipelines."
-    },
-    {
-      q: "What data type/format does cv2.Canny() typically expect as its image input?",
-      options: ["A single-channel (grayscale) 8-bit image","A 3-channel floating-point color image","A pre-computed binary edge mask","A raw compressed JPEG byte buffer"],
-      correct: 0,
-      explain: "Like the other edge operators in this lab, cv2.Canny() is designed to operate on a single-channel, 8-bit grayscale image — which is why the lab loads the image with cv2.imread(path, cv2.IMREAD_GRAYSCALE) before passing it to any edge detection function, Canny included. It does not expect a 3-channel float image, doesn't require an already-computed binary edge mask (that's its own output, not input), and needs a decoded pixel array rather than a raw compressed file buffer."
-    },
-    {
-      q: "What problem could arise if Canny's two thresholds are set too close together, e.g. THRESHOLD1 near THRESHOLD2?",
-      options: ["There would be no noticeable effect on the results at all","The hysteresis range becomes too narrow, so very few pixels qualify as weak edges, which can cause edge fragmentation or the loss of legitimately fainter edges","The image would be resized unexpectedly","The algorithm would fail to execute entirely"],
-      correct: 1,
-      explain: "Hysteresis thresholding depends on having a meaningful gap between THRESHOLD1 and THRESHOLD2 so there's a useful range of 'weak' candidates available to reconnect to strong edges. If the two thresholds are very close together, almost every pixel gets forced into either 'strong' or 'non-edge' with almost nothing in between, defeating the purpose of hysteresis and often producing choppier, more fragmented edges since faint-but-real continuations have no chance to be recovered. This is a real, noticeable effect, not something that crashes the algorithm or resizes the image."
-    }
-  ]
-},
-{
-  name: "Advanced Topics",
-  intro: "Rounding out the lab: the Laplacian of Gaussian, the Hough transform, and why raw edge maps often need extra processing before they're truly useful.",
-  kernel: [[1,0,1],[0,1,0],[1,0,1]],
-  questions: [
-    {
-      q: "What role does the Laplacian of Gaussian (LoG) play in edge detection?",
-      options: ["It has no meaningful role and is rarely used","It first smooths the image with a Gaussian filter to reduce noise, then applies the Laplacian to find zero-crossings, combining noise robustness with second-order edge detection","It only works correctly on already-color images","It completely replaces the need for Canny in every situation"],
-      correct: 1,
-      explain: "LoG addresses the Laplacian's core weakness — its high sensitivity to noise as a second-derivative operator — by applying a Gaussian blur first to smooth out noise, then computing the Laplacian on the smoothed result to find edges via zero-crossings. This gives you the directional-independence advantage of the isotropic Laplacian while substantially reducing the spurious noise responses a plain, unsmoothed Laplacian would produce. It works on grayscale images like the other operators here, and while strong, it doesn't universally replace Canny — each has its own strengths."
-    },
-    {
-      q: "Why is LoG generally considered more robust than a plain, unsmoothed Laplacian?",
-      options: ["It uses a larger number of separate kernels overall","The Gaussian smoothing step reduces the Laplacian's inherent noise sensitivity before the second derivative is computed","It avoids using derivatives entirely","It is specifically restricted to detecting only straight lines"],
-      correct: 1,
-      explain: "The plain Laplacian amplifies noise heavily because it's a second-derivative operator, and small random intensity fluctuations get magnified into large spurious responses. By blurring the image with a Gaussian filter first, high-frequency noise is substantially attenuated before the Laplacian computes its second derivative, resulting in a much cleaner zero-crossing map. It still fundamentally relies on the same second-derivative math (not avoiding derivatives), and it's a general edge-detection technique, not restricted to straight lines specifically — that's more the Hough transform's domain."
-    },
-    {
-      q: "What is the Hough Transform primarily used for in image processing?",
-      options: ["Correcting the color balance of an image","Detecting geometric shapes like lines and curves by transforming edge points into a parameter space and finding accumulated intersections","Removing noise from a raw, unprocessed image","Compressing an image's file size"],
-      correct: 1,
-      explain: "The Hough Transform takes a set of edge points (already detected by something like Sobel or Canny) and maps each into a parameter space (e.g., slope-intercept or angle-distance space for lines), where points lying on the same real-world line or curve all vote for the same point in that space. Finding where votes accumulate most strongly lets the algorithm robustly detect lines, circles, or other parametric shapes even when the underlying edge points are noisy or partially broken. It has no role in color correction, noise removal from raw images, or file compression."
-    },
-    {
-      q: "Why does the Hough Transform typically get applied after edge detection rather than before it?",
-      options: ["It requires a set of edge/boundary points as its input in order to detect the lines or curves formed by those points","It completely replaces the need for any edge detection step","It only operates correctly on raw, unprocessed color images","The order in which they're applied genuinely doesn't matter"],
-      correct: 0,
-      explain: "The Hough Transform's entire mechanism depends on having candidate edge points to vote in parameter space — without edge detection first identifying likely boundary pixels, there's nothing meaningful for it to analyze, and running it on raw, unfiltered pixel data would be wasteful and produce nonsensical results. This dependency is exactly why the lab title lists the Hough transform right after the edge detection topics, treating edge detection as a prerequisite step. It doesn't replace edge detection, doesn't require color, and the processing order absolutely matters."
-    },
-    {
-      q: "Why is edge linking often a necessary step after running a basic edge detector like Sobel?",
-      options: ["It is never actually necessary for any practical purpose","Basic edge detectors often produce broken, discontinuous edge segments due to noise or weak local gradients, so edge linking reconnects these fragments into continuous, meaningful boundaries","It converts a grayscale edge map into a full-color image","It reduces the overall file size of the edge map"],
-      correct: 1,
-      explain: "In practice, raw Sobel output frequently contains gaps — sections where the gradient briefly dips below a detectable level due to noise, shadows, or subtle texture changes, breaking what should be one continuous object boundary into several disconnected pieces. Edge linking techniques, ranging from simple proximity-based rules to more sophisticated graph-based approaches, stitch these fragments back together into complete, usable contours, which matters for downstream tasks like shape analysis that expect closed, continuous boundaries. It has nothing to do with color conversion or file size."
-    },
-    {
-      q: "What problem does multi-scale edge detection solve that a single fixed scale cannot?",
-      options: ["It solves no additional problem beyond single-scale detection","Real objects and features exist at different sizes; multi-scale detection captures both fine, small details and larger, coarse structures by analyzing the image at multiple resolutions or blur levels","It works exclusively with text-based images","It removes any need to choose thresholds at all"],
-      correct: 1,
-      explain: "A single, fixed level of analysis makes a trade-off: heavy smoothing captures large-scale structures well but loses fine detail, while minimal smoothing preserves fine detail but is more vulnerable to noise and may miss larger, gradual boundaries. Multi-scale edge detection sidesteps this by analyzing the image at several different scales — for instance, applying Gaussian blur at varying kernel sizes, as the lab's exercise suggests — and combining results so both fine textures and broad structures are captured appropriately. It's a general concept applicable to any image content, not just text, and doesn't eliminate the need for threshold tuning within each scale."
-    }
-  ]
-}
-];
-
-/* ============================= STATE ============================= */
-const TOTAL = CONCEPTS.reduce((sum,c)=>sum+c.questions.length,0);
-let conceptIdx = 0;
-let qIdx = 0;
-let mode = "intro"; // intro | question | conceptDone | allDone
-let answered = false;
-let completedCount = 0;
-let conceptDoneFlags = CONCEPTS.map(()=>false);
-
-const stage = document.getElementById('stage');
-const progressBar = document.getElementById('progressBar');
-const progressLabel = document.getElementById('progressLabel');
-const conceptLabel = document.getElementById('conceptLabel');
-const conceptNav = document.getElementById('conceptNav');
-const kernelViz = document.getElementById('kernelViz');
-
-/* ---------- kernel header viz ---------- */
-function renderKernel(matrix){
-  kernelViz.innerHTML = "";
-  matrix.flat().forEach(v=>{
-    const cell = document.createElement('div');
-    cell.textContent = v;
-    kernelViz.appendChild(cell);
-  });
-}
-
-/* ---------- concept nav ---------- */
-function renderConceptNav(){
-  conceptNav.innerHTML = "";
-  CONCEPTS.forEach((c,i)=>{
-    const btn = document.createElement('button');
-    btn.textContent = (i+1) + ". " + c.name;
-    if(i === conceptIdx) btn.classList.add('active');
-    if(conceptDoneFlags[i]) btn.classList.add('done');
-    btn.addEventListener('click', ()=>{
-      conceptIdx = i;
-      qIdx = 0;
-      mode = "intro";
-      answered = false;
-      render();
-    });
-    conceptNav.appendChild(btn);
-  });
-}
-
-/* ---------- progress ---------- */
-function questionsBeforeConcept(idx){
-  let n = 0;
-  for(let i=0;i<idx;i++) n += CONCEPTS[i].questions.length;
-  return n;
-}
-function updateProgress(){
-  const globalIndex = questionsBeforeConcept(conceptIdx) + qIdx + (mode==="question" || mode==="conceptDone" || mode==="allDone" ? 0 : 0);
-  let shown = completedCount;
-  progressBar.style.width = (shown/TOTAL*100) + "%";
-  progressLabel.textContent = "Question " + Math.min(shown, TOTAL) + " of " + TOTAL;
-  conceptLabel.textContent = CONCEPTS[conceptIdx].name;
-}
-
-/* ---------- render dispatch ---------- */
-function render(){
-  renderConceptNav();
-  updateProgress();
-  if(mode === "intro") renderConceptIntro();
-  else if(mode === "question") renderQuestion();
-  else if(mode === "conceptDone") renderConceptDone();
-  else if(mode === "allDone") renderAllDone();
-}
-
-function renderConceptIntro(){
-  const c = CONCEPTS[conceptIdx];
-  renderKernel(c.kernel);
-  stage.innerHTML = "";
-  const card = document.createElement('div');
-  card.className = "card concept-card";
-  card.innerHTML = `
-    <div class="concept-tag">Concept ${conceptIdx+1} of ${CONCEPTS.length}</div>
-    <h2>${c.name}</h2>
-    <p>${c.intro}</p>
-    <div class="count-line">${c.questions.length} questions in this concept</div>
-    <button class="btn btn-primary" id="startBtn">Start ${c.name} →</button>
-  `;
-  stage.appendChild(card);
-  document.getElementById('startBtn').addEventListener('click', ()=>{
-    mode = "question";
-    qIdx = 0;
-    answered = false;
-    render();
-  });
-}
-
-function renderQuestion(){
-  const c = CONCEPTS[conceptIdx];
-  const q = c.questions[qIdx];
-  renderKernel(c.kernel);
-  stage.innerHTML = "";
-  const card = document.createElement('div');
-  card.className = "card";
-
-  const globalNum = questionsBeforeConcept(conceptIdx) + qIdx + 1;
-
-  card.innerHTML = `
-    <div class="q-meta"><span class="num">Q${globalNum}</span> · ${c.name} · ${qIdx+1} of ${c.questions.length}</div>
-    <div class="q-text">${q.q}</div>
-    <div class="options" id="optionsWrap"></div>
-    <div id="explainWrap"></div>
-    <div class="next-row" id="nextRow"></div>
-  `;
-  stage.appendChild(card);
-
-  const optionsWrap = card.querySelector('#optionsWrap');
-  const letters = ['A','B','C','D'];
-  q.options.forEach((opt, i)=>{
-    const div = document.createElement('div');
-    div.className = "option";
-    div.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt}</span>`;
-    div.addEventListener('click', ()=> selectOption(i));
-    optionsWrap.appendChild(div);
-  });
-
-  answered = false;
-}
-
-function selectOption(i){
-  if(answered) return;
-  answered = true;
-  const c = CONCEPTS[conceptIdx];
-  const q = c.questions[qIdx];
-  const optionEls = document.querySelectorAll('#optionsWrap .option');
-
-  optionEls.forEach((el, idx)=>{
-    el.classList.add('locked');
-    if(idx === q.correct){
-      el.classList.add('is-correct');
-    }
-    if(idx === i && i !== q.correct){
-      el.classList.add('is-wrong');
-    }
-    if(idx !== i && idx !== q.correct){
-      el.classList.add('dim');
-    }
-  });
-
-  const isCorrect = (i === q.correct);
-  const explainWrap = document.getElementById('explainWrap');
-  const box = document.createElement('div');
-  box.className = "explain " + (isCorrect ? "correct" : "wrong");
-  box.innerHTML = `<span class="verdict">${isCorrect ? "Correct" : "Not quite"}</span><p>${q.explain}</p>`;
-  explainWrap.appendChild(box);
-
-  completedCount++;
-  updateProgress();
-
-  const nextRow = document.getElementById('nextRow');
-  const btn = document.createElement('button');
-  btn.className = "btn btn-primary";
-  const isLastInConcept = qIdx === c.questions.length - 1;
-  const isLastConcept = conceptIdx === CONCEPTS.length - 1;
-  btn.textContent = isLastInConcept ? (isLastConcept ? "Finish review →" : "Finish concept →") : "Next question →";
-  btn.addEventListener('click', ()=>{
-    if(isLastInConcept){
-      conceptDoneFlags[conceptIdx] = true;
-      mode = isLastConcept ? "allDone" : "conceptDone";
-    } else {
-      qIdx++;
-      mode = "question";
-    }
-    render();
-  });
-  nextRow.appendChild(btn);
-}
-
-function renderConceptDone(){
-  const c = CONCEPTS[conceptIdx];
-  const next = CONCEPTS[conceptIdx+1];
-  stage.innerHTML = "";
-  const card = document.createElement('div');
-  card.className = "card done-card";
-  card.innerHTML = `
-    <div class="mark">✓</div>
-    <h2>${c.name} — complete</h2>
-    <p>You've been through all ${c.questions.length} questions on this concept. Next up: <strong style="color:var(--text)">${next.name}</strong>.</p>
-    <button class="btn btn-primary" id="continueBtn">Continue →</button>
-  `;
-  stage.appendChild(card);
-  document.getElementById('continueBtn').addEventListener('click', ()=>{
-    conceptIdx++;
-    qIdx = 0;
-    mode = "intro";
-    render();
-  });
-}
-
-function renderAllDone(){
-  stage.innerHTML = "";
-  const card = document.createElement('div');
-  card.className = "card done-card";
-  card.innerHTML = `
-    <div class="mark">✓</div>
-    <h2>All 6 concepts complete</h2>
-    <p>You've been through every question on Edge Detection — fundamentals, Laplacian, Sobel, Prewitt, Canny, and the advanced topics. Feel free to jump back into any concept above to revisit an explanation.</p>
-    <button class="btn btn-ghost" id="restartBtn">Restart from the beginning</button>
-  `;
-  stage.appendChild(card);
-  document.getElementById('restartBtn').addEventListener('click', ()=>{
-    conceptIdx = 0; qIdx = 0; mode = "intro"; completedCount = 0;
-    conceptDoneFlags = CONCEPTS.map(()=>false);
-    render();
-  });
-}
-
-render();
-</script>
-<script src="js/site.js"></script>
-</body>
-</html>
+}]
